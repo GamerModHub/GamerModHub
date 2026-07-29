@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#05050c">
+    <title>GamerModHub — Centro Gaming</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap');
+
+        :root {
+            --neon-blue: #00f0ff;
+            --neon-purple: #bd00ff;
+            --neon-pink: #ff00aa;
+            --neon-green: #00ff94;
+            --neon-orange: #ff9500;
+            --neon-red: #ff0055;
+            --glass: rgba(10, 12, 22, 0.65);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: url('wallpaper/wallpaper.png') center center / cover no-repeat fixed;
+            color: #fff;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 18% 12%, rgba(0, 240, 255, 0.06), transparent 42%),
+                radial-gradient(ellipse at 82% 88%, rgba(189, 0, 255, 0.06), transparent 42%),
+                linear-gradient(180deg, rgba(0,0,0,0.52) 0%, rgba(0,0,0,0.72) 50%, rgba(0,0,0,0.86) 100%);
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: radial-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+            background-size: 48px 48px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .font-neon { font-family: 'Orbitron', sans-serif; }
+        
+        .neon-animated {
+            background: linear-gradient(90deg, 
+                var(--neon-blue) 0%, 
+                var(--neon-purple) 25%, 
+                var(--neon-pink) 50%, 
+                var(--neon-green) 75%, 
+                var(--neon-blue) 100%);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: neon-color-shift 4s linear infinite;
+        }
+        @keyframes neon-color-shift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        .neon-text {
+            color: #fff;
+            text-shadow: 0 0 8px var(--neon-blue), 0 0 16px rgba(0,240,255,0.4);
+        }
+
+        .header-glass {
+            background: rgba(5, 6, 14, 0.85);
+            backdrop-filter: blur(24px) saturate(1.5);
+            -webkit-backdrop-filter: blur(24px) saturate(1.5);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+        }
+        
+        .nav-glass {
+            background: rgba(5, 6, 14, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            position: relative;
+        }
+
+        /* PANEL NAV 5x2 ESTILO CHIP VERDE */
+        .nav-grid-5x2 {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            padding: 12px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 16px;
+        }
+
+        .tab-btn-chip {
+            background: rgba(0,0,0,0.6);
+            border: 1px solid rgba(0, 255, 148, 0.2);
+            color: #9ca3af;
+            border-radius: 12px;
+            padding: 12px 8px;
+            font-weight: 700;
+            font-size: 13px;
+            font-family: 'Rajdhani', sans-serif;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-align: center;
+        }
+
+        .tab-btn-chip:hover {
+            border-color: rgba(0, 255, 148, 0.5);
+            background: rgba(0, 255, 148, 0.05);
+            color: #00ff94;
+            transform: translateY(-2px);
+        }
+
+        .tab-btn-chip.tab-active {
+            background: rgba(0, 255, 148, 0.15);
+            border: 2px solid var(--neon-green);
+            color: var(--neon-green);
+            box-shadow:
+                0 0 15px rgba(0, 255, 148, 0.4),
+                inset 0 0 10px rgba(0, 255, 148, 0.1);
+            text-shadow: 0 0 8px rgba(0, 255, 148, 0.6);
+        }
+
+        /* BUSCADOR NEÓN ESTÁTICO */
+        .neon-search-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .neon-search-box {
+            width: 100%;
+            padding: 16px 50px 16px 48px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid var(--neon-blue);
+            border-radius: 16px;
+            color: #fff;
+            font-size: 15px;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            outline: none;
+            position: relative;
+            z-index: 10;
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 0 20px rgba(0, 240, 255, 0.3),
+                inset 0 0 20px rgba(0, 240, 255, 0.1),
+                0 0 40px rgba(0, 240, 255, 0.1);
+        }
+
+        .neon-search-box:focus {
+            border-color: var(--neon-blue);
+            box-shadow: 
+                0 0 30px rgba(0, 240, 255, 0.5),
+                0 0 60px rgba(0, 240, 255, 0.3),
+                0 0 90px rgba(0, 240, 255, 0.15),
+                inset 0 0 30px rgba(0, 240, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .neon-search-box::placeholder {
+            color: rgba(156, 163, 175, 0.7);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--neon-blue);
+            font-size: 18px;
+            z-index: 20;
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--neon-red);
+            cursor: pointer;
+            display: none;
+            transition: all 0.2s;
+            z-index: 20;
+            font-size: 18px;
+        }
+
+        .search-clear:hover {
+            transform: translateY(-50%) scale(1.2);
+            text-shadow: 0 0 15px var(--neon-red);
+        }
+
+        .search-clear.visible {
+            display: block;
+        }
+
+        /* Resultados de búsqueda */
+        .search-results {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 0;
+            right: 0;
+            background: rgba(5, 6, 14, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            border: 2px solid var(--neon-blue);
+            box-shadow: 
+                0 0 40px rgba(0, 240, 255, 0.4),
+                0 10px 40px rgba(0, 0, 0, 0.8),
+                0 0 80px rgba(0, 240, 255, 0.2);
+            max-height: 600px;
+            overflow-y: auto;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .search-results.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .search-results-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 240, 255, 0.05);
+        }
+
+        .search-results-count {
+            color: var(--neon-blue);
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .search-results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 16px;
+            padding: 20px;
+        }
+
+        .search-result-item {
+            background: rgba(0, 240, 255, 0.05);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            animation: fadeInResult 0.4s ease forwards;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        .search-result-item:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: var(--neon-blue);
+            box-shadow: 0 10px 30px rgba(0, 240, 255, 0.3);
+        }
+
+        @keyframes fadeInResult {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .search-result-cover {
+            width: 100%;
+            aspect-ratio: 3/4;
+            object-fit: cover;
+            display: block;
+        }
+
+        .search-result-info {
+            padding: 10px;
+        }
+
+        .search-result-title {
+            font-weight: 700;
+            font-size: 13px;
+            color: #fff;
+            margin-bottom: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .search-result-category {
+            font-size: 11px;
+            color: var(--neon-purple);
+            font-weight: 600;
+        }
+
+        .no-results {
+            padding: 40px 20px;
+            text-align: center;
+            color: #6b7280;
+        }
+
+        .no-results i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* PANEL DE NOVEDADES - SIN EFECTO NEÓN, SOLO BORDE */
+        .news-panel {
+            background: rgba(5, 6, 14, 0.85);
+            backdrop-filter: blur(16px);
+            border-radius: 16px;
+            border: 2px solid var(--neon-green);
+            position: relative;
+            overflow: hidden;
+            margin: 20px auto;
+            max-width: 800px;
+        }
+        
+        .news-content {
+            position: relative;
+            z-index: 10;
+            padding: 20px;
+        }
+        
+        .news-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .news-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .news-badge {
+            background: linear-gradient(135deg, var(--neon-green), #00cc77);
+            color: #000;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 12px;
+        }
+        
+        .news-title {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--neon-green);
+        }
+
+        .news-date {
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 600;
+        }
+        
+        .news-text {
+            color: #e5e7eb;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .news-scroll {
+            overflow: hidden;
+            position: relative;
+            min-height: 60px;
+        }
+        
+        .news-item {
+            display: none;
+            animation: newsFadeIn 0.5s ease;
+        }
+        
+        .news-item.active {
+            display: block;
+        }
+        
+        @keyframes newsFadeIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* OCULTAR CONTENIDO DURANTE BÚSQUEDA */
+        .inicio-content.hidden-search {
+            display: none;
+        }
+
+        .letter-filter {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding: 8px 0;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+        .letter-filter::-webkit-scrollbar { display: none; }
+        
+        .letter-btn {
+            flex-shrink: 0;
+            min-width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 240, 255, 0.05);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 8px;
+            color: var(--neon-blue);
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .letter-btn:hover {
+            background: rgba(0, 240, 255, 0.15);
+            border-color: var(--neon-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 240, 255, 0.2);
+        }
+        .letter-btn.active {
+            background: var(--neon-blue);
+            color: #000;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px var(--neon-blue);
+        }
+        .letter-btn-all {
+            min-width: 60px;
+            font-size: 12px;
+        }
+
+        .banner-box {
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .banner-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px -10px rgba(0, 240, 255, 0.15);
+        }
+        .banner-box::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            padding: 1.5px;
+            background: linear-gradient(120deg, var(--neon-blue), var(--neon-purple), var(--neon-pink), var(--neon-blue));
+            background-size: 250% 100%;
+            animation: border-flow 8s linear infinite;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+        @keyframes border-flow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 250% 50%; }
+        }
+
+        .logo-gif-container {
+            position: relative;
+            display: inline-block;
+            margin: 10px 0 20px;
+        }
+        .logo-gif-container::before {
+            content: '';
+            position: absolute;
+            inset: -15%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.25) 0%, rgba(189, 0, 255, 0.15) 40%, transparent 70%);
+            filter: blur(20px);
+            animation: logo-glow-pulse 3s ease-in-out infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .logo-gif-container::after {
+            content: '';
+            position: absolute;
+            inset: -8%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 0, 170, 0.15) 0%, transparent 60%);
+            filter: blur(15px);
+            animation: logo-glow-pulse 3s ease-in-out infinite reverse;
+            z-index: 0;
+            pointer-events: none;
+        }
+        @keyframes logo-glow-pulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.08); }
+        }
+        .logo-gif {
+            position: relative;
+            z-index: 1;
+            display: block;
+            max-width: 260px;
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 0 12px rgba(0, 240, 255, 0.4)) drop-shadow(0 0 25px rgba(189, 0, 255, 0.25));
+            animation: logo-float 4s ease-in-out infinite;
+        }
+        @keyframes logo-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+        @media (min-width: 768px) {
+            .logo-gif { max-width: 320px; }
+        }
+
+        .game-card, .folder-card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 14px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        .game-card.grid-card { width: 100%; max-width: none; }
+
+        .game-card::before, .folder-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 14px;
+            padding: 1px;
+            background: rgba(0, 240, 255, 0.12);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            z-index: 5;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+        }
+
+        .game-card:hover::before, .game-card.neon-on::before,
+        .folder-card:hover::before, .folder-card.neon-on::before {
+            opacity: 1;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple), var(--neon-pink), var(--neon-green), var(--neon-blue));
+            background-size: 300% 100%;
+            animation: neon-flow 2.4s linear infinite;
+            padding: 2px;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+        }
+        @keyframes neon-flow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 300% 50%; }
+        }
+
+        .game-card:hover, .game-card.neon-on,
+        .folder-card:hover, .folder-card.neon-on {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 12px 32px -6px rgba(0, 240, 255, 0.35), 0 0 25px rgba(0, 240, 255, 0.2);
+            border-color: rgba(0, 240, 255, 0.4);
+        }
+        .game-card:active, .folder-card:active { transform: scale(0.97); }
+        .game-card > *, .folder-card > * { position: relative; z-index: 2; }
+
+        .cover-img {
+            width: 100%;
+            aspect-ratio: 3/4;
+            object-fit: cover;
+            border-radius: 10px;
+            display: block;
+            background: linear-gradient(160deg, #141422, #1c1c30);
+            transition: transform 0.4s ease;
+        }
+        .game-card:hover .cover-img { transform: scale(1.05); }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 0.85rem;
+            line-height: 1.3;
+            margin-top: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            color: #f3f4f6;
+        }
+        .card-desc { font-size: 12px; color: #9ca3af; margin-top: 4px; }
+        .download-hint { 
+            font-size: 11px; 
+            color: var(--neon-green); 
+            margin-top: 8px; 
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            opacity: 0;
+            transform: translateY(5px);
+            transition: all 0.3s ease;
+        }
+        .game-card:hover .download-hint { opacity: 1; transform: translateY(0); }
+
+        .tag-rom {
+            position: absolute;
+            top: 8px; right: 8px;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 8px;
+            background: rgba(0,0,0,0.7);
+            color: var(--neon-blue);
+            border: 1px solid rgba(0,240,255,0.4);
+            z-index: 10;
+            backdrop-filter: blur(6px);
+        }
+
+        .scroll-row {
+            display: flex;
+            gap: 14px;
+            overflow-x: auto;
+            padding: 4px 2px 12px;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .scroll-row::-webkit-scrollbar { display: none; }
+        .scroll-row > * { scroll-snap-align: start; }
+
+        .btn-neon {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid rgba(0, 240, 255, 0.5);
+            color: #fff;
+            border-radius: 12px;
+            padding: 11px 24px;
+            font-weight: 700;
+            font-size: 14px;
+            font-family: 'Orbitron', sans-serif;
+            transition: all 0.22s ease;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+        }
+        .btn-neon:hover {
+            background: rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        .btn-neon:active { transform: scale(0.95); background: var(--neon-blue); color: #000; }
+
+        .btn-page {
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.32);
+            color: var(--neon-blue);
+            border-radius: 10px;
+            padding: 9px 18px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-page:hover:not(:disabled) { background: rgba(0, 240, 255, 0.2); }
+        .btn-page:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .ver-mas {
+            color: var(--neon-blue);
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .ver-mas:hover { color: #fff; text-shadow: 0 0 8px var(--neon-blue); }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--neon-blue);
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: gap 0.3s ease;
+        }
+        .back-btn:hover { gap: 12px; }
+
+        .tech-line {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0,240,255,0.3), transparent);
+            margin: 8px 0 24px;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active {
+            display: block;
+            animation: storeIn 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        @keyframes storeIn {
+            from { opacity: 0; transform: translateY(14px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in-item {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInItem 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        @keyframes fadeInItem {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 10px;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--neon-blue), var(--neon-purple));
+            border-radius: 4px;
+        }
+
+        main {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+        }
+    </style>
+</head>
+<body>
+
+<header class="sticky top-0 z-50 header-glass px-4 py-3">
+    <div class="max-w-7xl mx-auto flex items-center gap-4">
+        <h1 class="font-neon text-xl font-black neon-text tracking-wider shrink-0 cursor-pointer flex items-center gap-2" id="logo-home">
+            <i class="fa fa-bolt text-cyan-400"></i> GAMERMODHUB
+        </h1>
+        <div class="flex-1"></div>
+        <div class="w-10 h-10 rounded-full overflow-hidden shrink-0 shadow-lg shadow-cyan-500/20 cursor-pointer hover:scale-105 transition-transform border border-cyan-500/30">
+            <img src="wallpaper/icono.png" alt="Usuario" class="w-full h-full object-cover">
+        </div>
+    </div>
+</header>
+
+<nav class="sticky top-[65px] z-40 nav-glass">
+    <div class="max-w-7xl mx-auto">
+        <div class="nav-grid-5x2" id="tab-list-main">
+            <button type="button" class="tab-btn-chip tab-active" data-target="contenido-inicio">Inicio</button>
+            <button type="button" class="tab-btn-chip" data-target="contenido-manual">Biblioteca</button>
+            <button type="button" class="tab-btn-chip" data-target="contenido-mods">Mods</button>
+            <button type="button" class="tab-btn-chip" data-target="contenido-gametube">Gametube</button>
+            <button type="button" class="tab-btn-chip" data-target="contenido-novedad">Novedad</button>
+            <button type="button" class="tab-btn-chip" data-target="contenido-emuladores">Emuladores</button>
+            <button type="button" class="tab-btn-chip" data-target="contenido-grupos">Comunidad</button>
+            <button type="button" class="tab-btn-chip" data-target="contenido-redsocial">Red Social</button>
+            <button type="button" class="tab-btn-chip" data-target="contenido-admin">Administración</button>
+            <button type="button" class="tab-btn-chip" data-target="contenido-ajustes">Ajustes</button>
+        </div>
+    </div>
+</nav>
+
+<main>
+    <!-- INICIO -->
+    <div id="contenido-inicio" class="tab-content active">
+        
+        <section class="banner-box p-6 mb-6 fade-in-item">
+            <div class="relative z-10 flex flex-col items-center text-center">
+                <span class="inline-block text-xs px-3 py-1 rounded-full bg-pink-500/10 text-pink-300 border border-pink-500/30 mb-4 font-bold tracking-wider">⭐ CENTRO GAMING</span>
+                
+                <h2 class="font-neon text-3xl md:text-4xl font-black neon-animated leading-tight mb-4">Retro a Modgamer<br>en un solo lugar</h2>
+                
+                <div class="logo-gif-container">
+                    <img src="images/logo.gif" alt="GamerModHub Logo" class="logo-gif">
+                </div>
+                
+                <p class="text-gray-300 text-sm md:text-base max-w-2xl mb-6 leading-relaxed">
+                    <strong class="text-cyan-400">GamerModHub:</strong> es un sitio donde encontrarás <strong class="text-purple-400">Mods:</strong> Modificaciones de juegos, <strong class="text-green-400">Emuladores</strong> Android y PC actualizados, <strong class="text-pink-400">Hackroms</strong> exclusivas y <strong class="text-orange-400">Roms</strong>.
+                </p>
+                
+                <button type="button" class="btn-neon" id="btn-start">
+                    <i class="fa fa-rocket"></i> Comenzar
+                </button>
+            </div>
+        </section>
+
+        <!-- PANEL DE NOVEDADES - CARGADO DESDE JSON -->
+        <div class="news-panel fade-in-item inicio-content" style="animation-delay: 0.15s;">
+            <div class="news-content">
+                <div class="news-header">
+                    <div class="news-header-left">
+                        <span class="news-badge">● EN VIVO</span>
+                        <h3 class="news-title">NOVEDADES DE HOY</h3>
+                    </div>
+                    <span class="news-date" id="news-date">Cargando...</span>
+                </div>
+                <div class="news-scroll" id="news-container">
+                    <div class="text-center py-8 text-gray-400">
+                        <i class="fa fa-spinner fa-spin text-2xl mb-2"></i>
+                        <p>Cargando novedades...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-row gap-3 mb-6 fade-in-item inicio-content" style="animation-delay: 0.1s;">
+            <a href="https://romspure.cc/" target="_blank" rel="noopener noreferrer" class="flex-1 group flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg border border-cyan-500/30 bg-cyan-950/20 backdrop-blur-sm transition-all duration-300 hover:border-cyan-400 hover:shadow-[0_0_15px_rgba(0,240,255,0.2)] hover:-translate-y-0.5">
+                <i class="fa fa-external-link text-cyan-400 text-lg group-hover:scale-110 transition-transform"></i>
+                <span class="font-neon font-bold text-cyan-400 text-sm">RomsPure</span>
+            </a>
+
+            <a href="https://romsfun.com/" target="_blank" rel="noopener noreferrer" class="flex-1 group flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg border border-purple-500/30 bg-purple-950/20 backdrop-blur-sm transition-all duration-300 hover:border-purple-400 hover:shadow-[0_0_15px_rgba(189,0,255,0.2)] hover:-translate-y-0.5">
+                <i class="fa fa-external-link text-purple-400 text-lg group-hover:scale-110 transition-transform"></i>
+                <span class="font-neon font-bold text-purple-400 text-sm">RomsFun</span>
+            </a>
+        </div>
+
+        <!-- BUSCADOR NEÓN ESTÁTICO -->
+        <div class="neon-search-container mb-8 fade-in-item" style="animation-delay: 0.15s;">
+            <i class="fa fa-search search-icon"></i>
+            <input type="search" id="search-input" class="neon-search-box" placeholder="Buscar ROMs en todas las categorías...">
+            <i class="fa fa-times search-clear" id="search-clear"></i>
+            
+            <!-- Resultados de búsqueda -->
+            <div class="search-results" id="search-results">
+                <div class="search-results-header">
+                    <span class="search-results-count" id="search-count">0 resultados</span>
+                </div>
+                <div class="search-results-grid" id="search-grid"></div>
+            </div>
+        </div>
+
+        <!-- CONTENIDO QUE SE OCULTA AL BUSCAR -->
+        <div class="inicio-content">
+            <div class="tech-line"></div>
+
+            <div class="mb-10 fade-in-item" style="animation-delay: 0.3s;">
+                <div class="flex items-center justify-between flex-wrap gap-2 mb-4">
+                    <h3 class="font-neon text-lg neon-animated flex items-center gap-2"><i class="fa fa-gamepad"></i> ROMs PS Vita</h3>
+                    <span class="text-sm flex items-center gap-4">
+                        <span class="text-gray-400 font-semibold" id="psvita-count">Cargando...</span>
+                        <span class="ver-mas" id="btn-ver-mas-psvita">Ver más →</span>
+                    </span>
+                </div>
+                <div class="scroll-row" id="psvita-row">
+                    <div class="game-card shrink-0 w-[140px] p-3"><div class="skeleton w-full aspect-[3/4] mb-3"></div><div class="skeleton h-4 w-3/4 mb-2"></div><div class="skeleton h-3 w-1/2"></div></div>
+                    <div class="game-card shrink-0 w-[140px] p-3"><div class="skeleton w-full aspect-[3/4] mb-3"></div><div class="skeleton h-4 w-3/4 mb-2"></div><div class="skeleton h-3 w-1/2"></div></div>
+                    <div class="game-card shrink-0 w-[140px] p-3"><div class="skeleton w-full aspect-[3/4] mb-3"></div><div class="skeleton h-4 w-3/4 mb-2"></div><div class="skeleton h-3 w-1/2"></div></div>
+                </div>
+                
+                <div class="mt-10">
+                    <div class="flex items-center justify-between flex-wrap gap-2 mb-4">
+                        <h3 class="font-neon text-lg neon-animated flex items-center gap-2"><i class="fa fa-gamepad"></i> ROMs PSP</h3>
+                        <span class="text-sm flex items-center gap-4">
+                            <span class="text-gray-400 font-semibold" id="psp-count">Cargando...</span>
+                            <span class="ver-mas" id="btn-ver-mas-psp">Ver más →</span>
+                        </span>
+                    </div>
+                    <div class="scroll-row" id="psp-row"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CATEGORÍA CON FILTRO DE LETRAS -->
+    <div id="contenido-categoria" class="tab-content">
+        <div class="back-btn" id="btn-volver"><i class="fa fa-arrow-left"></i> Volver al inicio</div>
+        <h2 class="font-neon text-2xl neon-animated mb-1" id="cat-title">Catálogo PS Vita</h2>
+        <p class="text-gray-400 text-sm mb-6" id="cat-subtitle">—</p>
+        
+        <div class="relative max-w-md mb-4">
+            <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-cyan-400/70 text-sm"></i>
+            <input type="search" id="cat-search" class="search-box" placeholder="Filtrar en esta categoría...">
+            <i class="fa fa-times search-clear" id="cat-search-clear"></i>
+        </div>
+
+        <div class="mb-6">
+            <p class="text-xs text-gray-400 mb-2 font-semibold uppercase tracking-wider">Filtrar por letra inicial:</p>
+            <div class="letter-filter" id="letter-filter">
+                <button type="button" class="letter-btn letter-btn-all active" data-letter="all">Todos</button>
+                <button type="button" class="letter-btn" data-letter="A">A</button>
+                <button type="button" class="letter-btn" data-letter="B">B</button>
+                <button type="button" class="letter-btn" data-letter="C">C</button>
+                <button type="button" class="letter-btn" data-letter="D">D</button>
+                <button type="button" class="letter-btn" data-letter="E">E</button>
+                <button type="button" class="letter-btn" data-letter="F">F</button>
+                <button type="button" class="letter-btn" data-letter="G">G</button>
+                <button type="button" class="letter-btn" data-letter="H">H</button>
+                <button type="button" class="letter-btn" data-letter="I">I</button>
+                <button type="button" class="letter-btn" data-letter="J">J</button>
+                <button type="button" class="letter-btn" data-letter="K">K</button>
+                <button type="button" class="letter-btn" data-letter="L">L</button>
+                <button type="button" class="letter-btn" data-letter="M">M</button>
+                <button type="button" class="letter-btn" data-letter="N">N</button>
+                <button type="button" class="letter-btn" data-letter="O">O</button>
+                <button type="button" class="letter-btn" data-letter="P">P</button>
+                <button type="button" class="letter-btn" data-letter="Q">Q</button>
+                <button type="button" class="letter-btn" data-letter="R">R</button>
+                <button type="button" class="letter-btn" data-letter="S">S</button>
+                <button type="button" class="letter-btn" data-letter="T">T</button>
+                <button type="button" class="letter-btn" data-letter="U">U</button>
+                <button type="button" class="letter-btn" data-letter="V">V</button>
+                <button type="button" class="letter-btn" data-letter="W">W</button>
+                <button type="button" class="letter-btn" data-letter="X">X</button>
+                <button type="button" class="letter-btn" data-letter="Y">Y</button>
+                <button type="button" class="letter-btn" data-letter="Z">Z</button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4" id="cat-grid"></div>
+        
+        <div class="flex items-center justify-center gap-4 mt-10">
+            <button type="button" class="btn-page" id="prev-page" disabled><i class="fa fa-chevron-left mr-1"></i> Anterior</button>
+            <span class="text-sm text-gray-300 font-bold font-neon" id="page-info">1 / 1</span>
+            <button type="button" class="btn-page" id="next-page">Siguiente <i class="fa fa-chevron-right ml-1"></i></button>
+        </div>
+    </div>
+
+    <!-- BIBLIOTECA -->
+    <div id="contenido-manual" class="tab-content">
+        <h3 class="font-neon text-2xl neon-animated mb-2 flex items-center gap-2"><i class="fa fa-folder-open"></i> Biblioteca</h3>
+        <p class="text-gray-400 text-sm mb-6">Explorá el catálogo completo de consolas organizado</p>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4" id="biblioteca-grid"></div>
+    </div>
+
+    <!-- MODS Y TEXTURAS -->
+    <div id="contenido-mods" class="tab-content">
+        <h3 class="font-neon text-2xl neon-animated mb-2 flex items-center gap-2"><i class="fa fa-paint-brush"></i> Mods y texturas</h3>
+        <p class="text-gray-400 text-sm mb-6">Mejoras visuales y modificaciones para tus juegos favoritos</p>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            <div class="game-card grid-card p-6 text-center">
+                <div class="text-4xl mb-3">🖼️</div>
+                <h4 class="card-title text-lg">Texture Pack HD</h4>
+                <p class="card-desc mb-3">Mejora gráficos 4K</p>
+            </div>
+            <div class="game-card grid-card p-6 text-center">
+                <div class="text-4xl mb-3">🎭</div>
+                <h4 class="card-title text-lg">Mod Skin</h4>
+                <p class="card-desc mb-3">Diseños personalizados</p>
+            </div>
+            <div class="game-card grid-card p-6 text-center">
+                <div class="text-4xl mb-3">✨</div>
+                <h4 class="card-title text-lg">Shaders FX</h4>
+                <p class="card-desc mb-3">Efectos visuales mejorados</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- GAMETUBE -->
+    <div id="contenido-gametube" class="tab-content">
+        <h3 class="font-neon text-2xl neon-animated mb-2 flex items-center gap-2"><i class="fa fa-play-circle"></i> Gametube</h3>
+        <p class="text-gray-400 text-sm mb-6">Videos, tutoriales y gameplays</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="game-card grid-card p-5">
+                <div class="aspect-video bg-black/40 rounded-lg mb-3 flex items-center justify-center text-5xl">▶️</div>
+                <h4 class="card-title text-lg">Review: Los mejores juegos de PS Vita</h4>
+                <p class="card-desc">Análisis completo 2026</p>
+            </div>
+            <div class="game-card grid-card p-5">
+                <div class="aspect-video bg-black/40 rounded-lg mb-3 flex items-center justify-center text-5xl">▶️</div>
+                <h4 class="card-title text-lg">Top 10 ROMs PSP imperdibles</h4>
+                <p class="card-desc">Los clásicos que no te podés perder</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOVEDAD -->
+    <div id="contenido-novedad" class="tab-content">
+        <h3 class="font-neon text-2xl neon-animated mb-2 flex items-center gap-2"><i class="fa fa-star"></i> Novedad</h3>
+        <p class="text-gray-400 text-sm mb-6">Las últimas incorporaciones y anuncios</p>
+        <div class="banner-box p-6">
+            <h4 class="font-neon font-bold text-xl mb-2">¡Nueva actualización disponible!</h4>
+            <p class="text-gray-300">Revisa los últimos cambios y nuevas funciones añadidas a GamerModHub.</p>
+        </div>
+    </div>
+
+    <!-- EMULADORES -->
+    <div id="contenido-emuladores" class="tab-content">
+        <h3 class="font-neon text-2xl neon-animated mb-2 flex items-center gap-2"><i class="fa fa-microchip"></i> Emuladores</h3>
+        <p class="text-gray-400 text-sm mb-6">Para correr tus juegos con el mejor rendimiento</p>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            <a href="#" class="game-card grid-card p-5 text-center">
+                <div class="text-4xl mb-3">💻</div>
+                <h4 class="card-title text-lg">Vita3K</h4>
+                <p class="card-desc mb-3">PC · PS Vita</p>
+                <span class="inline-block px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 text-xs font-bold border border-cyan-500/30">Windows / macOS</span>
+            </a>
+            <a href="#" class="game-card grid-card p-5 text-center">
+                <div class="text-4xl mb-3">🎯</div>
+                <h4 class="card-title text-lg">PPSSPP</h4>
+                <p class="card-desc mb-3">PSP Multiplataforma</p>
+                <span class="inline-block px-3 py-1 rounded-full bg-green-500/10 text-green-400 text-xs font-bold border border-green-500/30">Android / PC</span>
+            </a>
+            <a href="#" class="game-card grid-card p-5 text-center">
+                <div class="text-4xl mb-3">🕹️</div>
+                <h4 class="card-title text-lg">RetroArch</h4>
+                <p class="card-desc mb-3">Multi-sistema</p>
+                <span class="inline-block px-3 py-1 rounded-full bg-purple-500/10 text-purple-400 text-xs font-bold border border-purple-500/30">Todo en uno</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- GRUPOS -->
+    <div id="contenido-grupos" class="tab-content">
+        <h3 class="font-neon text-2xl neon-animated mb-2 flex items-center gap-2"><i class="fa fa-users"></i> Comunidad</h3>
+        <p class="text-gray-400 text-sm mb-6">Comunidades y grupos de apoyo</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="game-card grid-card p-5 flex items-start gap-4">
+                <div class="w-12 h-12 rounded-xl bg-cyan-500/20 flex items-center justify-center text-2xl shrink-0">💬</div>
+                <div class="flex-1">
+                    <h4 class="font-neon font-bold text-lg mb-1">PS Vita Latam</h4>
+                    <p class="text-xs text-gray-400 mb-3">1.2k miembros</p>
+                    <p class="text-sm text-gray-300 mb-3">ROMs, tips y multiplayer Vita3K.</p>
+                </div>
+            </div>
+            
+            <div class="game-card grid-card p-5 flex items-start gap-4">
+                <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center text-2xl shrink-0">🌐</div>
+                <div class="flex-1">
+                    <h4 class="font-neon font-bold text-lg mb-1">Retro Emulation</h4>
+                    <p class="text-xs text-gray-400 mb-3">3.8k miembros</p>
+                    <p class="text-sm text-gray-300 mb-3">Emuladores, configs y fixes.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RED SOCIAL -->
+    <div id="contenido-redsocial" class="tab-content">
+        <h3 class="font-neon text-2xl neon-animated mb-2 flex items-center gap-2"><i class="fa fa-globe"></i> Red social</h3>
+        <p class="text-gray-400 text-sm mb-6">Seguinos en nuestras plataformas</p>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6">
+            <a href="#" class="game-card grid-card p-5 text-center" target="_blank" rel="noopener">
+                <div class="text-3xl mb-2">📘</div><h4 class="card-title text-base">Facebook</h4><p class="card-desc">GamerModHub Oficial</p>
+            </a>
+            <a href="#" class="game-card grid-card p-5 text-center" target="_blank" rel="noopener">
+                <div class="text-3xl mb-2">📸</div><h4 class="card-title text-base">Instagram</h4><p class="card-desc">@gamermodhub</p>
+            </a>
+            <a href="#" class="game-card grid-card p-5 text-center" target="_blank" rel="noopener">
+                <div class="text-3xl mb-2">💬</div><h4 class="card-title text-base">Discord</h4><p class="card-desc">Servidor Comunidad</p>
+            </a>
+            <a href="#" class="game-card grid-card p-5 text-center" target="_blank" rel="noopener">
+                <div class="text-3xl mb-2">▶️</div><h4 class="card-title text-base">YouTube</h4><p class="card-desc">Tutoriales y Gameplay</p>
+            </a>
+        </div>
+    </div>
+
+    <!-- ADMIN -->
+    <div id="contenido-admin" class="tab-content">
+        <h3 class="font-neon text-2xl neon-animated mb-2 flex items-center gap-2"><i class="fa fa-cog"></i> Administración</h3>
+        <p class="text-gray-400 text-sm mb-6">Panel de control y métricas</p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+            <div class="banner-box p-4 text-center">
+                <p class="text-3xl font-neon font-black text-cyan-400" id="admin-roms-count">0</p>
+                <p class="text-xs text-gray-400 font-semibold mt-1 uppercase tracking-wider">Total ROMs</p>
+            </div>
+            <div class="banner-box p-4 text-center">
+                <p class="text-3xl font-neon font-black text-green-400">OK</p>
+                <p class="text-xs text-gray-400 font-semibold mt-1 uppercase tracking-wider">Estado JSON</p>
+            </div>
+            <div class="banner-box p-4 text-center">
+                <p class="text-3xl font-neon font-black text-purple-400">1</p>
+                <p class="text-xs text-gray-400 font-semibold mt-1 uppercase tracking-wider">Categorías</p>
+            </div>
+            <div class="banner-box p-4 text-center">
+                <p class="text-3xl font-neon font-black text-pink-400">v2.0</p>
+                <p class="text-xs text-gray-400 font-semibold mt-1 uppercase tracking-wider">Versión UI</p>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="game-card grid-card p-5 flex items-center gap-4">
+                <div class="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center text-xl"></div>
+                <div><h4 class="font-bold text-base">Gestionar ROMs</h4><p class="text-xs text-gray-400">Editar bases de datos JSON</p></div>
+            </div>
+            <div class="game-card grid-card p-5 flex items-center gap-4">
+                <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center text-xl">🖼️</div>
+                <div><h4 class="font-bold text-base">Portadas</h4><p class="text-xs text-gray-400">Administrar covers</p></div>
+            </div>
+            <div class="game-card grid-card p-5 flex items-center gap-4">
+                <div class="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center text-xl">🔗</div>
+                <div><h4 class="font-bold text-base">Links</h4><p class="text-xs text-gray-400">Validar descargas</p></div>
+            </div>
+            <div class="game-card grid-card p-5 flex items-center gap-4">
+                <div class="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center text-xl">🔒</div>
+                <div><h4 class="font-bold text-base">Seguridad</h4><p class="text-xs text-gray-400">Acceso y permisos</p></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AJUSTES -->
+    <div id="contenido-ajustes" class="tab-content">
+        <h3 class="font-neon text-2xl neon-animated mb-2 flex items-center gap-2"><i class="fa fa-sliders"></i> Ajustes</h3>
+        <p class="text-gray-400 text-sm mb-6">Configuración de la aplicación</p>
+        <div class="banner-box p-6 text-center">
+            <p class="text-gray-300">Próximamente más opciones de personalización.</p>
+        </div>
+    </div>
+</main>
+
+<script>
+    const ROMS_PREVIEW = 8;
+    const ROMS_PER_PAGE = 12;
+
+    const CATEGORIES = ['PS Vita', 'PSP'];
+
+    const MOCK_DATA = {
+        'PS Vita': Array.from({length: 24}, (_, i) => ({
+            title: `Vita Game ${i + 1} - Edición Especial`,
+            description: 'RPG / Acción · 1.2 GB',
+            cover: `https://picsum.photos/seed/vita${i}/300/400`,
+            link: '#'
+        })),
+        'PSP': Array.from({length: 18}, (_, i) => ({
+            title: `PSP Game ${i + 1} - ISO`,
+            description: 'Aventura / Acción · 800 MB',
+            cover: `https://picsum.photos/seed/psp${i}/300/400`,
+            link: '#'
+        }))
+    };
+
+    let db = {};
+    CATEGORIES.forEach(cat => db[cat] = []);
+
+    let currentCategory = CATEGORIES[0];
+    let filteredList = [];
+    let currentPage = 1;
+    let totalPages = 1;
+    let currentLetter = 'all';
+
+    // Variables para novedades
+    let newsData = [];
+    let currentNewsIndex = 0;
+    let newsRotationInterval;
+
+    const tabs = document.querySelectorAll('.tab-btn-chip');
+    const contents = document.querySelectorAll('.tab-content');
+
+    function showSection(id) {
+        contents.forEach(c => c.classList.remove('active'));
+        const el = document.getElementById(id);
+        if (el) {
+            el.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        setTimeout(bindNeon, 40);
+    }
+
+    function goHome() {
+        showSection('contenido-inicio');
+        tabs.forEach(t => t.classList.remove('tab-active'));
+        const home = document.querySelector('[data-target="contenido-inicio"]');
+        if (home) home.classList.add('tab-active');
+    }
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('tab-active'));
+            tab.classList.add('tab-active');
+            showSection(tab.dataset.target);
+        });
+    });
+
+    function bindNeon() {
+        document.querySelectorAll('.game-card,.folder-card').forEach(card => {
+            if (card.dataset.neonBound) return;
+            card.dataset.neonBound = '1';
+            card.addEventListener('pointerenter', () => {
+                document.querySelectorAll('.neon-on').forEach(c => c.classList.remove('neon-on'));
+                card.classList.add('neon-on');
+            });
+            card.addEventListener('pointerleave', () => card.classList.remove('neon-on'));
+            card.addEventListener('touchstart', () => {
+                document.querySelectorAll('.neon-on').forEach(c => c.classList.remove('neon-on'));
+                card.classList.add('neon-on');
+            }, { passive: true });
+        });
+    }
+
+    function createGameCard(game, tag, isGrid) {
+        const a = document.createElement('a');
+        a.className = 'game-card fade-in-item text-center' + (isGrid ? ' grid-card' : ' shrink-0 w-[140px] md:w-[150px]');
+        a.href = game.link || '#';
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+
+        a.innerHTML = `
+            <span class="tag-rom">${tag}</span>
+            <img class="cover-img" src="${game.cover}" alt="${game.title}" loading="lazy"
+                 onerror="this.src='https://via.placeholder.com/300x400/1a1a2e/00f0ff?text=NO+COVER'">
+            <h4 class="card-title">${game.title}</h4>
+            <p class="card-desc">${game.description}</p>
+            <p class="download-hint"><i class="fa fa-download"></i> Descargar</p>
+        `;
+        return a;
+    }
+
+    async function loadCategory(name) {
+        try {
+            const file = name.toLowerCase().replace(' ', '');
+            const res = await fetch(`category/${file}.json`);
+            if (!res.ok) throw new Error('No existe 404');
+            const data = await res.json();
+            return data[file] || [];
+        } catch (e) {
+            console.error(`Error cargando ${name}:`, e);
+            return MOCK_DATA[name] || [];
+        }
+    }
+    
+    async function loadData() {
+        const promises = CATEGORIES.map(async cat => {
+            db[cat] = await loadCategory(cat);
+        });
+        await Promise.all(promises);
+
+        renderBiblioteca();
+        renderHomeRows();
+        updateCounts();
+    }
+
+    // CARGAR NOVEDADES DESDE JSON
+    async function loadNews() {
+        try {
+            const response = await fetch('novedades.json');
+            if (!response.ok) throw new Error('No se pudo cargar');
+            const data = await response.json();
+            newsData = data.novedades || [];
+            renderNews();
+        } catch (error) {
+            console.error('Error cargando novedades:', error);
+            // Fallback a datos de ejemplo si no existe el JSON
+            newsData = [
+                {
+                    id: 1,
+                    fecha: '2026-01-15',
+                    titulo: 'NUEVO',
+                    categoria: 'green-400',
+                    texto: 'Vita3K se actualizó a la versión 1.6 con mejoras de rendimiento y compatibilidad con más juegos.'
+                },
+                {
+                    id: 2,
+                    fecha: '2026-01-14',
+                    titulo: 'AGREGADO',
+                    categoria: 'cyan-400',
+                    texto: '15 nuevas ROMs de PS Vita disponibles en la biblioteca. ¡Incluyendo títulos exclusivos!'
+                },
+                {
+                    id: 3,
+                    fecha: '2026-01-13',
+                    titulo: 'ACTUALIZACIÓN',
+                    categoria: 'purple-400',
+                    texto: 'PPSSPP ahora soporta texturas HD personalizadas para PSP.'
+                }
+            ];
+            renderNews();
+        }
+    }
+
+    function formatDate(dateString) {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        const date = new Date(dateString);
+        return date.toLocaleDateString('es-ES', options);
+    }
+
+    function renderNews() {
+        const container = document.getElementById('news-container');
+        const dateElement = document.getElementById('news-date');
+        
+        if (newsData.length === 0) {
+            container.innerHTML = '<p class="text-center text-gray-400 py-8">No hay novedades disponibles</p>';
+            dateElement.textContent = '';
+            return;
+        }
+
+        // Mostrar fecha de la primera novedad
+        if (newsData[0].fecha) {
+            dateElement.textContent = formatDate(newsData[0].fecha);
+        }
+
+        // Renderizar todas las novedades
+        container.innerHTML = newsData.map((news, index) => `
+            <div class="news-item ${index === 0 ? 'active' : ''}" data-index="${index}">
+                <p class="news-text">
+                    <strong class="text-${news.categoria || 'green-400'}">${news.titulo}:</strong> ${news.texto}
+                </p>
+            </div>
+        `).join('');
+
+        // Iniciar rotación
+        startNewsRotation();
+    }
+
+    function startNewsRotation() {
+        // Limpiar intervalo anterior si existe
+        if (newsRotationInterval) {
+            clearInterval(newsRotationInterval);
+        }
+
+        // Rotar cada 5 segundos si hay más de una novedad
+        if (newsData.length > 1) {
+            newsRotationInterval = setInterval(() => {
+                const items = document.querySelectorAll('.news-item');
+                if (items.length === 0) return;
+
+                items[currentNewsIndex].classList.remove('active');
+                currentNewsIndex = (currentNewsIndex + 1) % newsData.length;
+                items[currentNewsIndex].classList.add('active');
+
+                // Actualizar fecha
+                if (newsData[currentNewsIndex].fecha) {
+                    document.getElementById('news-date').textContent = formatDate(newsData[currentNewsIndex].fecha);
+                }
+            }, 5000);
+        }
+    }
+
+    function updateCounts() {
+        CATEGORIES.forEach(cat => {
+            const id = cat.toLowerCase().replace(' ', '');
+            const countEl = document.getElementById(id + '-count');
+            if(countEl) countEl.textContent = db[cat].length + ' ROMs';
+
+            const folderEl = document.getElementById('folder-' + id + '-count');
+            if(folderEl) folderEl.textContent = db[cat].length + ' títulos';
+        });
+
+        const ac = document.getElementById('admin-roms-count');
+        if (ac) ac.textContent = Object.values(db).flat().length;
+    }
+
+    function renderBiblioteca() {
+        const grid = document.getElementById('biblioteca-grid');
+        if(!grid) return;
+        grid.innerHTML = '';
+
+        const iconos = {
+            'PS Vita': '🎮',
+            'PSP': '📀',
+            'PS2': '🕹️',
+            'NDS': '📱',
+            'GAMECUBE': '🎲'
+        };
+
+        CATEGORIES.forEach(cat => {
+            const id = cat.toLowerCase().replace(' ', '');
+            const div = document.createElement('div');
+            div.className = 'folder-card p-6 text-center';
+            div.id = 'folder-' + id;
+            div.onclick = () => openCategory(cat);
+            div.innerHTML = `
+                <div class="text-5xl mb-4">${iconos[cat] || '🎯'}</div>
+                <h4 class="font-neon font-bold text-lg mb-1">${cat}</h4>
+                <p class="text-xs text-cyan-400 font-semibold" id="folder-${id}-count">Cargando...</p>
+            `;
+            grid.appendChild(div);
+        });
+        bindNeon();
+    }
+
+    function renderHomeRows() {
+        CATEGORIES.forEach((cat, index) => {
+            const id = cat.toLowerCase().replace(' ', '');
+            const row = document.getElementById(id + '-row');
+            if (!row) return;
+
+            row.innerHTML = '';
+            db[cat].slice(0, ROMS_PREVIEW).forEach((g, i) => {
+                const card = createGameCard(g, cat.toUpperCase().substring(0,4), false);
+                card.style.animationDelay = `${i * 0.05}s`;
+                row.appendChild(card);
+            });
+
+            const btnVerMas = document.getElementById('btn-ver-mas-' + id);
+            if(btnVerMas) btnVerMas.onclick = () => openCategory(cat);
+        });
+        bindNeon();
+    }
+
+    window.openCategory = function(category) {
+        currentCategory = category;
+        currentLetter = 'all';
+        filteredList = [...db[category]];
+        currentPage = 1;
+
+        document.getElementById('cat-title').textContent = `Catálogo ${category}`;
+        document.getElementById('cat-search').value = '';
+        document.getElementById('cat-search-clear').classList.remove('visible');
+
+        document.querySelectorAll('.letter-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelector('.letter-btn-all').classList.add('active');
+
+        renderCategoryPage();
+        showSection('contenido-categoria');
+        tabs.forEach(t => t.classList.remove('tab-active'));
+    };
+
+    function renderCategoryPage() {
+        const grid = document.getElementById('cat-grid');
+        grid.innerHTML = '';
+        const start = (currentPage - 1) * ROMS_PER_PAGE;
+        const slice = filteredList.slice(start, start + ROMS_PER_PAGE);
+
+        if (!slice.length) {
+            grid.innerHTML = '<div class="col-span-full text-center py-12 text-gray-400"><i class="fa fa-search text-4xl mb-3 opacity-50"></i><p>Sin resultados</p></div>';
+        } else {
+            slice.forEach((g, i) => {
+                const card = createGameCard(g, currentCategory.toUpperCase().substring(0, 4), true);
+                card.style.animationDelay = `${i * 0.05}s`;
+                grid.appendChild(card);
+            });
+        }
+
+        totalPages = Math.max(1, Math.ceil(filteredList.length / ROMS_PER_PAGE));
+        document.getElementById('page-info').textContent = currentPage + ' / ' + totalPages;
+        document.getElementById('prev-page').disabled = currentPage <= 1;
+        document.getElementById('next-page').disabled = currentPage >= totalPages;
+
+        const q = document.getElementById('cat-search').value.trim();
+        const letterText = currentLetter !== 'all' ? ` (Letra: ${currentLetter})` : '';
+        document.getElementById('cat-subtitle').textContent = q
+           ? `${filteredList.length} resultados para "${q}"${letterText}`
+            : `${filteredList.length} juegos disponibles${letterText}`;
+        bindNeon();
+    }
+
+    document.getElementById('letter-filter').addEventListener('click', (e) => {
+        const btn = e.target.closest('.letter-btn');
+        if (!btn) return;
+
+        const letter = btn.dataset.letter;
+        currentLetter = letter;
+
+        document.querySelectorAll('.letter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        applyFilters();
+    });
+
+    function applyFilters() {
+        const q = document.getElementById('cat-search').value.trim().toLowerCase();
+        let baseList = [...db[currentCategory]];
+
+        if (currentLetter !== 'all') {
+            baseList = baseList.filter(g => {
+                const firstChar = (g.title || '').charAt(0).toUpperCase();
+                return firstChar === currentLetter;
+            });
+        }
+
+        if (q) {
+            baseList = baseList.filter(g => (g.title || '').toLowerCase().includes(q));
+        }
+
+        filteredList = baseList;
+        currentPage = 1;
+        renderCategoryPage();
+    }
+
+    document.getElementById('btn-volver').addEventListener('click', goHome);
+
+    document.getElementById('prev-page').addEventListener('click', () => {
+        if (currentPage > 1) { currentPage--; renderCategoryPage(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    });
+    document.getElementById('next-page').addEventListener('click', () => {
+        if (currentPage < totalPages) { currentPage++; renderCategoryPage(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    });
+
+    // BUSCADOR NEÓN - BÚSQUEDA EN JSON
+    const searchInput = document.getElementById('search-input');
+    const searchClear = document.getElementById('search-clear');
+    const searchResults = document.getElementById('search-results');
+    const searchGrid = document.getElementById('search-grid');
+    const searchCount = document.getElementById('search-count');
+    const inicioContents = document.querySelectorAll('.inicio-content');
+
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.trim().toLowerCase();
+        searchClear.classList.toggle('visible', query.length > 0);
+
+        if (query.length < 2) {
+            searchResults.classList.remove('active');
+            inicioContents.forEach(el => el.classList.remove('hidden-search'));
+            return;
+        }
+
+        inicioContents.forEach(el => el.classList.add('hidden-search'));
+
+        const results = [];
+        CATEGORIES.forEach(cat => {
+            db[cat].forEach(game => {
+                if (game.title.toLowerCase().includes(query) || 
+                    game.description.toLowerCase().includes(query)) {
+                    results.push({ ...game, category: cat });
+                }
+            });
+        });
+
+        displaySearchResults(results, query);
+    });
+
+    function displaySearchResults(results, query) {
+        searchGrid.innerHTML = '';
+        searchCount.textContent = `${results.length} resultado${results.length !== 1 ? 's' : ''} encontrado${results.length !== 1 ? 's' : ''}`;
+
+        if (results.length === 0) {
+            searchGrid.innerHTML = `
+                <div class="no-results col-span-full">
+                    <i class="fa fa-search"></i>
+                    <p>No se encontraron ROMs para "${query}"</p>
+                </div>
+            `;
+        } else {
+            results.forEach((game, index) => {
+                const item = document.createElement('a');
+                item.className = 'search-result-item';
+                item.href = game.link || '#';
+                item.target = '_blank';
+                item.rel = 'noopener noreferrer';
+                item.style.animationDelay = `${index * 0.05}s`;
+                
+                item.innerHTML = `
+                    <img class="search-result-cover" src="${game.cover}" alt="${game.title}" 
+                         onerror="this.src='https://via.placeholder.com/300x400/1a1a2e/00f0ff?text=NO+COVER'">
+                    <div class="search-result-info">
+                        <div class="search-result-title">${highlightText(game.title, query)}</div>
+                        <div class="search-result-category">${game.category}</div>
+                    </div>
+                `;
+                
+                searchGrid.appendChild(item);
+            });
+        }
+
+        searchResults.classList.add('active');
+    }
+
+    function highlightText(text, query) {
+        const regex = new RegExp(`(${query})`, 'gi');
+        return text.replace(regex, '<span style="color: var(--neon-blue); font-weight: bold;">$1</span>');
+    }
+
+    searchClear.addEventListener('click', () => {
+        searchInput.value = '';
+        searchClear.classList.remove('visible');
+        searchResults.classList.remove('active');
+        inicioContents.forEach(el => el.classList.remove('hidden-search'));
+        searchInput.focus();
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+            searchResults.classList.remove('active');
+        }
+    });
+
+    // Inicialización
+    loadData();
+    loadNews(); // Cargar novedades
+    bindNeon();
+</script>
+</body>
+</html>
