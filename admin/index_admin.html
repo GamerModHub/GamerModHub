@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Centro administrativo | Admin Pro 3.3</title>
+    <title>Panel de Administración | Admin Pro 3.4</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -92,8 +92,7 @@
         .vista-previa-mini { width: 80px; height: 80px; border-radius: 0.5rem; border: 1px solid var(--oro-oscuro); object-fit: cover; background: #000; }
         .vista-previa-edit { width: 100%; max-height: 150px; border-radius: 0.5rem; border: 1px solid var(--oro-oscuro); object-fit: cover; background: #000; display: none; }
 
-        #panel-principal { display: none; }
-        #panel-validador { display: none; }
+        #panel-principal, #panel-validador, #panel-huerfanas, #panel-reportes { display: none; }
         #pantalla-bienvenida { display: none; }
         
         .modal-global { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 9999; padding: 1rem; }
@@ -323,6 +322,11 @@
             border-color: rgba(0, 200, 255, 0.4);
         }
         .val-rota-btn.reemplazar:hover { background: rgba(0, 200, 255, 0.25); }
+        .val-rota-btn.visitar {
+            background: rgba(0, 240, 255, 0.15); color: #00f0ff;
+            border-color: rgba(0, 240, 255, 0.4);
+        }
+        .val-rota-btn.visitar:hover { background: rgba(0, 240, 255, 0.25); }
         .val-rota-btn.eliminar-captura {
             background: rgba(255, 50, 50, 0.15); color: #ff6666;
             border-color: rgba(255, 50, 50, 0.4);
@@ -342,6 +346,180 @@
             padding: 0.3rem 0.5rem; border-radius: 0.4rem;
             margin-top: 0.3rem; text-align: center;
         }
+
+        /* ============================================
+           LOGIN - Acceso Restringido
+        ============================================ */
+        .aviso-restringido {
+            background: linear-gradient(135deg, rgba(255, 50, 50, 0.12), rgba(255, 165, 0, 0.08));
+            border: 1px solid rgba(255, 100, 50, 0.4);
+            border-radius: 0.8rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            text-align: left;
+        }
+        .aviso-restringido i {
+            color: #ffa500;
+            font-size: 1.5rem;
+            margin-top: 0.1rem;
+        }
+        .aviso-restringido .aviso-texto {
+            flex: 1;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+        .aviso-restringido .aviso-titulo {
+            color: #ff9966;
+            font-weight: 800;
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .aviso-restringido .aviso-mensaje {
+            color: rgba(255, 215, 0, 0.7);
+        }
+
+        /* ============================================
+           HUÉRFANAS
+        ============================================ */
+        .huerfana-item {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 165, 0, 0.25);
+            border-left: 3px solid #ffa500;
+            border-radius: 0.6rem;
+            padding: 0.6rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: all 0.2s;
+        }
+        .huerfana-item:hover { background: rgba(255, 165, 0, 0.05); }
+        .huerfana-item.selected {
+            background: rgba(255, 50, 50, 0.1);
+            border-left-color: #ff4444;
+            border-color: rgba(255, 50, 50, 0.4);
+        }
+        .huerfana-thumb {
+            width: 50px; height: 65px; border-radius: 0.4rem;
+            object-fit: cover; border: 1px solid rgba(255, 165, 0, 0.3);
+            background: #000; flex-shrink: 0;
+        }
+        .huerfana-info { flex: 1; min-width: 0; }
+        .huerfana-path {
+            font-size: 0.8rem; color: var(--oro-brillante);
+            font-family: monospace;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .huerfana-meta {
+            font-size: 0.7rem; color: rgba(255, 215, 0, 0.5);
+            margin-top: 0.2rem;
+        }
+        .huerfana-checkbox {
+            width: 20px; height: 20px; accent-color: var(--oro-puro);
+            cursor: pointer; flex-shrink: 0;
+        }
+
+        /* ============================================
+           REPORTES
+        ============================================ */
+        .reporte-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 100, 50, 0.3);
+            border-radius: 0.8rem;
+            padding: 1rem;
+            margin-bottom: 0.8rem;
+            transition: all 0.2s;
+        }
+        .reporte-card:hover {
+            background: rgba(255, 100, 50, 0.05);
+            border-color: rgba(255, 100, 50, 0.5);
+        }
+        .reporte-card.resuelto {
+            opacity: 0.5;
+            border-left: 4px solid #00c851;
+        }
+        .reporte-card.pendiente {
+            border-left: 4px solid #ff9500;
+        }
+
+        .reporte-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            margin-bottom: 0.6rem;
+        }
+        .reporte-thumb {
+            width: 50px; height: 65px; border-radius: 0.4rem;
+            object-fit: cover; border: 1px solid rgba(255, 215, 0, 0.3);
+            background: #000; flex-shrink: 0;
+        }
+        .reporte-info { flex: 1; min-width: 0; }
+        .reporte-titulo {
+            font-weight: 800; color: #fff;
+            font-size: 1rem; margin-bottom: 0.3rem;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .reporte-badges {
+            display: flex; gap: 0.3rem; flex-wrap: wrap;
+            margin-bottom: 0.3rem;
+        }
+        .reporte-badge {
+            display: inline-flex; align-items: center; gap: 0.2rem;
+            padding: 0.15rem 0.5rem; border-radius: 0.3rem;
+            font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+        }
+        .reporte-badge.tipo-link { background: rgba(255, 50, 50, 0.2); color: #ff6666; border: 1px solid rgba(255, 50, 50, 0.4); }
+        .reporte-badge.tipo-incorrecto { background: rgba(255, 165, 0, 0.2); color: #ffa500; border: 1px solid rgba(255, 165, 0, 0.4); }
+        .reporte-badge.tipo-otro { background: rgba(189, 0, 255, 0.2); color: #bd00ff; border: 1px solid rgba(189, 0, 255, 0.4); }
+        .reporte-badge.contador { background: rgba(0, 240, 255, 0.2); color: #00f0ff; border: 1px solid rgba(0, 240, 255, 0.4); }
+        .reporte-badge.resuelto-badge { background: rgba(0, 200, 80, 0.2); color: #00c851; border: 1px solid rgba(0, 200, 80, 0.4); }
+
+        .reporte-detalles {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            border-radius: 0.5rem;
+            padding: 0.5rem 0.7rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.8rem;
+        }
+        .reporte-detalle-item {
+            display: flex; gap: 0.5rem; padding: 0.2rem 0;
+            border-bottom: 1px dashed rgba(255, 215, 0, 0.05);
+        }
+        .reporte-detalle-item:last-child { border-bottom: none; }
+        .reporte-detalle-label {
+            color: rgba(255, 215, 0, 0.6);
+            font-weight: 700;
+            min-width: 80px;
+        }
+        .reporte-detalle-value { color: #fff; word-break: break-word; }
+
+        .reporte-acciones {
+            display: flex; gap: 0.5rem; flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+        .reporte-btn {
+            padding: 0.4rem 0.8rem; border-radius: 0.4rem;
+            font-weight: 700; font-size: 0.75rem; cursor: pointer;
+            border: 1px solid; transition: all 0.2s;
+            display: inline-flex; align-items: center; gap: 0.3rem;
+        }
+        .reporte-btn:active { transform: scale(0.96); }
+        .reporte-btn.marcar-resuelto {
+            background: rgba(0, 200, 80, 0.15); color: #00c851;
+            border-color: rgba(0, 200, 80, 0.4);
+        }
+        .reporte-btn.marcar-resuelto:hover { background: rgba(0, 200, 80, 0.25); }
+        .reporte-btn.ir-editor {
+            background: rgba(255, 215, 0, 0.1); color: var(--oro-brillante);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+        .reporte-btn.ir-editor:hover { background: rgba(255, 215, 0, 0.2); }
 
         #modal-editar-url-rota .info-juego-roto {
             background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 215, 0, 0.2);
@@ -367,7 +545,7 @@
             .caja-centro .fa { font-size: 3rem !important; }
             .btn-soberano { font-size: 0.9rem; padding: 0.9rem 1rem; }
             .input-lujo { font-size: 16px; padding: 0.8rem 1rem; }
-            #panel-principal, #panel-validador { padding: 0.5rem; }
+            #panel-principal, #panel-validador, #panel-huerfanas, #panel-reportes { padding: 0.5rem; }
             .marco-real { padding: 1.2rem !important; border-radius: 1rem; }
             .elemento-lista { padding: 1rem; border-radius: 0.8rem; }
             .elemento-lista img { width: 60px !important; height: 80px !important; }
@@ -377,8 +555,8 @@
             .caja-modal { padding: 1.5rem 1rem; }
             .boton-accion { padding: 0.5rem 0.8rem; font-size: 0.85rem; }
             .grid-responsive { grid-template-columns: 1fr !important; }
-            #panel-principal header, #panel-validador header { flex-direction: column; align-items: flex-start !important; gap: 0.8rem; }
-            #panel-principal header h1, #panel-validador header h1 { font-size: 1.6rem !important; }
+            #panel-principal header, #panel-validador header, #panel-huerfanas header, #panel-reportes header { flex-direction: column; align-items: flex-start !important; gap: 0.8rem; }
+            #panel-principal header h1, #panel-validador header h1, #panel-huerfanas header h1, #panel-reportes header h1 { font-size: 1.6rem !important; }
             .val-filtro-grupo { grid-template-columns: 1fr; }
             .val-url-item { grid-template-columns: 40px 1fr; }
             .val-url-item > .val-actions-inline { grid-column: 1 / -1; }
@@ -395,7 +573,7 @@
         }
 
         @media (hover: none) and (pointer: coarse) {
-            .btn-soberano:hover, .boton-accion:hover, .val-action-btn:hover, .val-rota-btn:hover { transform: none; box-shadow: none; }
+            .btn-soberano:hover, .boton-accion:hover, .val-action-btn:hover, .val-rota-btn:hover, .reporte-btn:hover { transform: none; box-shadow: none; }
             .elemento-lista:hover { border-color: rgba(255, 215, 0, 0.15); background: linear-gradient(90deg, rgba(255, 215, 0, 0.05), transparent); }
         }
     </style>
@@ -421,8 +599,17 @@
 <div id="pantalla-login" class="pantalla-completa">
     <div class="marco-real caja-centro">
         <i class="fa fa-shield titulo-dorado text-5xl mb-4"></i>
-        <h1 class="font-gamer text-3xl titulo-dorado mb-1">NEON HUB</h1>
-        <p class="text-amber-500/60 text-sm mb-8">Panel de Administración Seguro</p>
+        <h1 class="font-gamer text-2xl sm:text-3xl titulo-dorado mb-2">PANEL DE ADMINISTRACIÓN</h1>
+        <p class="text-amber-500/60 text-sm mb-5">Sistema de Gestión Seguro</p>
+        
+        <div class="aviso-restringido">
+            <i class="fa fa-exclamation-triangle"></i>
+            <div class="aviso-texto">
+                <div class="aviso-titulo">Acceso Restringido</div>
+                <div class="aviso-mensaje">Esta sesión está reservada exclusivamente para administradores autorizados. El usuario común no puede acceder a este panel.</div>
+            </div>
+        </div>
+        
         <form id="form-login" class="space-y-5">
             <input type="text" id="usuario" class="input-lujo" placeholder="Usuario" required autocomplete="username">
             <input type="password" id="clave" class="input-lujo" placeholder="Contraseña" required autocomplete="current-password">
@@ -437,14 +624,22 @@
         <i class="fa fa-user-circle-o titulo-dorado text-7xl mb-6"></i>
         <h1 class="font-gamer text-2xl sm:text-3xl titulo-dorado mb-2">BIENVENIDO</h1>
         <h2 class="text-xl sm:text-2xl text-white mb-1" id="nombre-admin-display">ADMIN</h2>
-        <p class="text-amber-400/70 mb-10 text-base sm:text-lg">Sistema de Gestión de Catálogo v3.3</p>
+        <p class="text-amber-400/70 mb-10 text-base sm:text-lg">Sistema de Gestión de Catálogo v3.4</p>
         
-        <button id="btn-ir-al-panel" class="btn-soberano w-full text-base sm:text-xl py-4 sm:py-5 mb-4 shadow-lg shadow-yellow-500/20">
+        <button id="btn-ir-al-panel" class="btn-soberano w-full text-base sm:text-xl py-4 sm:py-5 mb-3 shadow-lg shadow-yellow-500/20">
             <i class="fa fa-upload mr-2"></i> SUBIR ROMS / GESTIONAR
         </button>
 
-        <button id="btn-ir-al-validador" class="btn-soberano w-full text-base sm:text-xl py-4 sm:py-5 mb-4 shadow-lg shadow-yellow-500/20" style="background: linear-gradient(135deg, #0066cc, #00aaff, #66ccff);">
+        <button id="btn-ir-al-validador" class="btn-soberano w-full text-base sm:text-xl py-4 sm:py-5 mb-3 shadow-lg shadow-yellow-500/20" style="background: linear-gradient(135deg, #0066cc, #00aaff, #66ccff);">
             <i class="fa fa-check-circle mr-2"></i> VALIDAR URLs
+        </button>
+
+        <button id="btn-ir-a-huerfanas" class="btn-soberano w-full text-base sm:text-xl py-4 sm:py-5 mb-3 shadow-lg shadow-orange-500/20" style="background: linear-gradient(135deg, #cc6600, #ff9500, #ffcc66);">
+            <i class="fa fa-ghost mr-2"></i> ELIMINAR FOTOS HUÉRFANAS
+        </button>
+
+        <button id="btn-ir-a-reportes" class="btn-soberano w-full text-base sm:text-xl py-4 sm:py-5 mb-4 shadow-lg shadow-red-500/20" style="background: linear-gradient(135deg, #990033, #ff0055, #ff6688);">
+            <i class="fa fa-flag mr-2"></i> REPORTES DE USUARIOS
         </button>
         
         <button id="btn-logout-bienvenida" class="boton-accion bg-red-900/30 text-red-300 border border-red-600/50 w-full py-3 hover:bg-red-900/50">
@@ -814,11 +1009,208 @@
         </div>
         <p class="text-xs text-amber-400/70 mb-4">
             <i class="fa fa-info-circle"></i> 
+            Usá <strong>"Visitar URL"</strong> para verificar en el navegador antes de reemplazar. · 
             <strong>Capturas:</strong> podés reemplazarlas o eliminarlas. · 
-            <strong>Portadas y enlaces de descarga:</strong> solo podés reemplazarlos. 
-            Para eliminar completamente un juego, usá la sección "Cargar ROMs".
+            <strong>Portadas y enlaces de descarga:</strong> solo podés reemplazarlos.
         </p>
         <div id="val-rotas-lista"></div>
+    </div>
+</div>
+
+<!-- 5. PANEL HUÉRFANAS -->
+<div id="panel-huerfanas" class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-10">
+    <header class="mb-6 sm:mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div class="w-full md:w-auto">
+            <h1 class="font-gamer text-xl sm:text-3xl md:text-4xl titulo-dorado flex items-center gap-3">
+                <i class="fa fa-ghost text-orange-400"></i> FOTOS HUÉRFANAS
+                <span class="text-xs sm:text-sm align-top bg-orange-500/20 text-orange-300 px-2 py-1 rounded border border-orange-500/30">LIMPIEZA</span>
+            </h1>
+            <p class="text-amber-400/70 text-xs sm:text-sm mt-1"><i class="fa fa-broom text-orange-400"></i> Detecta imágenes en GitHub que no están vinculadas a ningún juego</p>
+            <p class="text-green-400 text-xs mt-1"><i class="fa fa-user"></i> Analista: <span class="font-bold" id="admin-huerfanas-name">-</span></p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+            <button id="btn-volver-inicio-desde-huerfanas" class="boton-accion bg-amber-900/30 text-amber-200 border border-amber-600/50 hover:bg-amber-900/50 w-full md:w-auto">
+                <i class="fa fa-home"></i> <span class="hidden sm:inline">Inicio</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="val-stats-grid">
+        <div class="val-stat total">
+            <div class="num" id="huer-stat-total">0</div>
+            <div class="lbl">Archivos en GitHub</div>
+        </div>
+        <div class="val-stat ok">
+            <div class="num" id="huer-stat-vinculados">0</div>
+            <div class="lbl">✅ Vinculados</div>
+        </div>
+        <div class="val-stat error">
+            <div class="num" id="huer-stat-huerfanos">0</div>
+            <div class="lbl">👻 Huérfanos</div>
+        </div>
+        <div class="val-stat warn">
+            <div class="num" id="huer-stat-seleccionados">0</div>
+            <div class="lbl">🎯 Seleccionados</div>
+        </div>
+    </div>
+
+    <div class="marco-real p-4 sm:p-5 mb-4">
+        <h3 class="font-gamer text-sm sm:text-base titulo-dorado mb-3 flex items-center gap-2">
+            <i class="fa fa-search"></i> ESCANEO DE REPOSITORIO
+        </h3>
+        <div class="val-filtro-grupo" style="margin-bottom: 0;">
+            <div>
+                <label class="text-xs text-amber-400/70 uppercase tracking-wider mb-1 block">Carpeta</label>
+                <select id="huer-filtro-carpeta" class="input-lujo text-sm">
+                    <option value="todas">📁 Todas las carpetas</option>
+                    <option value="portadas">📷 Solo portadas</option>
+                    <option value="capturas">🖼️ Solo capturas</option>
+                </select>
+            </div>
+            <div>
+                <label class="text-xs text-amber-400/70 uppercase tracking-wider mb-1 block">Ver</label>
+                <select id="huer-filtro-ver" class="input-lujo text-sm">
+                    <option value="huerfanos">👻 Solo huérfanos</option>
+                    <option value="todos">📋 Todos los archivos</option>
+                    <option value="vinculados">✅ Solo vinculados</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="val-actions" style="margin-top: 1rem; margin-bottom: 0;">
+            <button id="huer-btn-escanear" class="val-action-btn primary">
+                <i class="fa fa-search"></i> Escanear GitHub
+            </button>
+            <button id="huer-btn-seleccionar-todos" class="val-action-btn">
+                <i class="fa fa-check-square"></i> Seleccionar todos los huérfanos
+            </button>
+            <button id="huer-btn-deseleccionar" class="val-action-btn">
+                <i class="fa fa-square-o"></i> Deseleccionar
+            </button>
+            <button id="huer-btn-eliminar" class="val-action-btn danger">
+                <i class="fa fa-trash"></i> Eliminar seleccionados
+            </button>
+            <button id="huer-btn-refrescar-lista" class="val-action-btn">
+                <i class="fa fa-refresh"></i> Actualizar lista
+            </button>
+        </div>
+
+        <div class="val-progress-bar" id="huer-progress-bar" style="display:none;">
+            <div class="val-progress-fill" id="huer-progress-fill"></div>
+        </div>
+        <p id="huer-progress-text" class="text-xs text-amber-400/70 text-center" style="display:none;">
+            <span id="huer-progress-detalle">-</span>
+        </p>
+    </div>
+
+    <div class="marco-real p-4 sm:p-5">
+        <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
+            <h3 class="font-gamer text-sm sm:text-base titulo-dorado flex items-center gap-2">
+                <i class="fa fa-list-alt"></i> LISTADO DE ARCHIVOS
+                <span id="huer-list-count" class="text-xs bg-amber-900/30 text-amber-300 px-2 py-0.5 rounded border border-amber-700/30">0</span>
+            </h3>
+            <div class="flex gap-2">
+                <input type="text" id="huer-buscar" class="input-lujo text-sm" placeholder="🔍 Buscar archivo..." style="max-width: 250px; padding: 0.5rem 0.8rem;">
+            </div>
+        </div>
+        <div id="huer-lista" class="val-url-list" style="max-height: 600px;">
+            <div class="text-center py-10 text-amber-500/50">
+                <i class="fa fa-ghost text-3xl mb-3"></i>
+                <p class="text-sm">Presioná "Escanear GitHub" para detectar archivos huérfanos</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 6. PANEL REPORTES -->
+<div id="panel-reportes" class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-10">
+    <header class="mb-6 sm:mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div class="w-full md:w-auto">
+            <h1 class="font-gamer text-xl sm:text-3xl md:text-4xl titulo-dorado flex items-center gap-3">
+                <i class="fa fa-flag text-red-400"></i> REPORTES DE USUARIOS
+                <span class="text-xs sm:text-sm align-top bg-red-500/20 text-red-300 px-2 py-1 rounded border border-red-500/30">MODERACIÓN</span>
+            </h1>
+            <p class="text-amber-400/70 text-xs sm:text-sm mt-1"><i class="fa fa-users text-red-400"></i> Reportes de enlaces caídos, juegos incorrectos y problemas</p>
+            <p class="text-green-400 text-xs mt-1"><i class="fa fa-user"></i> Moderador: <span class="font-bold" id="admin-reportes-name">-</span></p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+            <button id="btn-volver-inicio-desde-reportes" class="boton-accion bg-amber-900/30 text-amber-200 border border-amber-600/50 hover:bg-amber-900/50 w-full md:w-auto">
+                <i class="fa fa-home"></i> <span class="hidden sm:inline">Inicio</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="val-stats-grid">
+        <div class="val-stat total">
+            <div class="num" id="rep-stat-total">0</div>
+            <div class="lbl">Reportes Totales</div>
+        </div>
+        <div class="val-stat error">
+            <div class="num" id="rep-stat-pendientes">0</div>
+            <div class="lbl">⏳ Pendientes</div>
+        </div>
+        <div class="val-stat ok">
+            <div class="num" id="rep-stat-resueltos">0</div>
+            <div class="lbl">✅ Resueltos</div>
+        </div>
+        <div class="val-stat warn">
+            <div class="num" id="rep-stat-juegos">0</div>
+            <div class="lbl">🎮 Juegos Afectados</div>
+        </div>
+    </div>
+
+    <div class="marco-real p-4 sm:p-5 mb-4">
+        <h3 class="font-gamer text-sm sm:text-base titulo-dorado mb-3 flex items-center gap-2">
+            <i class="fa fa-filter"></i> FILTROS
+        </h3>
+        <div class="val-filtro-grupo" style="margin-bottom: 0;">
+            <div>
+                <label class="text-xs text-amber-400/70 uppercase tracking-wider mb-1 block">Estado</label>
+                <select id="rep-filtro-estado" class="input-lujo text-sm">
+                    <option value="pendientes">⏳ Solo pendientes</option>
+                    <option value="todos">📋 Todos los reportes</option>
+                    <option value="resueltos">✅ Solo resueltos</option>
+                </select>
+            </div>
+            <div>
+                <label class="text-xs text-amber-400/70 uppercase tracking-wider mb-1 block">Tipo de reporte</label>
+                <select id="rep-filtro-tipo" class="input-lujo text-sm">
+                    <option value="todos">🔍 Todos los tipos</option>
+                    <option value="link_caido">🔗 Link caído</option>
+                    <option value="juego_incorrecto">⚠️ Juego incorrecto</option>
+                    <option value="otro">📝 Otro</option>
+                </select>
+            </div>
+        </div>
+        <div class="val-actions" style="margin-top: 1rem; margin-bottom: 0;">
+            <button id="rep-btn-cargar" class="val-action-btn primary">
+                <i class="fa fa-refresh"></i> Cargar Reportes
+            </button>
+            <button id="rep-btn-marcar-todos" class="val-action-btn success">
+                <i class="fa fa-check-double"></i> Marcar todos como resueltos
+            </button>
+            <button id="rep-btn-limpiar-resueltos" class="val-action-btn danger">
+                <i class="fa fa-trash"></i> Eliminar resueltos
+            </button>
+        </div>
+    </div>
+
+    <div class="marco-real p-4 sm:p-5">
+        <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
+            <h3 class="font-gamer text-sm sm:text-base titulo-dorado flex items-center gap-2">
+                <i class="fa fa-list-alt"></i> LISTADO DE REPORTES
+                <span id="rep-list-count" class="text-xs bg-amber-900/30 text-amber-300 px-2 py-0.5 rounded border border-amber-700/30">0</span>
+            </h3>
+            <div class="flex gap-2">
+                <input type="text" id="rep-buscar" class="input-lujo text-sm" placeholder="🔍 Buscar por título..." style="max-width: 250px; padding: 0.5rem 0.8rem;">
+            </div>
+        </div>
+        <div id="rep-lista" class="val-url-list" style="max-height: 600px;">
+            <div class="text-center py-10 text-amber-500/50">
+                <i class="fa fa-flag text-3xl mb-3"></i>
+                <p class="text-sm">Presioná "Cargar Reportes" para ver los reportes de usuarios</p>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -902,6 +1294,28 @@ let adminActual = '';
 let editCoverPathToDelete = '';
 let editCapturasPathsToDelete = [];
 let editCapturasUrlsToKeep = [];
+
+// ==========================================
+// 🔥 FUNCIÓN PARA ACORTAR URLs DEL DOMINIO PROPIO
+// Oculta el usuario y el dominio, muestra solo la ruta relativa
+// ==========================================
+function acortarUrl(url) {
+    if (!url) return '';
+    const urlLimpia = limpiarUrl(url);
+    // Si es del dominio propio de GitHub del admin
+    if (urlLimpia.includes('raw.githubusercontent.com') && urlLimpia.includes(CFG.user) && urlLimpia.includes(CFG.repo)) {
+        // Extraer solo la ruta después de /main/
+        const match = urlLimpia.match(/\/main\/(.+)$/);
+        if (match) {
+            return '/' + match[1];
+        }
+    }
+    // Para otras URLs, mostrar normal pero truncadas si son muy largas
+    if (url.length > 80) {
+        return url.substring(0, 35) + '...' + url.substring(url.length - 35);
+    }
+    return url;
+}
 
 function comprimirImagen(file) {
     return new Promise((resolve, reject) => {
@@ -1039,41 +1453,52 @@ document.getElementById('form-login').onsubmit = async (e) => {
                 document.getElementById('nombre-admin-display').textContent = adminActual.toUpperCase();
                 document.getElementById('admin-header-name').textContent = adminActual;
                 document.getElementById('admin-validator-name').textContent = adminActual;
+                document.getElementById('admin-huerfanas-name').textContent = adminActual;
+                document.getElementById('admin-reportes-name').textContent = adminActual;
                 document.querySelector('#filtroAdmin option[value="mio"]').textContent = `👤 Solo mis subidas (${adminActual})`;
                 cerrarModal();
                 mostrarToast(`Bienvenido, ${adminActual}`, 'success');
                 return;
             }
         }
-        modalError('Usuario o contraseña incorrectos.');
+        modalError('Usuario o contraseña incorrectos. Acceso denegado.');
     } catch (er) { modalError(er.message); }
 };
 
+// Navegación entre paneles
+function mostrarPanel(idPanel) {
+    ['pantalla-bienvenida', 'panel-principal', 'panel-validador', 'panel-huerfanas', 'panel-reportes'].forEach(id => {
+        document.getElementById(id).style.display = 'none';
+    });
+    document.getElementById(idPanel).style.display = (idPanel === 'pantalla-bienvenida') ? 'flex' : 'block';
+}
+
 document.getElementById('btn-ir-al-panel').onclick = async () => {
-    document.getElementById('pantalla-bienvenida').style.display = 'none';
-    document.getElementById('panel-principal').style.display = 'block';
+    mostrarPanel('panel-principal');
     abrirModal('CARGANDO', 'Obteniendo catálogo...', 50);
     await cargarLista();
     cerrarModal();
 };
 document.getElementById('btn-ir-al-validador').onclick = async () => {
-    document.getElementById('pantalla-bienvenida').style.display = 'none';
-    document.getElementById('panel-validador').style.display = 'block';
+    mostrarPanel('panel-validador');
     await inicializarValidador();
 };
 document.getElementById('btn-ir-validador-desde-panel').onclick = async () => {
-    document.getElementById('panel-principal').style.display = 'none';
-    document.getElementById('panel-validador').style.display = 'block';
+    mostrarPanel('panel-validador');
     await inicializarValidador();
 };
-document.getElementById('btn-volver-inicio').onclick = () => {
-    document.getElementById('panel-principal').style.display = 'none';
-    document.getElementById('pantalla-bienvenida').style.display = 'flex';
+document.getElementById('btn-ir-a-huerfanas').onclick = () => {
+    mostrarPanel('panel-huerfanas');
+    Huerfanas.inicializar();
 };
-document.getElementById('btn-volver-inicio-desde-val').onclick = () => {
-    document.getElementById('panel-validador').style.display = 'none';
-    document.getElementById('pantalla-bienvenida').style.display = 'flex';
+document.getElementById('btn-ir-a-reportes').onclick = () => {
+    mostrarPanel('panel-reportes');
+    Reportes.inicializar();
 };
+document.getElementById('btn-volver-inicio').onclick = () => mostrarPanel('pantalla-bienvenida');
+document.getElementById('btn-volver-inicio-desde-val').onclick = () => mostrarPanel('pantalla-bienvenida');
+document.getElementById('btn-volver-inicio-desde-huerfanas').onclick = () => mostrarPanel('pantalla-bienvenida');
+document.getElementById('btn-volver-inicio-desde-reportes').onclick = () => mostrarPanel('pantalla-bienvenida');
 document.getElementById('btn-logout-bienvenida').onclick = () => location.reload();
 
 document.getElementById('imgPortada').onchange = async (e) => {
@@ -1436,41 +1861,15 @@ document.getElementById('formEditar').onsubmit = async (e) => {
 };
 
 // ==========================================
-// 🔥 VALIDADOR DE URLs - VERSIÓN 3.3
-// Mejorado específicamente para descargas
+// VALIDADOR DE URLs
 // ==========================================
-
-// Dominios conocidos que requieren estrategia especial
 const DOMINIOS_PROBLEMATICOS = [
-    'mediafire.com',
-    'mega.nz', 'mega.co.nz',
-    'minecrfapkmod.com',
-    'apkadmin.com',
-    'uploadhaven.com',
-    'usersdrive.com',
-    'zippyshare.com',
-    'solidfiles.com',
-    'anonfiles.com',
-    'dropbox.com',
-    'drive.google.com',
-    '1fichier.com',
-    'uptobox.com',
-    'uptofile.com',
-    'file.io',
-    'sendspace.com',
-    '4shared.com',
-    'mediafire.com',
-    'gofile.io',
-    'pixeldrain.com',
-    'androidapksfree.com',
-    'apkdone.com',
-    'apkmirror.com',
-    'apkpure.com',
-    'revdl.com',
-    'apkmb.com',
-    'happy-mod.com',
-    'dodi-repacks.site',
-    'fitgirl-repacks.site'
+    'mediafire.com', 'mega.nz', 'mega.co.nz', 'minecrfapkmod.com', 'apkadmin.com',
+    'uploadhaven.com', 'usersdrive.com', 'zippyshare.com', 'solidfiles.com',
+    'anonfiles.com', 'dropbox.com', 'drive.google.com', '1fichier.com', 'uptobox.com',
+    'uptofile.com', 'file.io', 'sendspace.com', '4shared.com', 'gofile.io', 'pixeldrain.com',
+    'androidapksfree.com', 'apkdone.com', 'apkmirror.com', 'apkpure.com', 'revdl.com',
+    'apkmb.com', 'happy-mod.com', 'dodi-repacks.site', 'fitgirl-repacks.site'
 ];
 
 const ValidadorURLs = {
@@ -1481,14 +1880,11 @@ const ValidadorURLs = {
     cacheKey: 'gmh_url_validation_cache_v2',
     tiempos: [],
     
-    // Detecta si una URL pertenece a un dominio problemático
     esDominioProblematico(url) {
         try {
             const host = new URL(url).hostname.toLowerCase();
             return DOMINIOS_PROBLEMATICOS.some(d => host.includes(d));
-        } catch (e) {
-            return false;
-        }
+        } catch (e) { return false; }
     },
     
     async inicializar() {
@@ -1522,15 +1918,10 @@ const ValidadorURLs = {
             if (j.cover && j.cover.trim() !== '') {
                 if (filtroTipoUrl === 'todas' || filtroTipoUrl === 'cover') {
                     this.urls.push({
-                        id: idCounter++, juegoId: j.id,
-                        titulo: j.title || 'Sin título',
-                        consola: j.consola || 'N/A',
-                        tipo: j.tipo || 'rom',
-                        uploadedBy: j.uploadedBy || 'Desconocido',
-                        timestamp: j.timestamp || 0,
-                        tipoUrl: 'cover',
-                        url: limpiarUrl(j.cover),
-                        path: j.coverPath || '',
+                        id: idCounter++, juegoId: j.id, titulo: j.title || 'Sin título',
+                        consola: j.consola || 'N/A', tipo: j.tipo || 'rom',
+                        uploadedBy: j.uploadedBy || 'Desconocido', timestamp: j.timestamp || 0,
+                        tipoUrl: 'cover', url: limpiarUrl(j.cover), path: j.coverPath || '',
                         status: 'pending', codigoHttp: null, tiempoMs: null
                     });
                 }
@@ -1540,14 +1931,10 @@ const ValidadorURLs = {
                     if (url && url.trim() !== '') {
                         if (filtroTipoUrl === 'todas' || filtroTipoUrl === 'screenshot') {
                             this.urls.push({
-                                id: idCounter++, juegoId: j.id,
-                                titulo: j.title || 'Sin título',
-                                consola: j.consola || 'N/A',
-                                tipo: j.tipo || 'rom',
-                                uploadedBy: j.uploadedBy || 'Desconocido',
-                                timestamp: j.timestamp || 0,
-                                tipoUrl: 'screenshot', subIndice: idx,
-                                url: limpiarUrl(url),
+                                id: idCounter++, juegoId: j.id, titulo: j.title || 'Sin título',
+                                consola: j.consola || 'N/A', tipo: j.tipo || 'rom',
+                                uploadedBy: j.uploadedBy || 'Desconocido', timestamp: j.timestamp || 0,
+                                tipoUrl: 'screenshot', subIndice: idx, url: limpiarUrl(url),
                                 path: (j.screenshotsPaths && j.screenshotsPaths[idx]) || '',
                                 status: 'pending', codigoHttp: null, tiempoMs: null
                             });
@@ -1558,14 +1945,10 @@ const ValidadorURLs = {
             if (j.link && j.link.trim() !== '') {
                 if (filtroTipoUrl === 'todas' || filtroTipoUrl === 'download') {
                     this.urls.push({
-                        id: idCounter++, juegoId: j.id,
-                        titulo: j.title || 'Sin título',
-                        consola: j.consola || 'N/A',
-                        tipo: j.tipo || 'rom',
-                        uploadedBy: j.uploadedBy || 'Desconocido',
-                        timestamp: j.timestamp || 0,
-                        tipoUrl: 'download',
-                        url: j.link, path: '',
+                        id: idCounter++, juegoId: j.id, titulo: j.title || 'Sin título',
+                        consola: j.consola || 'N/A', tipo: j.tipo || 'rom',
+                        uploadedBy: j.uploadedBy || 'Desconocido', timestamp: j.timestamp || 0,
+                        tipoUrl: 'download', url: j.link, path: '',
                         status: 'pending', codigoHttp: null, tiempoMs: null
                     });
                 }
@@ -1621,128 +2004,70 @@ const ValidadorURLs = {
         return aplicadas;
     },
     
-    // ==========================================
-    // 🔥 VALIDACIÓN DE DESCARGAS (Estrategia especial)
-    // ==========================================
     async validarDescarga(urlObj) {
         const inicio = performance.now();
         urlObj.status = 'checking';
         this.renderItem(urlObj);
-        
         const intentos = 2;
-        
         for (let intento = 1; intento <= intentos; intento++) {
-            if (this.cancelado) {
-                urlObj.status = 'pending';
-                this.renderItem(urlObj);
-                return;
-            }
-            
+            if (this.cancelado) { urlObj.status = 'pending'; this.renderItem(urlObj); return; }
             try {
-                // User-Agent de navegador real
                 const headers = {
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
                     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
-                    'Accept-Language': 'es-ES,es;q=0.9,en;q=0.8',
-                    'Accept-Encoding': 'gzip, deflate, br'
+                    'Accept-Language': 'es-ES,es;q=0.9,en;q=0.8'
                 };
-                
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s para descargas
-                
-                // 🔥 ESTRATEGIA: GET con redirect: follow, sin Range, sin HEAD
+                const timeoutId = setTimeout(() => controller.abort(), 30000);
                 const response = await fetch(urlObj.url, {
-                    method: 'GET',
-                    mode: 'cors',
-                    credentials: 'omit',
-                    redirect: 'follow',
-                    signal: controller.signal,
-                    headers: headers,
-                    cache: 'no-cache'
+                    method: 'GET', mode: 'cors', credentials: 'omit',
+                    redirect: 'follow', signal: controller.signal, headers: headers, cache: 'no-cache'
                 });
-                
                 clearTimeout(timeoutId);
                 urlObj.tiempoMs = Math.round(performance.now() - inicio);
-                
-                // 🔥 Para descargas, aceptar MUCHOS más códigos como OK
-                // 200-299: éxito
-                // 301, 302, 303, 307, 308: redirects (fetch los sigue automáticamente)
                 if (response.ok) {
-                    urlObj.status = 'ok';
-                    urlObj.codigoHttp = response.status;
-                    this.renderItem(urlObj);
-                    this.actualizarStats();
-                    return;
+                    urlObj.status = 'ok'; urlObj.codigoHttp = response.status;
+                    this.renderItem(urlObj); this.actualizarStats(); return;
                 }
-                
-                // Algunos sitios devuelven códigos raros pero sirven el archivo
-                // Aceptar también 403 si es MediaFire (a veces bloquea pero el link funciona)
                 if (response.status === 403 || response.status === 405 || response.status === 451) {
-                    // Posible bloqueo anti-bot, pero el link puede funcionar en navegador
-                    // Intentar fallback con Image/Link test
                     const funciona = await this.testFallbackNavegador(urlObj.url);
                     urlObj.tiempoMs = Math.round(performance.now() - inicio);
-                    
                     if (funciona) {
-                        urlObj.status = 'ok';
-                        urlObj.codigoHttp = `${response.status}*`; // asterisco = validado con fallback
-                        this.renderItem(urlObj);
-                        this.actualizarStats();
-                        return;
+                        urlObj.status = 'ok'; urlObj.codigoHttp = `${response.status}*`;
+                        this.renderItem(urlObj); this.actualizarStats(); return;
                     }
                 }
-                
-                // Errores definitivos
                 if (response.status === 404 || response.status === 410) {
-                    urlObj.status = 'error';
-                    urlObj.codigoHttp = response.status;
-                    this.renderItem(urlObj);
-                    this.actualizarStats();
-                    return;
+                    urlObj.status = 'error'; urlObj.codigoHttp = response.status;
+                    this.renderItem(urlObj); this.actualizarStats(); return;
                 }
-                
-                // Otros códigos: reintentar
                 throw new Error('HTTP ' + response.status);
-                
             } catch (err) {
-                // Si es error de CORS o red, intentar fallback
                 if (err.name === 'TypeError' || err.message.includes('Failed to fetch') || err.message.includes('CORS')) {
                     const funciona = await this.testFallbackNavegador(urlObj.url);
                     urlObj.tiempoMs = Math.round(performance.now() - inicio);
-                    
                     if (funciona) {
-                        urlObj.status = 'ok';
-                        urlObj.codigoHttp = 'OK*'; // asterisco = validado con fallback
-                        this.renderItem(urlObj);
-                        this.actualizarStats();
-                        return;
+                        urlObj.status = 'ok'; urlObj.codigoHttp = 'OK*';
+                        this.renderItem(urlObj); this.actualizarStats(); return;
                     }
                 }
-                
                 if (intento === intentos) {
                     urlObj.tiempoMs = Math.round(performance.now() - inicio);
                     urlObj.status = 'error';
                     urlObj.codigoHttp = err.name === 'AbortError' ? 'TIMEOUT' : 'ERR';
-                    this.renderItem(urlObj);
-                    this.actualizarStats();
-                    return;
+                    this.renderItem(urlObj); this.actualizarStats(); return;
                 }
                 await new Promise(r => setTimeout(r, 1000 * intento));
             }
         }
     },
     
-    // 🔥 Fallback: intentar cargar como Image() o Link preconnect
-    // Esto permite validar URLs con CORS bloqueado
     testFallbackNavegador(url) {
         return new Promise((resolve) => {
             const timeout = setTimeout(() => resolve(false), 8000);
-            
-            // Intento 1: Cargar como imagen (solo sirve si es imagen, pero algunos sitios sirven HTML con imagen)
             const img = new Image();
             img.onload = () => { clearTimeout(timeout); resolve(true); };
             img.onerror = () => {
-                // Intento 2: Crear un <link rel="preconnect"> para ver si el dominio responde
                 clearTimeout(timeout);
                 this.testDominioConPreconnect(url).then(resolve);
             };
@@ -1750,132 +2075,69 @@ const ValidadorURLs = {
         });
     },
     
-    // Test del dominio: si el servidor responde al menos con TCP, asumimos que el link funciona
     testDominioConPreconnect(url) {
         return new Promise((resolve) => {
             try {
                 const host = new URL(url).origin;
                 const timeout = setTimeout(() => resolve(false), 6000);
-                
                 const link = document.createElement('link');
-                link.rel = 'preconnect';
-                link.href = host;
-                
-                // Si se añade al DOM sin error, el navegador puede conectar
+                link.rel = 'preconnect'; link.href = host;
                 document.head.appendChild(link);
-                
-                // Hacer un fetch con mode: no-cors (no podemos leer respuesta, pero vemos si conecta)
-                fetch(url, { 
-                    method: 'GET', 
-                    mode: 'no-cors', 
-                    cache: 'no-cache',
-                    redirect: 'follow'
-                })
-                .then(() => {
-                    clearTimeout(timeout);
-                    document.head.removeChild(link);
-                    resolve(true); // Si no-cors funciona, el link responde
-                })
-                .catch(() => {
-                    clearTimeout(timeout);
-                    document.head.removeChild(link);
-                    resolve(false);
-                });
-            } catch (e) {
-                resolve(false);
-            }
+                fetch(url, { method: 'GET', mode: 'no-cors', cache: 'no-cache', redirect: 'follow' })
+                    .then(() => { clearTimeout(timeout); document.head.removeChild(link); resolve(true); })
+                    .catch(() => { clearTimeout(timeout); document.head.removeChild(link); resolve(false); });
+            } catch (e) { resolve(false); }
         });
     },
     
-    // ==========================================
-    // VALIDACIÓN NORMAL (imágenes: portadas y capturas)
-    // ==========================================
     async validarImagen(urlObj, intentos = 3) {
         const inicio = performance.now();
         urlObj.status = 'checking';
         this.renderItem(urlObj);
-        
         for (let intento = 1; intento <= intentos; intento++) {
-            if (this.cancelado) {
-                urlObj.status = 'pending';
-                this.renderItem(urlObj);
-                return;
-            }
-            
+            if (this.cancelado) { urlObj.status = 'pending'; this.renderItem(urlObj); return; }
             try {
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 15000);
                 let response;
-                
                 try {
-                    response = await fetch(urlObj.url, {
-                        method: 'HEAD',
-                        mode: 'cors',
-                        signal: controller.signal,
-                        cache: 'no-cache'
-                    });
+                    response = await fetch(urlObj.url, { method: 'HEAD', mode: 'cors', signal: controller.signal, cache: 'no-cache' });
                 } catch (headErr) {
                     clearTimeout(timeoutId);
                     const controller2 = new AbortController();
                     const timeoutId2 = setTimeout(() => controller2.abort(), 15000);
                     try {
                         response = await fetch(urlObj.url, {
-                            method: 'GET',
-                            mode: 'cors',
-                            signal: controller2.signal,
-                            headers: { 'Range': 'bytes=0-0' },
-                            cache: 'no-cache'
+                            method: 'GET', mode: 'cors', signal: controller2.signal,
+                            headers: { 'Range': 'bytes=0-0' }, cache: 'no-cache'
                         });
                         clearTimeout(timeoutId2);
-                    } catch (getErr) {
-                        clearTimeout(timeoutId2);
-                        throw getErr;
-                    }
+                    } catch (getErr) { clearTimeout(timeoutId2); throw getErr; }
                 }
-                
                 clearTimeout(timeoutId);
                 urlObj.tiempoMs = Math.round(performance.now() - inicio);
-                
                 if (response.ok || response.status === 206) {
-                    urlObj.status = 'ok';
-                    urlObj.codigoHttp = response.status;
-                    this.renderItem(urlObj);
-                    this.actualizarStats();
-                    return;
+                    urlObj.status = 'ok'; urlObj.codigoHttp = response.status;
+                    this.renderItem(urlObj); this.actualizarStats(); return;
                 } else if (response.status === 404 || response.status === 410 || response.status === 403) {
-                    urlObj.status = 'error';
-                    urlObj.codigoHttp = response.status;
-                    this.renderItem(urlObj);
-                    this.actualizarStats();
-                    return;
-                } else {
-                    throw new Error('HTTP ' + response.status);
-                }
+                    urlObj.status = 'error'; urlObj.codigoHttp = response.status;
+                    this.renderItem(urlObj); this.actualizarStats(); return;
+                } else { throw new Error('HTTP ' + response.status); }
             } catch (err) {
                 if (intento === intentos) {
                     urlObj.tiempoMs = Math.round(performance.now() - inicio);
                     urlObj.status = 'error';
                     urlObj.codigoHttp = err.name === 'AbortError' ? 'TIMEOUT' : 'ERR';
-                    this.renderItem(urlObj);
-                    this.actualizarStats();
-                    return;
+                    this.renderItem(urlObj); this.actualizarStats(); return;
                 }
                 await new Promise(r => setTimeout(r, 500 * intento));
             }
         }
     },
     
-    // ==========================================
-    // Dispatcher principal: elige la estrategia según el tipo
-    // ==========================================
     async validarUna(urlObj) {
-        if (urlObj.tipoUrl === 'download') {
-            // 🔥 DESCARGAS: estrategia especial
-            await this.validarDescarga(urlObj);
-        } else {
-            // IMÁGENES: estrategia normal (HEAD + Range)
-            await this.validarImagen(urlObj);
-        }
+        if (urlObj.tipoUrl === 'download') await this.validarDescarga(urlObj);
+        else await this.validarImagen(urlObj);
     },
     
     async validarMultiples(urlsAValidar) {
@@ -1979,14 +2241,12 @@ const ValidadorURLs = {
             'checking': u.tipoUrl === 'download' ? '🔄 Analizando descarga...' : '🔄 Analizando...',
             'eliminada': '🗑️ Eliminada'
         }[u.status];
-        const urlCorta = u.url.length > 70 ? u.url.substring(0, 35) + '...' + u.url.substring(u.url.length - 30) : u.url;
+        // 🔥 Usar acortarUrl para ocultar el dominio propio
+        const urlMostrada = acortarUrl(u.url);
         const thumbSrc = u.tipoUrl !== 'download' ? u.url : 'https://via.placeholder.com/45x60/1a1400/ffd700?text=DL';
-        
-        // Si es descarga y dominio problemático, mostrar aviso
         const avisoDominio = (u.tipoUrl === 'download' && this.esDominioProblematico(u.url)) 
             ? '<span style="color: #ffa500; font-size: 0.65rem;" title="Dominio con protecciones especiales">⚡</span>' 
             : '';
-        
         return `
         <div class="val-url-item status-${u.status}" data-url-id="${u.id}">
             <img class="val-url-thumb" src="${thumbSrc}" onerror="this.onerror=null; this.src='https://via.placeholder.com/45x60/1a1400/ff4444?text=X';" loading="lazy" alt="">
@@ -1998,7 +2258,7 @@ const ValidadorURLs = {
                     <span style="color: rgba(255,215,0,0.6);">${u.consola}</span>
                     ${u.tiempoMs ? `<span style="color: rgba(255,215,0,0.5);">${u.tiempoMs}ms</span>` : ''}
                 </div>
-                <div style="font-size: 0.7rem; color: rgba(255,215,0,0.4); margin-top: 0.2rem; word-break: break-all;" title="${u.url}">${urlCorta}</div>
+                <div style="font-size: 0.7rem; color: rgba(255,215,0,0.4); margin-top: 0.2rem; word-break: break-all;" title="${u.url}">${urlMostrada}</div>
             </div>
             <div style="display: flex; flex-direction: column; gap: 0.3rem; align-items: flex-end;">
                 <span class="val-url-status ${u.status}">${estadoTexto}</span>
@@ -2034,18 +2294,11 @@ const ValidadorURLs = {
         const container = document.getElementById('val-rotas-container');
         const lista = document.getElementById('val-rotas-lista');
         const rotas = this.urls.filter(u => u.status === 'error');
-        
-        if (rotas.length === 0) {
-            container.style.display = 'none';
-            return;
-        }
-        
+        if (rotas.length === 0) { container.style.display = 'none'; return; }
         container.style.display = 'block';
         document.getElementById('val-rotas-count').textContent = rotas.length;
-        
         const orden = { cover: 1, screenshot: 2, download: 3 };
         rotas.sort((a, b) => (orden[a.tipoUrl] || 9) - (orden[b.tipoUrl] || 9));
-        
         lista.innerHTML = rotas.map(u => this.renderRotaCardHTML(u)).join('');
     },
     
@@ -2054,8 +2307,15 @@ const ValidadorURLs = {
         const tipoUrlLabel = u.tipoUrl === 'cover' ? 'PORTADA' : (u.tipoUrl === 'screenshot' ? 'CAPTURA' : 'ENLACE DESCARGA');
         const thumbSrc = u.tipoUrl !== 'download' ? u.url : 'https://via.placeholder.com/70x90/1a1400/ff4444?text=DL';
         const fechaSubida = u.timestamp ? formatearFecha(u.timestamp) : 'N/A';
+        // 🔥 URL acortada para no mostrar el dominio propio
+        const urlMostrada = acortarUrl(u.url);
         
         let botonesHTML = '';
+        // 🔥 BOTÓN VISITAR URL (abierto en nueva pestaña)
+        botonesHTML += `<a href="${u.url}" target="_blank" rel="noopener noreferrer" class="val-rota-btn visitar" title="Abrir URL en nueva pestaña para verificar">
+            <i class="fa fa-external-link"></i> Visitar URL
+        </a>`;
+        
         botonesHTML += `<button class="val-rota-btn reemplazar" onclick="ValidadorURLs.abrirModalReparar(${u.id})">
             <i class="fa fa-wrench"></i> Reemplazar
         </button>`;
@@ -2094,7 +2354,7 @@ const ValidadorURLs = {
                     <span class="val-rota-badge error-code">HTTP ${u.codigoHttp || 'ERR'}</span>
                 </div>
                 <div class="val-rota-url" title="${u.url}">
-                    <strong>URL rota:</strong> ${u.url}
+                    <strong>URL rota:</strong> ${urlMostrada}
                 </div>
                 <div class="val-rota-subido">
                     <i class="fa fa-user"></i> Subido por: ${u.uploadedBy} · ${fechaSubida}
@@ -2109,31 +2369,24 @@ const ValidadorURLs = {
     abrirModalReparar(id) {
         const u = this.urls.find(x => x.id === id);
         if (!u) return;
-        
         document.getElementById('roto-url-id').value = id;
         document.getElementById('roto-juego-titulo').textContent = u.titulo;
         document.getElementById('roto-juego-consola').innerHTML = `<i class="fa fa-gamepad"></i> ${u.consola}`;
         const tipoBadge = document.getElementById('roto-juego-tipo');
         tipoBadge.textContent = (u.tipo || 'N/A').toUpperCase();
         tipoBadge.className = `val-rota-badge tipo-${u.tipo}`;
-        
         const tipoUrlLabel = u.tipoUrl === 'cover' ? '📷 PORTADA' : (u.tipoUrl === 'screenshot' ? '🖼️ CAPTURA' : '⬇️ ENLACE DESCARGA');
         document.getElementById('roto-tipo-url').innerHTML = tipoUrlLabel;
         document.getElementById('roto-juego-uploader').textContent = u.uploadedBy;
-        document.getElementById('roto-url-actual').textContent = u.url;
+        document.getElementById('roto-url-actual').textContent = acortarUrl(u.url);
         document.getElementById('roto-codigo-error').innerHTML = `<i class="fa fa-exclamation-triangle"></i> Código de error: <strong>HTTP ${u.codigoHttp || 'ERR'}</strong>`;
-        
         const imagenContainer = document.getElementById('roto-imagen-container');
         const nuevaLabel = document.getElementById('roto-nueva-label');
         const preview = document.getElementById('roto-img-preview');
         const nuevaUrlInput = document.getElementById('roto-nueva-url');
         const nuevoPathInput = document.getElementById('roto-nuevo-path');
-        
-        preview.style.display = 'none';
-        preview.src = '';
-        nuevaUrlInput.value = '';
-        nuevoPathInput.value = '';
-        
+        preview.style.display = 'none'; preview.src = '';
+        nuevaUrlInput.value = ''; nuevoPathInput.value = '';
         if (u.tipoUrl === 'download') {
             imagenContainer.style.display = 'none';
             nuevaLabel.innerHTML = '🔗 NUEVO ENLACE DE DESCARGA';
@@ -2143,51 +2396,31 @@ const ValidadorURLs = {
             nuevaLabel.innerHTML = u.tipoUrl === 'cover' ? '📷 NUEVA PORTADA' : '🖼️ NUEVA CAPTURA';
             nuevaUrlInput.placeholder = 'O pegá la URL directa de la imagen';
         }
-        
         document.getElementById('modal-editar-url-rota').style.display = 'flex';
     },
     
     async eliminarCapturaRota(id) {
         const u = this.urls.find(x => x.id === id);
-        if (!u || u.tipoUrl !== 'screenshot') {
-            mostrarToast('Solo se pueden eliminar capturas', 'error');
-            return;
-        }
-        
+        if (!u || u.tipoUrl !== 'screenshot') { mostrarToast('Solo se pueden eliminar capturas', 'error'); return; }
         const juego = listaJuegos.find(j => j.id === u.juegoId);
-        if (!juego) {
-            mostrarToast('No se encontró el juego', 'error');
-            return;
-        }
-        
+        if (!juego) { mostrarToast('No se encontró el juego', 'error'); return; }
         if (!confirm(`¿Eliminar esta captura rota de "${juego.title}"?\n\nLa imagen se borrará de GitHub y del catálogo.`)) return;
-        
         abrirModal('ELIMINANDO', 'Actualizando base de datos...', 20);
-        
         try {
             const urlLimpia = limpiarUrl(u.url);
             const idx = (juego.screenshots || []).findIndex(s => limpiarUrl(s) === urlLimpia);
-            
-            if (idx === -1) {
-                cerrarModal();
-                mostrarToast('No se encontró la captura en el juego', 'error');
-                return;
-            }
-            
+            if (idx === -1) { cerrarModal(); mostrarToast('No se encontró la captura en el juego', 'error'); return; }
             juego.screenshots.splice(idx, 1);
             if (juego.screenshotsPaths && juego.screenshotsPaths[idx]) {
                 const pathABorrar = juego.screenshotsPaths[idx];
                 juego.screenshotsPaths.splice(idx, 1);
-                
                 document.getElementById('detalle-modal').textContent = 'Eliminando imagen de GitHub...';
                 document.getElementById('barra-progreso').style.width = '70%';
                 await borrarArchivoGitHub(pathABorrar);
             }
-            
             const docRef = db.collection('sistema').doc('catalogo_por_consola');
             const doc = await docRef.get();
             const data = doc.data();
-            
             if (data[juego.consola]) {
                 const juegoEnDb = data[juego.consola].find(j => j.id === juego.id);
                 if (juegoEnDb) {
@@ -2196,39 +2429,23 @@ const ValidadorURLs = {
                     await docRef.update({ [juego.consola]: data[juego.consola] });
                 }
             }
-            
             u.status = 'eliminada';
-            this.renderItem(u);
-            this.renderizarRotas();
-            this.actualizarStats();
-            
+            this.renderItem(u); this.renderizarRotas(); this.actualizarStats();
             modalExito(`Captura eliminada de "${juego.title}"`);
-        } catch (err) {
-            modalError('Error al eliminar: ' + err.message);
-        }
+        } catch (err) { modalError('Error al eliminar: ' + err.message); }
     },
     
     async irAEditorCompleto(juegoId, consola) {
-        if (!confirm('¿Ir al editor completo del juego?\n\nSe cerrará el validador y se abrirá el panel principal con el editor.')) return;
-        
-        document.getElementById('panel-validador').style.display = 'none';
-        document.getElementById('panel-principal').style.display = 'block';
-        
-        if (listaJuegos.length === 0) {
-            await cargarLista();
-        }
-        
-        setTimeout(() => {
-            editarJuego(juegoId, consola);
-        }, 100);
+        if (!confirm('¿Ir al editor completo del juego?\n\nSe cerrará el validador y se abrirá el panel principal.')) return;
+        mostrarPanel('panel-principal');
+        if (listaJuegos.length === 0) await cargarLista();
+        setTimeout(() => editarJuego(juegoId, consola), 100);
     },
     
     async cargarYRenderizar() {
         this.construirLista();
         const cacheadas = this.aplicarCache();
-        this.renderizar();
-        this.renderizarRotas();
-        this.actualizarStats();
+        this.renderizar(); this.renderizarRotas(); this.actualizarStats();
         mostrarToast(`${this.urls.length} URLs cargadas · ${cacheadas} desde cache`, 'info');
     },
     
@@ -2254,127 +2471,82 @@ const ValidadorURLs = {
     }
 };
 
-// Manejo de subida en modal de reparación
 document.getElementById('roto-img-input').onchange = async (e) => {
     const arch = e.target.files[0];
     if (!arch) return;
     if (arch.size > 5 * 1024 * 1024) { mostrarToast('Excede 5MB.', 'error'); e.target.value = ''; return; }
-    
     abrirModal('OPTIMIZANDO', 'Comprimiendo imagen...', 30);
     try {
         const blobComprimido = await comprimirImagen(arch);
         abrirModal('SUBIENDO', 'Enviando a GitHub...', 70);
-        
         const idUnico = Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
         const urlId = parseInt(document.getElementById('roto-url-id').value);
         const u = ValidadorURLs.urls.find(x => x.id === urlId);
         const prefijo = u && u.tipoUrl === 'cover' ? 'portada_repair_' : 'captura_repair_';
         const carpeta = u && u.tipoUrl === 'cover' ? 'portadas' : 'capturas';
         const ruta = `${carpeta}/${prefijo}${idUnico}.jpg`;
-        
         const resultado = await subirArchivoGitHub(blobComprimido, ruta);
-        
         document.getElementById('roto-nueva-url').value = limpiarUrl(resultado.url);
         document.getElementById('roto-nuevo-path').value = resultado.path;
         const preview = document.getElementById('roto-img-preview');
-        preview.src = limpiarUrl(resultado.url);
-        preview.style.display = 'block';
-        
+        preview.src = limpiarUrl(resultado.url); preview.style.display = 'block';
         cerrarModal();
         mostrarToast('Imagen subida. Ahora guardá la reparación.', 'success');
-    } catch (err) {
-        cerrarModal();
-        modalError('Fallo al subir: ' + err.message);
-    }
+    } catch (err) { cerrarModal(); modalError('Fallo al subir: ' + err.message); }
     e.target.value = '';
 };
 
-// Guardar reparación
 document.getElementById('form-reparar-url').onsubmit = async (e) => {
     e.preventDefault();
     const urlId = parseInt(document.getElementById('roto-url-id').value);
     const u = ValidadorURLs.urls.find(x => x.id === urlId);
     if (!u) { mostrarToast('URL no encontrada', 'error'); return; }
-    
     const nuevaUrl = limpiarUrl(document.getElementById('roto-nueva-url').value.trim());
     const nuevoPath = document.getElementById('roto-nuevo-path').value.trim();
-    
-    if (!nuevaUrl) {
-        mostrarToast('Debés subir una imagen o pegar una URL', 'error');
-        return;
-    }
-    
+    if (!nuevaUrl) { mostrarToast('Debés subir una imagen o pegar una URL', 'error'); return; }
     const juego = listaJuegos.find(j => j.id === u.juegoId);
     if (!juego) { mostrarToast('Juego no encontrado', 'error'); return; }
-    
     const btn = e.target.querySelector('button[type="submit"]');
     btn.disabled = true;
     btn.innerHTML = '<i class="fa fa-circle-o-notch fa-spin"></i> GUARDANDO...';
-    
     abrirModal('REPARANDO', 'Actualizando base de datos...', 30);
-    
     try {
         const pathViejo = u.path || '';
-        
-        if (u.tipoUrl === 'cover') {
-            juego.cover = nuevaUrl;
-            juego.coverPath = nuevoPath;
-        } else if (u.tipoUrl === 'screenshot') {
+        if (u.tipoUrl === 'cover') { juego.cover = nuevaUrl; juego.coverPath = nuevoPath; }
+        else if (u.tipoUrl === 'screenshot') {
             const urlViejaLimpia = limpiarUrl(u.url);
             const idx = (juego.screenshots || []).findIndex(s => limpiarUrl(s) === urlViejaLimpia);
             if (idx !== -1) {
                 juego.screenshots[idx] = nuevaUrl;
                 if (juego.screenshotsPaths) juego.screenshotsPaths[idx] = nuevoPath;
             }
-        } else if (u.tipoUrl === 'download') {
-            juego.link = nuevaUrl;
-        }
-        
+        } else if (u.tipoUrl === 'download') { juego.link = nuevaUrl; }
         const docRef = db.collection('sistema').doc('catalogo_por_consola');
         const doc = await docRef.get();
         const data = doc.data();
-        
         if (data[juego.consola]) {
             const juegoEnDb = data[juego.consola].find(j => j.id === juego.id);
             if (juegoEnDb) {
-                if (u.tipoUrl === 'cover') {
-                    juegoEnDb.cover = nuevaUrl;
-                    juegoEnDb.coverPath = nuevoPath;
-                } else if (u.tipoUrl === 'screenshot') {
+                if (u.tipoUrl === 'cover') { juegoEnDb.cover = nuevaUrl; juegoEnDb.coverPath = nuevoPath; }
+                else if (u.tipoUrl === 'screenshot') {
                     juegoEnDb.screenshots = [...juego.screenshots];
                     juegoEnDb.screenshotsPaths = [...(juego.screenshotsPaths || [])];
-                } else if (u.tipoUrl === 'download') {
-                    juegoEnDb.link = nuevaUrl;
-                }
+                } else if (u.tipoUrl === 'download') { juegoEnDb.link = nuevaUrl; }
                 await docRef.update({ [juego.consola]: data[juego.consola] });
             }
         }
-        
         document.getElementById('detalle-modal').textContent = 'Eliminando archivo viejo de GitHub...';
         document.getElementById('barra-progreso').style.width = '70%';
-        
-        if (pathViejo && pathViejo !== nuevoPath) {
-            await borrarArchivoGitHub(pathViejo);
-        }
-        
-        u.url = nuevaUrl;
-        u.path = nuevoPath;
-        u.status = 'ok';
-        u.codigoHttp = 200;
-        
+        if (pathViejo && pathViejo !== nuevoPath) await borrarArchivoGitHub(pathViejo);
+        u.url = nuevaUrl; u.path = nuevoPath; u.status = 'ok'; u.codigoHttp = 200;
         ValidadorURLs.renderItem(u);
         ValidadorURLs.renderizarRotas();
         ValidadorURLs.actualizarStats();
         ValidadorURLs.guardarCache();
-        
         document.getElementById('modal-editar-url-rota').style.display = 'none';
         modalExito(`URL reparada correctamente en "${juego.title}"`);
-    } catch (err) {
-        modalError('Error al reparar: ' + err.message);
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa fa-check"></i> GUARDAR REPARACIÓN';
-    }
+    } catch (err) { modalError('Error al reparar: ' + err.message); }
+    finally { btn.disabled = false; btn.innerHTML = '<i class="fa fa-check"></i> GUARDAR REPARACIÓN'; }
 };
 
 async function inicializarValidador() { await ValidadorURLs.inicializar(); }
@@ -2401,6 +2573,611 @@ document.getElementById('val-buscar').oninput = () => {
     ValidadorURLs.renderizar(); ValidadorURLs.renderizarRotas(); ValidadorURLs.actualizarStats();
 };
 
+// ==========================================
+// 🔥 HUÉRFANAS - Detectar archivos en GitHub sin vincular a la BD
+// ==========================================
+const Huerfanas = {
+    archivos: [],         // Todos los archivos de portadas/capturas en GitHub
+    seleccionados: new Set(),
+    procesando: false,
+    
+    inicializar() {
+        this.archivos = [];
+        this.seleccionados.clear();
+        this.renderizar();
+        this.actualizarStats();
+    },
+    
+    // Lista todos los archivos del repo en portadas/ y capturas/
+    async listarArchivosGitHub() {
+        try {
+            const resp = await fetch(`https://api.github.com/repos/${CFG.user}/${CFG.repo}/git/trees/${CFG.rama}?recursive=1`, {
+                headers: { 'Authorization': `token ${github.token}` }
+            });
+            if (!resp.ok) throw new Error((await resp.json()).message || 'Error al listar');
+            const data = await resp.json();
+            return (data.tree || [])
+                .filter(item => item.type === 'blob')
+                .filter(item => item.path.startsWith('portadas/') || item.path.startsWith('capturas/'))
+                .map(item => ({
+                    path: item.path,
+                    carpeta: item.path.split('/')[0],
+                    nombre: item.path.split('/').pop(),
+                    size: item.size || 0,
+                    url: `${CFG.baseURL}${item.path}`,
+                    vinculado: false,
+                    juegoAsociado: null
+                }));
+        } catch (e) {
+            console.error("Error listarArchivosGitHub:", e);
+            throw e;
+        }
+    },
+    
+    // Detecta a qué juego pertenece cada archivo (si está vinculado)
+    vincularArchivos() {
+        this.archivos.forEach(archivo => {
+            archivo.vinculado = false;
+            archivo.juegoAsociado = null;
+            
+            for (const juego of listaJuegos) {
+                // Verificar portada
+                if (juego.coverPath === archivo.path) {
+                    archivo.vinculado = true;
+                    archivo.juegoAsociado = juego;
+                    return;
+                }
+                // Verificar capturas
+                if (Array.isArray(juego.screenshotsPaths) && juego.screenshotsPaths.includes(archivo.path)) {
+                    archivo.vinculado = true;
+                    archivo.juegoAsociado = juego;
+                    return;
+                }
+            }
+        });
+    },
+    
+    async escanear() {
+        if (this.procesando) return;
+        this.procesando = true;
+        
+        document.getElementById('huer-btn-escanear').disabled = true;
+        document.getElementById('huer-progress-bar').style.display = 'block';
+        document.getElementById('huer-progress-text').style.display = 'block';
+        document.getElementById('huer-progress-detalle').textContent = 'Consultando API de GitHub...';
+        document.getElementById('huer-progress-fill').style.width = '30%';
+        
+        try {
+            if (listaJuegos.length === 0) {
+                document.getElementById('huer-progress-detalle').textContent = 'Cargando catálogo...';
+                await cargarLista();
+            }
+            
+            document.getElementById('huer-progress-detalle').textContent = 'Obteniendo lista de archivos del repositorio...';
+            document.getElementById('huer-progress-fill').style.width = '60%';
+            
+            this.archivos = await this.listarArchivosGitHub();
+            
+            document.getElementById('huer-progress-detalle').textContent = 'Comparando con la base de datos...';
+            document.getElementById('huer-progress-fill').style.width = '90%';
+            
+            this.vincularArchivos();
+            this.seleccionados.clear();
+            this.renderizar();
+            this.actualizarStats();
+            
+            document.getElementById('huer-progress-fill').style.width = '100%';
+            const huerfanos = this.archivos.filter(a => !a.vinculado).length;
+            document.getElementById('huer-progress-detalle').textContent = 
+                `✅ Análisis completo · ${huerfanos} archivos huérfanos detectados`;
+            
+            setTimeout(() => {
+                document.getElementById('huer-progress-bar').style.display = 'none';
+                document.getElementById('huer-progress-text').style.display = 'none';
+            }, 3000);
+            
+            if (huerfanos > 0) {
+                mostrarToast(`👻 Se encontraron ${huerfanos} archivos huérfanos`, 'info');
+            } else {
+                mostrarToast('✅ No hay archivos huérfanos. Todo limpio.', 'success');
+            }
+            
+        } catch (err) {
+            mostrarToast('Error al escanear: ' + err.message, 'error');
+        } finally {
+            this.procesando = false;
+            document.getElementById('huer-btn-escanear').disabled = false;
+        }
+    },
+    
+    renderizar() {
+        const contenedor = document.getElementById('huer-lista');
+        const busqueda = (document.getElementById('huer-buscar').value || '').toLowerCase();
+        const filtroCarpeta = document.getElementById('huer-filtro-carpeta').value;
+        const filtroVer = document.getElementById('huer-filtro-ver').value;
+        
+        let filtrados = this.archivos;
+        if (filtroCarpeta !== 'todas') filtrados = filtrados.filter(a => a.carpeta === filtroCarpeta);
+        if (filtroVer === 'huerfanos') filtrados = filtrados.filter(a => !a.vinculado);
+        else if (filtroVer === 'vinculados') filtrados = filtrados.filter(a => a.vinculado);
+        if (busqueda) filtrados = filtrados.filter(a => 
+            a.path.toLowerCase().includes(busqueda) || 
+            (a.juegoAsociado && (a.juegoAsociado.title || '').toLowerCase().includes(busqueda))
+        );
+        
+        document.getElementById('huer-list-count').textContent = filtrados.length;
+        
+        if (this.archivos.length === 0) {
+            contenedor.innerHTML = `<div class="text-center py-10 text-amber-500/50">
+                <i class="fa fa-ghost text-3xl mb-3"></i>
+                <p class="text-sm">Presioná "Escanear GitHub" para detectar archivos huérfanos</p>
+            </div>`;
+            return;
+        }
+        
+        if (filtrados.length === 0) {
+            contenedor.innerHTML = `<div class="text-center py-10 text-amber-500/50">
+                <i class="fa fa-filter text-3xl mb-3"></i>
+                <p class="text-sm">No hay archivos con estos filtros</p>
+            </div>`;
+            return;
+        }
+        
+        const MAX_RENDER = 300;
+        const limitados = filtrados.slice(0, MAX_RENDER);
+        const sobrantes = filtrados.length - MAX_RENDER;
+        
+        contenedor.innerHTML = limitados.map(a => this.renderItemHTML(a)).join('');
+        if (sobrantes > 0) {
+            contenedor.innerHTML += `<div class="text-center py-3 text-amber-400/60 text-xs">
+                <i class="fa fa-info-circle"></i> Mostrando ${MAX_RENDER} de ${filtrados.length} archivos.</div>`;
+        }
+    },
+    
+    renderItemHTML(a) {
+        const isHuerfano = !a.vinculado;
+        const isSelected = this.seleccionados.has(a.path);
+        const iconoCarpeta = a.carpeta === 'portadas' ? '📷' : '🖼️';
+        const sizeKB = (a.size / 1024).toFixed(1);
+        
+        const infoVinculo = a.vinculado && a.juegoAsociado
+            ? `<span style="color: #00c851;"><i class="fa fa-check-circle"></i> ${a.juegoAsociado.title || 'Sin título'} <span style="opacity:0.6;">(${a.juegoAsociado.consola || '?'})</span></span>`
+            : `<span style="color: #ff9966;"><i class="fa fa-ghost"></i> <strong>HUÉRFANO</strong> - No vinculado a ningún juego</span>`;
+        
+        return `
+        <div class="huerfana-item ${isSelected ? 'selected' : ''}" data-path="${a.path}">
+            <input type="checkbox" class="huerfana-checkbox" 
+                ${isSelected ? 'checked' : ''}
+                ${!isHuerfano ? 'disabled title="Solo se pueden eliminar huérfanos"' : ''}
+                onchange="Huerfanas.toggleSeleccion('${a.path}', this.checked)">
+            <img class="huerfana-thumb" src="${a.url}" 
+                onerror="this.onerror=null; this.src='https://via.placeholder.com/50x65/1a1400/ffa500?text=?';"
+                loading="lazy" alt="">
+            <div class="huerfana-info">
+                <div class="huerfana-path" title="${a.path}">${iconoCarpeta} ${a.path}</div>
+                <div class="huerfana-meta">
+                    ${infoVinculo}
+                    <span style="opacity:0.5;"> · ${sizeKB} KB</span>
+                </div>
+            </div>
+        </div>`;
+    },
+    
+    toggleSeleccion(path, checked) {
+        if (checked) this.seleccionados.add(path);
+        else this.seleccionados.delete(path);
+        this.actualizarStats();
+        // Actualizar solo visualmente la tarjeta
+        const el = document.querySelector(`[data-path="${CSS.escape(path)}"]`);
+        if (el) el.classList.toggle('selected', checked);
+    },
+    
+    seleccionarTodosHuerfanos() {
+        this.archivos.filter(a => !a.vinculado).forEach(a => this.seleccionados.add(a.path));
+        this.renderizar();
+        this.actualizarStats();
+    },
+    
+    deseleccionarTodos() {
+        this.seleccionados.clear();
+        this.renderizar();
+        this.actualizarStats();
+    },
+    
+    async eliminarSeleccionados() {
+        if (this.seleccionados.size === 0) {
+            mostrarToast('No hay archivos seleccionados', 'info');
+            return;
+        }
+        
+        const cantidad = this.seleccionados.size;
+        if (!confirm(`⚠️ ¿Eliminar ${cantidad} archivo(s) huérfano(s) de GitHub?\n\nEsta acción NO se puede deshacer.`)) return;
+        
+        document.getElementById('huer-progress-bar').style.display = 'block';
+        document.getElementById('huer-progress-text').style.display = 'block';
+        
+        const paths = [...this.seleccionados];
+        let eliminados = 0;
+        let fallidos = 0;
+        
+        for (let i = 0; i < paths.length; i++) {
+            const path = paths[i];
+            document.getElementById('huer-progress-detalle').textContent = 
+                `Eliminando ${i + 1} de ${cantidad}: ${path.split('/').pop()}`;
+            document.getElementById('huer-progress-fill').style.width = `${((i + 1) / cantidad) * 100}%`;
+            
+            const ok = await borrarArchivoGitHub(path);
+            if (ok) eliminados++;
+            else fallidos++;
+        }
+        
+        // Actualizar la lista local
+        this.archivos = this.archivos.filter(a => !this.seleccionados.has(a.path));
+        this.seleccionados.clear();
+        this.renderizar();
+        this.actualizarStats();
+        
+        setTimeout(() => {
+            document.getElementById('huer-progress-bar').style.display = 'none';
+            document.getElementById('huer-progress-text').style.display = 'none';
+        }, 2000);
+        
+        if (fallidos === 0) {
+            mostrarToast(`✅ ${eliminados} archivo(s) eliminados correctamente`, 'success');
+        } else {
+            mostrarToast(`⚠️ ${eliminados} eliminados, ${fallidos} fallaron`, 'error');
+        }
+    },
+    
+    actualizarStats() {
+        const total = this.archivos.length;
+        const vinculados = this.archivos.filter(a => a.vinculado).length;
+        const huerfanos = this.archivos.filter(a => !a.vinculado).length;
+        const seleccionados = this.seleccionados.size;
+        document.getElementById('huer-stat-total').textContent = total;
+        document.getElementById('huer-stat-vinculados').textContent = vinculados;
+        document.getElementById('huer-stat-huerfanos').textContent = huerfanos;
+        document.getElementById('huer-stat-seleccionados').textContent = seleccionados;
+    }
+};
+
+document.getElementById('huer-btn-escanear').onclick = () => Huerfanas.escanear();
+document.getElementById('huer-btn-seleccionar-todos').onclick = () => Huerfanas.seleccionarTodosHuerfanos();
+document.getElementById('huer-btn-deseleccionar').onclick = () => Huerfanas.deseleccionarTodos();
+document.getElementById('huer-btn-eliminar').onclick = () => Huerfanas.eliminarSeleccionados();
+document.getElementById('huer-btn-refrescar-lista').onclick = () => Huerfanas.escanear();
+document.getElementById('huer-filtro-carpeta').onchange = () => Huerfanas.renderizar();
+document.getElementById('huer-filtro-ver').onchange = () => Huerfanas.renderizar();
+document.getElementById('huer-buscar').oninput = () => Huerfanas.renderizar();
+
+// ==========================================
+// 🔥 REPORTES - Gestión de reportes de usuarios
+// ==========================================
+const Reportes = {
+    reportes: [],
+    
+    inicializar() {
+        this.reportes = [];
+        this.renderizar();
+        this.actualizarStats();
+    },
+    
+    async cargar() {
+        abrirModal('CARGANDO', 'Obteniendo reportes...', 40);
+        try {
+            // Intentar leer de la colección 'reportes'
+            // Estructura esperada: { juegoId, titulo, consola, tipo, mensaje, usuario, timestamp, resuelto }
+            let snapshot;
+            try {
+                snapshot = await db.collection('reportes').orderBy('timestamp', 'desc').get();
+            } catch (e) {
+                // Si no existe la colección, crear documento base
+                try {
+                    await db.collection('reportes').doc('_init').set({ 
+                        _placeholder: true, 
+                        timestamp: Date.now() 
+                    });
+                    mostrarToast('Se inicializó la colección de reportes', 'info');
+                } catch (e2) {}
+                snapshot = { docs: [] };
+            }
+            
+            this.reportes = snapshot.docs
+                .filter(doc => {
+                    const data = doc.data();
+                    return !data._placeholder; // Ignorar documentos de inicialización
+                })
+                .map(doc => ({ id: doc.id, ...doc.data() }));
+            
+            this.renderizar();
+            this.actualizarStats();
+            cerrarModal();
+            mostrarToast(`${this.reportes.length} reportes cargados`, 'success');
+        } catch (err) {
+            cerrarModal();
+            modalError('Error al cargar reportes: ' + err.message);
+        }
+    },
+    
+    renderizar() {
+        const contenedor = document.getElementById('rep-lista');
+        const busqueda = (document.getElementById('rep-buscar').value || '').toLowerCase();
+        const filtroEstado = document.getElementById('rep-filtro-estado').value;
+        const filtroTipo = document.getElementById('rep-filtro-tipo').value;
+        
+        // Agrupar reportes por juego
+        const grupos = {};
+        this.reportes.forEach(r => {
+            const key = r.juegoId || 'sin_id';
+            if (!grupos[key]) {
+                grupos[key] = {
+                    juegoId: r.juegoId,
+                    titulo: r.titulo || 'Juego desconocido',
+                    consola: r.consola || 'N/A',
+                    cover: r.cover || '',
+                    reportes: [],
+                    resuelto: true  // Solo es resuelto si TODOS sus reportes lo están
+                };
+            }
+            grupos[key].reportes.push(r);
+            if (!r.resuelto) grupos[key].resuelto = false;
+        });
+        
+        let listaGrupos = Object.values(grupos);
+        
+        if (filtroEstado === 'pendientes') listaGrupos = listaGrupos.filter(g => !g.resuelto);
+        else if (filtroEstado === 'resueltos') listaGrupos = listaGrupos.filter(g => g.resuelto);
+        
+        if (filtroTipo !== 'todos') {
+            listaGrupos = listaGrupos.filter(g => g.reportes.some(r => r.tipo === filtroTipo));
+        }
+        
+        if (busqueda) {
+            listaGrupos = listaGrupos.filter(g => 
+                (g.titulo || '').toLowerCase().includes(busqueda) ||
+                (g.consola || '').toLowerCase().includes(busqueda)
+            );
+        }
+        
+        // Ordenar: pendientes primero, luego por cantidad de reportes descendente
+        listaGrupos.sort((a, b) => {
+            if (a.resuelto !== b.resuelto) return a.resuelto ? 1 : -1;
+            return b.reportes.length - a.reportes.length;
+        });
+        
+        document.getElementById('rep-list-count').textContent = listaGrupos.length;
+        
+        if (this.reportes.length === 0) {
+            contenedor.innerHTML = `<div class="text-center py-10 text-amber-500/50">
+                <i class="fa fa-flag text-3xl mb-3"></i>
+                <p class="text-sm">Presioná "Cargar Reportes" para ver los reportes de usuarios</p>
+            </div>`;
+            return;
+        }
+        
+        if (listaGrupos.length === 0) {
+            contenedor.innerHTML = `<div class="text-center py-10 text-amber-500/50">
+                <i class="fa fa-filter text-3xl mb-3"></i>
+                <p class="text-sm">No hay reportes con estos filtros</p>
+            </div>`;
+            return;
+        }
+        
+        contenedor.innerHTML = listaGrupos.map(g => this.renderGrupoHTML(g)).join('');
+    },
+    
+    renderGrupoHTML(g) {
+        const thumbSrc = g.cover ? limpiarUrl(g.cover) : 'https://via.placeholder.com/50x65/1a1400/ffd700?text=?';
+        const totalReportes = g.reportes.length;
+        
+        // Contar por tipo
+        const contadores = { link_caido: 0, juego_incorrecto: 0, otro: 0 };
+        g.reportes.forEach(r => {
+            if (contadores[r.tipo] !== undefined) contadores[r.tipo]++;
+            else contadores.otro++;
+        });
+        
+        // Detalles de cada reporte individual
+        const detallesHTML = g.reportes.map(r => {
+            const tipoLabel = r.tipo === 'link_caido' ? '🔗 Link caído' : 
+                            (r.tipo === 'juego_incorrecto' ? '⚠️ Juego incorrecto' : '📝 Otro');
+            const fecha = r.timestamp ? formatearFecha(r.timestamp) : 'Sin fecha';
+            return `
+                <div class="reporte-detalle-item">
+                    <span class="reporte-detalle-label">${tipoLabel}</span>
+                    <span class="reporte-detalle-value">
+                        <div>${r.mensaje || '(sin mensaje)'}</div>
+                        <div style="font-size:0.7rem; opacity:0.6; margin-top:0.2rem;">
+                            <i class="fa fa-user"></i> ${r.usuario || 'Anónimo'} · <i class="fa fa-clock-o"></i> ${fecha}
+                            ${r.resuelto ? ' · <span style="color:#00c851;">✅ Resuelto</span>' : ''}
+                        </div>
+                    </span>
+                </div>
+            `;
+        }).join('');
+        
+        const badgesContador = [];
+        if (contadores.link_caido > 0) badgesContador.push(`<span class="reporte-badge tipo-link">🔗 ${contadores.link_caido}x link caído</span>`);
+        if (contadores.juego_incorrecto > 0) badgesContador.push(`<span class="reporte-badge tipo-incorrecto">⚠️ ${contadores.juego_incorrecto}x incorrecto</span>`);
+        if (contadores.otro > 0) badgesContador.push(`<span class="reporte-badge tipo-otro">📝 ${contadores.otro}x otro</span>`);
+        
+        const estadoClase = g.resuelto ? 'resuelto' : 'pendiente';
+        const estadoBadge = g.resuelto 
+            ? '<span class="reporte-badge resuelto-badge">✅ RESUELTO</span>' 
+            : '<span class="reporte-badge tipo-link">⏳ PENDIENTE</span>';
+        
+        return `
+        <div class="reporte-card ${estadoClase}" data-juego-id="${g.juegoId || ''}">
+            <div class="reporte-header">
+                <img class="reporte-thumb" src="${thumbSrc}" 
+                    onerror="this.onerror=null; this.src='https://via.placeholder.com/50x65/1a1400/ffd700?text=?';"
+                    loading="lazy" alt="">
+                <div class="reporte-info">
+                    <div class="reporte-titulo" title="${g.titulo}">${g.titulo}</div>
+                    <div class="reporte-badges">
+                        <span class="reporte-badge" style="background:rgba(0,240,255,0.15);color:#00f0ff;border:1px solid rgba(0,240,255,0.3);">
+                            <i class="fa fa-gamepad"></i> ${g.consola}
+                        </span>
+                        <span class="reporte-badge contador">
+                            <i class="fa fa-users"></i> ${totalReportes} reporte${totalReportes !== 1 ? 's' : ''}
+                        </span>
+                        ${estadoBadge}
+                    </div>
+                    <div class="reporte-badges">
+                        ${badgesContador.join('')}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="reporte-detalles">
+                ${detallesHTML}
+            </div>
+            
+            <div class="reporte-acciones">
+                ${!g.resuelto ? `
+                <button class="reporte-btn marcar-resuelto" onclick="Reportes.marcarGrupoResuelto('${g.juegoId}')">
+                    <i class="fa fa-check"></i> Marcar como resuelto
+                </button>` : `
+                <button class="reporte-btn marcar-resuelto" onclick="Reportes.reabrirGrupo('${g.juegoId}')" style="background:rgba(255,165,0,0.15);color:#ffa500;border-color:rgba(255,165,0,0.4);">
+                    <i class="fa fa-undo"></i> Reabrir
+                </button>`}
+                <button class="reporte-btn ir-editor" onclick="Reportes.irAEditor('${g.juegoId}', '${g.consola}')">
+                    <i class="fa fa-pencil"></i> Editar juego
+                </button>
+                <button class="reporte-btn" style="background:rgba(255,50,50,0.1);color:#ff6666;border-color:rgba(255,50,50,0.3);" 
+                    onclick="Reportes.eliminarReportesGrupo('${g.juegoId}')">
+                    <i class="fa fa-trash"></i> Borrar reportes
+                </button>
+            </div>
+        </div>`;
+    },
+    
+    async marcarGrupoResuelto(juegoId) {
+        try {
+            const reportesGrupo = this.reportes.filter(r => r.juegoId === juegoId && !r.resuelto);
+            for (const r of reportesGrupo) {
+                await db.collection('reportes').doc(r.id).update({ 
+                    resuelto: true, 
+                    resueltoPor: adminActual,
+                    resueltoTimestamp: Date.now() 
+                });
+                r.resuelto = true;
+                r.resueltoPor = adminActual;
+            }
+            this.renderizar();
+            this.actualizarStats();
+            mostrarToast(`✅ ${reportesGrupo.length} reporte(s) marcados como resueltos`, 'success');
+        } catch (err) {
+            mostrarToast('Error al marcar: ' + err.message, 'error');
+        }
+    },
+    
+    async reabrirGrupo(juegoId) {
+        try {
+            const reportesGrupo = this.reportes.filter(r => r.juegoId === juegoId && r.resuelto);
+            for (const r of reportesGrupo) {
+                await db.collection('reportes').doc(r.id).update({ 
+                    resuelto: false,
+                    resueltoPor: null,
+                    resueltoTimestamp: null
+                });
+                r.resuelto = false;
+            }
+            this.renderizar();
+            this.actualizarStats();
+            mostrarToast(`🔓 ${reportesGrupo.length} reporte(s) reabiertos`, 'info');
+        } catch (err) {
+            mostrarToast('Error al reabrir: ' + err.message, 'error');
+        }
+    },
+    
+    async eliminarReportesGrupo(juegoId) {
+        const reportesGrupo = this.reportes.filter(r => r.juegoId === juegoId);
+        if (!confirm(`¿Eliminar ${reportesGrupo.length} reporte(s) de este juego?\n\nEsta acción no se puede deshacer.`)) return;
+        
+        try {
+            for (const r of reportesGrupo) {
+                await db.collection('reportes').doc(r.id).delete();
+            }
+            this.reportes = this.reportes.filter(r => r.juegoId !== juegoId);
+            this.renderizar();
+            this.actualizarStats();
+            mostrarToast(`🗑️ ${reportesGrupo.length} reporte(s) eliminados`, 'success');
+        } catch (err) {
+            mostrarToast('Error al eliminar: ' + err.message, 'error');
+        }
+    },
+    
+    async irAEditor(juegoId, consola) {
+        if (!juegoId) { mostrarToast('Este reporte no tiene ID de juego', 'error'); return; }
+        if (!confirm('¿Ir al editor del juego?\n\nSe abrirá el panel principal.')) return;
+        mostrarPanel('panel-principal');
+        if (listaJuegos.length === 0) await cargarLista();
+        setTimeout(() => editarJuego(juegoId, consola), 100);
+    },
+    
+    async marcarTodosResueltos() {
+        const pendientes = this.reportes.filter(r => !r.resuelto);
+        if (pendientes.length === 0) { mostrarToast('No hay reportes pendientes', 'info'); return; }
+        if (!confirm(`¿Marcar ${pendientes.length} reporte(s) como resueltos?`)) return;
+        
+        try {
+            for (const r of pendientes) {
+                await db.collection('reportes').doc(r.id).update({ 
+                    resuelto: true, 
+                    resueltoPor: adminActual,
+                    resueltoTimestamp: Date.now() 
+                });
+                r.resuelto = true;
+            }
+            this.renderizar();
+            this.actualizarStats();
+            mostrarToast(`✅ ${pendientes.length} reporte(s) resueltos`, 'success');
+        } catch (err) {
+            mostrarToast('Error: ' + err.message, 'error');
+        }
+    },
+    
+    async limpiarResueltos() {
+        const resueltos = this.reportes.filter(r => r.resuelto);
+        if (resueltos.length === 0) { mostrarToast('No hay reportes resueltos', 'info'); return; }
+        if (!confirm(`¿Eliminar ${resueltos.length} reporte(s) ya resueltos?`)) return;
+        
+        try {
+            for (const r of resueltos) {
+                await db.collection('reportes').doc(r.id).delete();
+            }
+            this.reportes = this.reportes.filter(r => !r.resuelto);
+            this.renderizar();
+            this.actualizarStats();
+            mostrarToast(`🗑️ ${resueltos.length} reporte(s) eliminados`, 'success');
+        } catch (err) {
+            mostrarToast('Error: ' + err.message, 'error');
+        }
+    },
+    
+    actualizarStats() {
+        const total = this.reportes.length;
+        const pendientes = this.reportes.filter(r => !r.resuelto).length;
+        const resueltos = this.reportes.filter(r => r.resuelto).length;
+        const juegosAfectados = new Set(this.reportes.map(r => r.juegoId)).size;
+        document.getElementById('rep-stat-total').textContent = total;
+        document.getElementById('rep-stat-pendientes').textContent = pendientes;
+        document.getElementById('rep-stat-resueltos').textContent = resueltos;
+        document.getElementById('rep-stat-juegos').textContent = juegosAfectados;
+    }
+};
+
+document.getElementById('rep-btn-cargar').onclick = () => Reportes.cargar();
+document.getElementById('rep-btn-marcar-todos').onclick = () => Reportes.marcarTodosResueltos();
+document.getElementById('rep-btn-limpiar-resueltos').onclick = () => Reportes.limpiarResueltos();
+document.getElementById('rep-filtro-estado').onchange = () => Reportes.renderizar();
+document.getElementById('rep-filtro-tipo').onchange = () => Reportes.renderizar();
+document.getElementById('rep-buscar').oninput = () => Reportes.renderizar();
+
+// ==========================================
+// EVENT LISTENERS GENERALES
+// ==========================================
 document.getElementById('cerrar-modal-proceso').onclick = cerrarModal;
 document.getElementById('buscar').oninput = renderizarLista;
 document.getElementById('filtroTipo').onchange = renderizarLista;
