@@ -145,12 +145,7 @@
             .tab-btn-chip { font-size: 12px; padding: 12px 8px; }
         }
 
-        .neon-search-container {
-            position: relative;
-            width: 100%;
-            max-width: 600px;
-            margin: 0 auto;
-        }
+        .neon-search-container { position: relative; width: 100%; max-width: 600px; margin: 0 auto; }
 
         .neon-search-box {
             width: 100%;
@@ -178,36 +173,17 @@
         .neon-search-box::placeholder { color: rgba(156, 163, 175, 0.7); }
 
         .search-icon {
-            position: absolute;
-            left: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--neon-blue);
-            font-size: 16px;
-            z-index: 20;
+            position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+            color: var(--neon-blue); font-size: 16px; z-index: 20;
             text-shadow: 0 0 10px var(--neon-blue);
         }
 
         .search-clear {
-            position: absolute;
-            right: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--neon-red);
-            cursor: pointer;
-            display: none;
-            transition: all 0.2s;
-            z-index: 20;
-            font-size: 18px;
-            padding: 8px;
-            margin: -8px;
+            position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+            color: var(--neon-red); cursor: pointer; display: none; transition: all 0.2s;
+            z-index: 20; font-size: 18px; padding: 8px; margin: -8px;
         }
-
-        .search-clear:hover {
-            transform: translateY(-50%) scale(1.2);
-            text-shadow: 0 0 15px var(--neon-red);
-        }
-
+        .search-clear:hover { transform: translateY(-50%) scale(1.2); text-shadow: 0 0 15px var(--neon-red); }
         .search-clear.visible { display: block; }
 
         @media (min-width: 640px) {
@@ -217,71 +193,46 @@
         }
 
         .search-results {
-            position: absolute;
-            top: calc(100% + 10px);
-            left: 0;
-            right: 0;
-            background: rgba(5, 6, 14, 0.98);
-            backdrop-filter: blur(20px);
-            border-radius: 16px;
-            border: 2px solid var(--neon-blue);
+            position: absolute; top: calc(100% + 10px); left: 0; right: 0;
+            background: rgba(5, 6, 14, 0.98); backdrop-filter: blur(20px);
+            border-radius: 16px; border: 2px solid var(--neon-blue);
             box-shadow: 0 0 40px rgba(0, 240, 255, 0.4), 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 80px rgba(0, 240, 255, 0.2);
-            max-height: 60vh;
-            overflow-y: auto;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-10px);
+            max-height: 60vh; overflow-y: auto; z-index: 1000;
+            opacity: 0; visibility: hidden; transform: translateY(-10px);
             transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
         }
-
         @media (min-width: 640px) { .search-results { max-height: 600px; } }
-
         .search-results.active { opacity: 1; visibility: visible; transform: translateY(0); }
 
         .search-results-header {
-            padding: 16px 20px;
-            border-bottom: 1px solid rgba(0, 240, 255, 0.3);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 16px 20px; border-bottom: 1px solid rgba(0, 240, 255, 0.3);
+            display: flex; justify-content: space-between; align-items: center;
             background: rgba(0, 240, 255, 0.05);
         }
-
         .search-results-count { color: var(--neon-blue); font-weight: 700; font-size: 14px; }
 
         .search-results-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 12px;
-            padding: 16px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 12px; padding: 16px;
         }
-
         @media (min-width: 480px) {
             .search-results-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; padding: 20px; }
         }
 
         .search-result-item {
-            background: rgba(0, 240, 255, 0.05);
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            border-radius: 12px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            animation: fadeInResult 0.4s ease forwards;
-            opacity: 0;
-            transform: translateY(10px);
+            background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 12px; overflow: hidden; transition: all 0.3s ease;
+            cursor: pointer; animation: fadeInResult 0.4s ease forwards;
+            opacity: 0; transform: translateY(10px);
         }
-
         .search-result-item:hover {
-            transform: translateY(-5px) scale(1.02);
-            border-color: var(--neon-blue);
+            transform: translateY(-5px) scale(1.02); border-color: var(--neon-blue);
             box-shadow: 0 10px 30px rgba(0, 240, 255, 0.3);
         }
-
         @keyframes fadeInResult { to { opacity: 1; transform: translateY(0); } }
 
-        .search-result-cover { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
+        .search-result-cover-wrap { position: relative; width: 100%; }
+        .search-result-cover { width: 100%; object-fit: cover; display: block; }
         .search-result-info { padding: 10px; }
         .search-result-title {
             font-weight: 700; font-size: 13px; color: #fff; margin-bottom: 4px;
@@ -291,16 +242,10 @@
         .no-results i { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
 
         .news-panel {
-            background: rgba(5, 6, 14, 0.85);
-            backdrop-filter: blur(16px);
-            border-radius: 16px;
-            border: 2px solid var(--neon-green);
-            position: relative;
-            overflow: hidden;
-            margin: 16px auto;
-            max-width: 800px;
+            background: rgba(5, 6, 14, 0.85); backdrop-filter: blur(16px);
+            border-radius: 16px; border: 2px solid var(--neon-green);
+            position: relative; overflow: hidden; margin: 16px auto; max-width: 800px;
         }
-
         .news-content { position: relative; z-index: 10; padding: 16px; }
         @media (min-width: 640px) { .news-panel { margin: 20px auto; } .news-content { padding: 20px; } }
 
@@ -373,7 +318,7 @@
 
         .game-card, .folder-card {
             background: var(--glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border-radius: 14px; position: relative; overflow: hidden; border: 1px solid rgba(0, 240, 255, 0.15);
+            border-radius: 14px; position: relative; overflow: visible; border: 1px solid rgba(0, 240, 255, 0.15);
             text-decoration: none; color: inherit; display: block; transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
             cursor: pointer; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
@@ -397,53 +342,135 @@
         .game-card:active, .folder-card:active { transform: scale(0.97); }
         .game-card > *, .folder-card > * { position: relative; z-index: 2; }
 
-        /* === MODIFICADO: cover-img sin aspect-ratio fijo === */
+        .cover-wrap {
+            position: relative;
+            width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .game-card-compact .cover-wrap { border-radius: 8px; }
+
         .cover-img {
             width: 100%;
             object-fit: cover;
-            border-radius: 10px;
             display: block;
             background: linear-gradient(160deg, #141422, #1c1c30);
             transition: transform 0.4s ease;
         }
         .game-card:hover .cover-img { transform: scale(1.05); }
 
-        /* === NUEVO: Clases de aspect-ratio por categoría === */
-        .cover-ratio-1-1 { aspect-ratio: 1/1; border-radius: 18px; }
+        .cover-ratio-1-1 { aspect-ratio: 1/1; }
         .cover-ratio-3-4 { aspect-ratio: 3/4; }
         .cover-ratio-2-3 { aspect-ratio: 2/3; }
         .cover-ratio-4-5 { aspect-ratio: 4/5; }
         .cover-ratio-16-9 { aspect-ratio: 16/9; }
         .cover-ratio-9-16 { aspect-ratio: 9/16; }
 
+        /* ============================================================
+           ETIQUETA VERTICAL DEL TIPO (ROM/MOD/PORT)
+           Borde derecho, sobre la línea neón, texto vertical
+        ============================================================ */
+        .cover-tag {
+            position: absolute;
+            top: 50%;
+            z-index: 15;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 3px;
+            font-size: 9px;
+            font-weight: 800;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            line-height: 1;
+            pointer-events: none;
+            white-space: nowrap;
+            writing-mode: vertical-rl;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .cover-tag-type {
+            right: -9px;
+            transform: translateY(-50%);
+            border-radius: 0 5px 5px 0;
+            border-left: none;
+        }
+
+        /* ROM = NARANJA */
+        .tag-rom {
+            background: rgba(180, 90, 0, 0.92);
+            border: 1px solid rgba(255, 160, 30, 0.8);
+            color: #ffd9a0;
+            text-shadow: 0 0 6px rgba(255, 140, 0, 0.9);
+            box-shadow: 0 0 12px rgba(255, 120, 0, 0.4), inset 0 0 8px rgba(255, 160, 30, 0.15);
+        }
+
+        /* MOD = ROSA */
+        .tag-mod {
+            background: rgba(140, 0, 90, 0.92);
+            border: 1px solid rgba(255, 60, 180, 0.8);
+            color: #ffb8e8;
+            text-shadow: 0 0 6px rgba(255, 0, 150, 0.9);
+            box-shadow: 0 0 12px rgba(255, 0, 150, 0.4), inset 0 0 8px rgba(255, 80, 200, 0.15);
+        }
+
+        /* PORT = VERDE */
+        .tag-port {
+            background: rgba(0, 110, 65, 0.92);
+            border: 1px solid rgba(0, 230, 140, 0.8);
+            color: #a0ffd8;
+            text-shadow: 0 0 6px rgba(0, 220, 130, 0.9);
+            box-shadow: 0 0 12px rgba(0, 200, 120, 0.4), inset 0 0 8px rgba(0, 255, 160, 0.15);
+        }
+
+        /* GENÉRICO = GRIS */
+        .tag-generic {
+            background: rgba(60, 60, 75, 0.92);
+            border: 1px solid rgba(150, 150, 170, 0.6);
+            color: #cccce0;
+            text-shadow: 0 0 4px rgba(180, 180, 200, 0.5);
+            box-shadow: 0 0 8px rgba(100, 100, 120, 0.3);
+        }
+
+        /* Tamaños tarjetas normales */
+        .game-card:not(.game-card-compact) .cover-tag {
+            font-size: 10px;
+            padding: 12px 4px;
+        }
+        .game-card:not(.game-card-compact) .cover-tag-type { right: -10px; }
+
+        /* Modal */
+        .modal-cover-wrap .cover-tag {
+            font-size: 10px;
+            padding: 14px 4px;
+        }
+        .modal-cover-wrap .cover-tag-type { right: -10px; }
+
+        /* Búsqueda: más pequeñas */
+        .search-result-cover-wrap .cover-tag {
+            font-size: 8px;
+            padding: 8px 2px;
+        }
+        .search-result-cover-wrap .cover-tag-type { right: -7px; }
+
+        /* Compactas (ticker) */
+        .game-card-compact .cover-tag {
+            font-size: 8px;
+            padding: 8px 2px;
+        }
+        .game-card-compact .cover-tag-type { right: -8px; }
+
         .card-title {
             font-weight: 700; font-size: 0.92rem; line-height: 1.3; margin-top: 10px;
             display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: #f3f4f6;
         }
 
-        .game-card-compact {
-            flex-shrink: 0;
-            width: 115px;
-            padding: 8px !important;
-        }
-        @media (min-width: 480px) {
-            .game-card-compact { width: 125px; padding: 10px !important; }
-        }
-        @media (min-width: 768px) {
-            .game-card-compact { width: 135px; }
-        }
-        .game-card-compact .card-title {
-            font-size: 0.78rem;
-            margin-top: 6px;
-            line-height: 1.2;
-            -webkit-line-clamp: 1;
-        }
-        .game-card-compact .cover-img {
-            border-radius: 8px;
-        }
-        .game-card-compact .cover-ratio-1-1 {
-            border-radius: 14px;
-        }
+        .game-card-compact { flex-shrink: 0; width: 115px; padding: 8px !important; }
+        @media (min-width: 480px) { .game-card-compact { width: 125px; padding: 10px !important; } }
+        @media (min-width: 768px) { .game-card-compact { width: 135px; } }
+        .game-card-compact .card-title { font-size: 0.78rem; margin-top: 6px; line-height: 1.2; -webkit-line-clamp: 1; }
 
         .scroll-row {
             display: flex; gap: 14px; overflow-x: auto; padding: 4px 12px 16px;
@@ -468,28 +495,12 @@
         .btn-neon.disabled { opacity: 0.45; pointer-events: none; }
 
         .btn-report {
-            width: 100%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            background: rgba(255, 0, 85, 0.08);
-            border: 1px solid rgba(255, 0, 85, 0.35);
-            color: var(--neon-red);
-            border-radius: 12px;
-            padding: 12px 18px;
-            font-weight: 700;
-            font-size: 14px;
-            font-family: 'Orbitron', sans-serif;
-            transition: all 0.22s ease;
-            cursor: pointer;
-            margin-bottom: 24px;
+            width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            background: rgba(255, 0, 85, 0.08); border: 1px solid rgba(255, 0, 85, 0.35); color: var(--neon-red);
+            border-radius: 12px; padding: 12px 18px; font-weight: 700; font-size: 14px;
+            font-family: 'Orbitron', sans-serif; transition: all 0.22s ease; cursor: pointer; margin-bottom: 24px;
         }
-        .btn-report:hover {
-            background: rgba(255, 0, 85, 0.16);
-            box-shadow: 0 0 18px rgba(255, 0, 85, 0.2);
-            transform: translateY(-1px);
-        }
+        .btn-report:hover { background: rgba(255, 0, 85, 0.16); box-shadow: 0 0 18px rgba(255, 0, 85, 0.2); transform: translateY(-1px); }
         .btn-report:active { transform: scale(0.98); }
 
         .btn-page {
@@ -531,67 +542,28 @@
         .grupo-whatsapp:hover .grupo-btn { background: rgba(37, 211, 102, 0.2); box-shadow: 0 0 18px rgba(37, 211, 102, 0.25); }
 
         .carousel-section {
-            background: rgba(5, 6, 14, 0.55);
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            padding: 16px 12px 12px;
-            margin-bottom: 14px;
-            position: relative;
-            overflow: hidden;
+            background: rgba(5, 6, 14, 0.55); border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.06); padding: 16px 12px 12px;
+            margin-bottom: 14px; position: relative; overflow: hidden;
         }
         .carousel-section::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 16px;
-            padding: 1px;
+            content: ''; position: absolute; inset: 0; border-radius: 16px; padding: 1px;
             background: linear-gradient(120deg, var(--accent-from, var(--neon-blue)), var(--accent-to, var(--neon-purple)), transparent 60%);
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            pointer-events: none;
-            opacity: 0.5;
+            -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; opacity: 0.5;
         }
-        .carousel-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 10px;
-            padding: 0 6px;
-        }
+        .carousel-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; padding: 0 6px; }
         .carousel-icon-wrap {
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            color: white;
-            font-size: 16px;
+            width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center;
+            justify-content: center; flex-shrink: 0; color: white; font-size: 16px;
         }
-        .carousel-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.95rem;
-            font-weight: 800;
-            margin: 0;
-            line-height: 1.15;
-        }
-        .carousel-subtitle {
-            font-size: 0.72rem;
-            color: #9ca3af;
-            margin: 0;
-        }
+        .carousel-title { font-family: 'Orbitron', sans-serif; font-size: 0.95rem; font-weight: 800; margin: 0; line-height: 1.15; }
+        .carousel-subtitle { font-size: 0.72rem; color: #9ca3af; margin: 0; }
         .carousel-track {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            scrollbar-width: none;
-            padding: 4px 6px 10px;
-            -webkit-overflow-scrolling: touch;
-            will-change: scroll-position;
-            align-items: flex-start;
+            display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none;
+            padding: 4px 6px 10px; -webkit-overflow-scrolling: touch;
+            will-change: scroll-position; align-items: flex-start;
         }
         .carousel-track::-webkit-scrollbar { display: none; }
         .carousel-track > * { flex-shrink: 0; }
@@ -604,19 +576,11 @@
         .modal-overlay.active { opacity: 1; visibility: visible; }
 
         .modal-content {
-            background: rgba(8, 10, 18, 0.96);
-            border: 2px solid var(--neon-blue);
-            border-radius: 22px;
-            padding: 24px;
-            width: 100%;
-            max-width: 700px;
-            max-height: min(92vh, 980px);
-            overflow-y: auto;
-            position: relative;
-            text-align: center;
+            background: rgba(8, 10, 18, 0.96); border: 2px solid var(--neon-blue); border-radius: 22px;
+            padding: 24px; width: 100%; max-width: 700px; max-height: min(92vh, 980px);
+            overflow-y: auto; position: relative; text-align: center;
             box-shadow: 0 0 60px rgba(0, 240, 255, 0.22), inset 0 0 40px rgba(0, 240, 255, 0.04);
-            transform: scale(0.92) translateY(24px);
-            transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+            transform: scale(0.92) translateY(24px); transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
         }
         .modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
 
@@ -629,15 +593,25 @@
         .modal-close-btn:hover { background: var(--neon-red); color: #fff; box-shadow: 0 0 18px var(--neon-red); }
 
         .modal-top { display: flex; align-items: center; gap: 18px; text-align: left; margin-bottom: 18px; padding-right: 34px; }
-        .modal-cover { width: 115px; height: 155px; object-fit: cover; border-radius: 14px; border: 2px solid rgba(0, 240, 255, 0.45); box-shadow: 0 10px 30px rgba(0,0,0,0.55), 0 0 22px rgba(0, 240, 255, 0.18); flex-shrink: 0; background: #101018; }
+
+        .modal-cover-wrap {
+            position: relative; flex-shrink: 0; width: 115px; overflow: visible;
+            border-radius: 14px; background: #101018;
+        }
+        .modal-cover-wrap .cover-img {
+            border-radius: 12px;
+            border: 2px solid rgba(0, 240, 255, 0.45);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.55), 0 0 22px rgba(0, 240, 255, 0.18);
+        }
+
         .modal-heading { flex: 1; min-width: 0; }
         .modal-title { font-family: 'Orbitron', sans-serif; font-size: 1.45rem; font-weight: 800; color: #fff; margin: 0 0 10px; line-height: 1.25; text-shadow: 0 0 12px rgba(0, 240, 255, 0.45); word-break: break-word; }
         .modal-badges { display: flex; flex-wrap: wrap; gap: 8px; }
         .modal-badge { display: inline-flex; align-items: center; padding: 5px 11px; border-radius: 999px; font-size: 11px; font-weight: 800; letter-spacing: 0.04em; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.05); }
-        .badge-console { color: var(--neon-green); border-color: rgba(0,255,148,0.35); background: rgba(0,255,148,0.08); }
-        .badge-rom { color: var(--neon-orange); border-color: rgba(255,149,0,0.4); background: rgba(255,149,0,0.08); }
-        .badge-mod { color: var(--neon-pink); border-color: rgba(255,0,170,0.4); background: rgba(255,0,170,0.08); }
-        .badge-port { color: var(--neon-blue); border-color: rgba(0,240,255,0.4); background: rgba(0,240,255,0.08); }
+        .badge-console { color: #8ec8ff; border-color: rgba(0, 100, 220, 0.5); background: rgba(8, 40, 100, 0.5); }
+        .badge-rom { color: var(--neon-orange); border-color: rgba(255,149,0,0.5); background: rgba(255,149,0,0.12); }
+        .badge-mod { color: var(--neon-pink); border-color: rgba(255,0,170,0.5); background: rgba(255,0,170,0.12); }
+        .badge-port { color: var(--neon-green); border-color: rgba(0,255,148,0.5); background: rgba(0,200,120,0.12); }
         .badge-generic { color: #d1d5db; border-color: rgba(255,255,255,0.18); background: rgba(255,255,255,0.04); }
 
         .modal-screenshot-stage {
@@ -673,7 +647,7 @@
             .modal-content { padding: 18px; }
             .modal-top { flex-direction: column; text-align: center; padding-right: 0; }
             .modal-badges { justify-content: center; }
-            .modal-cover { width: 140px; height: 185px; }
+            .modal-cover-wrap { width: 140px; }
             .grupo-top { flex-direction: column; text-align: center; }
             .grupo-info { text-align: center; }
             .carousel-section { padding: 12px 10px 10px; }
@@ -774,13 +748,11 @@
         <div class="back-btn" id="btn-volver"><i class="fa fa-arrow-left"></i> Volver al inicio</div>
         <h2 class="font-neon text-2xl neon-animated mb-1" id="cat-title">Catálogo</h2>
         <p class="text-gray-400 text-sm mb-6" id="cat-subtitle">—</p>
-
         <div class="relative max-w-md mb-4">
             <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-cyan-400/70 text-sm"></i>
             <input type="search" id="cat-search" class="w-full pl-9 pr-9 py-3 bg-black/60 border border-cyan-500/30 rounded-xl text-white font-semibold outline-none focus:border-cyan-400 focus:shadow-[0_0_15px_rgba(0,240,255,0.2)] transition-all text-base" placeholder="Filtrar en esta categoría...">
             <i class="fa fa-times absolute right-2 top-1/2 -translate-y-1/2 text-red-500 cursor-pointer hidden transition-all p-2 -m-2" id="cat-search-clear"></i>
         </div>
-
         <div class="mb-6">
             <p class="text-xs text-gray-400 mb-2 font-semibold uppercase tracking-wider">Filtrar por letra inicial:</p>
             <div class="letter-filter" id="letter-filter">
@@ -788,9 +760,7 @@
                 <button type="button" class="letter-btn" data-letter="A">A</button><button type="button" class="letter-btn" data-letter="B">B</button><button type="button" class="letter-btn" data-letter="C">C</button><button type="button" class="letter-btn" data-letter="D">D</button><button type="button" class="letter-btn" data-letter="E">E</button><button type="button" class="letter-btn" data-letter="F">F</button><button type="button" class="letter-btn" data-letter="G">G</button><button type="button" class="letter-btn" data-letter="H">H</button><button type="button" class="letter-btn" data-letter="I">I</button><button type="button" class="letter-btn" data-letter="J">J</button><button type="button" class="letter-btn" data-letter="K">K</button><button type="button" class="letter-btn" data-letter="L">L</button><button type="button" class="letter-btn" data-letter="M">M</button><button type="button" class="letter-btn" data-letter="N">N</button><button type="button" class="letter-btn" data-letter="O">O</button><button type="button" class="letter-btn" data-letter="P">P</button><button type="button" class="letter-btn" data-letter="Q">Q</button><button type="button" class="letter-btn" data-letter="R">R</button><button type="button" class="letter-btn" data-letter="S">S</button><button type="button" class="letter-btn" data-letter="T">T</button><button type="button" class="letter-btn" data-letter="U">U</button><button type="button" class="letter-btn" data-letter="V">V</button><button type="button" class="letter-btn" data-letter="W">W</button><button type="button" class="letter-btn" data-letter="X">X</button><button type="button" class="letter-btn" data-letter="Y">Y</button><button type="button" class="letter-btn" data-letter="Z">Z</button>
             </div>
         </div>
-
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4" id="cat-grid"></div>
-
         <div class="flex items-center justify-center gap-4 mt-10">
             <button type="button" class="btn-page" id="prev-page" disabled><i class="fa fa-chevron-left mr-1"></i> Anterior</button>
             <span class="text-sm text-gray-300 font-bold font-neon" id="page-info">1 / 1</span>
@@ -849,16 +819,10 @@
     <div id="contenido-grupos" class="tab-content">
         <h3 class="font-neon text-2xl neon-animated mb-2 flex items-center gap-2"><i class="fa fa-users"></i> Grupos Gamers</h3>
         <p class="text-gray-400 text-sm mb-6">Únete a nuestros grupos oficiales de WhatsApp</p>
-
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <a href="https://chat.whatsapp.com/C3M05Sa7uCZ7ujGyi72Dj4?s=cl&p=a&mlu=4"
-               target="_blank" rel="noopener noreferrer"
-               class="game-card grid-card grupo-whatsapp p-5">
+            <a href="https://chat.whatsapp.com/C3M05Sa7uCZ7ujGyi72Dj4?s=cl&p=a&mlu=4" target="_blank" rel="noopener noreferrer" class="game-card grid-card grupo-whatsapp p-5">
                 <div class="grupo-top">
-                    <div class="grupo-logo-wrap">
-                        <img src="images/logo.png" alt="Gamer Mod Hub" class="grupo-logo"
-                             onerror="if(!this.dataset.f1){this.dataset.f1='1'; this.src='logo.png';} else {this.src='https://via.placeholder.com/100x100/0b0f0c/25d366?text=GMH';}">
-                    </div>
+                    <div class="grupo-logo-wrap"><img src="images/logo.png" alt="Gamer Mod Hub" class="grupo-logo" onerror="if(!this.dataset.f1){this.dataset.f1='1'; this.src='logo.png';} else {this.src='https://via.placeholder.com/100x100/0b0f0c/25d366?text=GMH';}"></div>
                     <div class="grupo-info">
                         <span class="grupo-app"><i class="fa fa-whatsapp"></i> Grupo WhatsApp</span>
                         <h4 class="grupo-name">Gamer Mod Hub N°1</h4>
@@ -867,15 +831,9 @@
                 </div>
                 <span class="grupo-btn"><i class="fa fa-whatsapp"></i> Unirse al grupo</span>
             </a>
-
-            <a href="https://chat.whatsapp.com/HSsqpYKBunI5hWKq8eeosB?s=cl&p=a&mlu=4"
-               target="_blank" rel="noopener noreferrer"
-               class="game-card grid-card grupo-whatsapp p-5">
+            <a href="https://chat.whatsapp.com/HSsqpYKBunI5hWKq8eeosB?s=cl&p=a&mlu=4" target="_blank" rel="noopener noreferrer" class="game-card grid-card grupo-whatsapp p-5">
                 <div class="grupo-top">
-                    <div class="grupo-logo-wrap">
-                        <img src="images/logo.png" alt="Gamer Mod Hub" class="grupo-logo"
-                             onerror="if(!this.dataset.f1){this.dataset.f1='1'; this.src='logo.png';} else {this.src='https://via.placeholder.com/100x100/0b0f0c/25d366?text=GMH';}">
-                    </div>
+                    <div class="grupo-logo-wrap"><img src="images/logo.png" alt="Gamer Mod Hub" class="grupo-logo" onerror="if(!this.dataset.f1){this.dataset.f1='1'; this.src='logo.png';} else {this.src='https://via.placeholder.com/100x100/0b0f0c/25d366?text=GMH';}"></div>
                     <div class="grupo-info">
                         <span class="grupo-app"><i class="fa fa-whatsapp"></i> Grupo WhatsApp</span>
                         <h4 class="grupo-name">Gamer Mod Hub N°2</h4>
@@ -890,37 +848,28 @@
 
 <div id="game-modal" class="modal-overlay" onclick="if(event.target === this) closeGameModal()">
     <div class="modal-content" id="modal-content">
-        <button class="modal-close-btn" onclick="closeGameModal()" aria-label="Cerrar">
-            <i class="fa fa-times"></i>
-        </button>
-
+        <button class="modal-close-btn" onclick="closeGameModal()" aria-label="Cerrar"><i class="fa fa-times"></i></button>
         <div class="modal-top">
-            <img id="modal-cover" class="modal-cover" src="" alt="Portada del juego">
+            <div id="modal-cover-wrap" class="modal-cover-wrap cover-ratio-3-4">
+                <img id="modal-cover" class="cover-img" src="" alt="Portada del juego">
+                <span id="modal-tag-console" class="cover-tag cover-tag-type tag-generic" style="display:none;"></span>
+                <span id="modal-tag-type" class="cover-tag cover-tag-type tag-rom"></span>
+            </div>
             <div class="modal-heading">
                 <h3 id="modal-title" class="modal-title"></h3>
                 <div id="modal-badges" class="modal-badges"></div>
             </div>
         </div>
-
         <div class="modal-screenshot-stage">
             <div id="modal-screenshot-bg" class="screenshot-bg"></div>
             <img id="modal-screenshot" class="modal-screenshot-img" src="" alt="Captura del juego">
             <span id="modal-screenshot-badge" class="screenshot-badge">Captura</span>
         </div>
-
         <div id="modal-screenshot-thumbs" class="screenshot-thumbs"></div>
-
         <div class="modal-desc-title">Descripción</div>
         <p id="modal-desc" class="modal-desc"></p>
-
-        <a id="modal-download" href="#" target="_blank" rel="noopener noreferrer" class="btn-neon modal-download-btn">
-            <i class="fa fa-download"></i> Descargar
-        </a>
-
-        <button id="modal-report" class="btn-report" type="button">
-            <i class="fa fa-flag"></i> Report
-        </button>
-
+        <a id="modal-download" href="#" target="_blank" rel="noopener noreferrer" class="btn-neon modal-download-btn"><i class="fa fa-download"></i> Descargar</a>
+        <button id="modal-report" class="btn-report" type="button"><i class="fa fa-flag"></i> Report</button>
         <div class="modal-extra">
             <div class="modal-extra-title">Información adicional</div>
             <div class="modal-meta">
@@ -950,7 +899,6 @@
     const ROMS_PREVIEW = 8;
     const ROMS_PER_PAGE = 12;
 
-    // === NUEVO: Placeholders por aspect-ratio ===
     const PLACEHOLDER_COVERS = {
         '1/1': 'https://via.placeholder.com/400x400/1a1a2e/00f0ff?text=SIN+PORTADA',
         '3/4': 'https://via.placeholder.com/300x400/1a1a2e/00f0ff?text=SIN+PORTADA',
@@ -963,17 +911,14 @@
 
     let db = {};
     let CATEGORIES = [];
-
     let currentCategory = '';
     let filteredList = [];
     let currentPage = 1;
     let totalPages = 1;
     let currentLetter = 'all';
-
     let newsData = [];
     let currentNewsIndex = 0;
     let newsRotationInterval;
-
     let modalScreenshots = [];
     let currentModalScreenshot = 0;
     let currentModalCover = '';
@@ -992,42 +937,26 @@
         'mame': 'MAME', 'arcade_y_mas': 'Arcade y Más'
     };
 
-    // === NUEVO: Mapa de aspect-ratios por categoría ===
     const CONSOLE_ASPECT_RATIOS = {
-        // Apps/PC
-        'android': '1/1',          // Cuadrado (Play Store)
-        'windows': '3/4',          // Poster vertical (Steam/GOG)
-
-        // PlayStation (cajas verticales)
-        'ps1': '3/4', 'ps2': '3/4', 'ps3': '3/4', 'ps4': '3/4',
-        'psp': '3/4', 'psvita': '3/4',
-
-        // Nintendo portátiles
-        'gameboy': '3/4', 'gameboycolor': '3/4', 'gameboyadvance': '3/4',
-        'nds': '3/4', '3ds': '3/4',
-
-        // Nintendo sobremesa
-        'nes': '3/4', 'snes': '3/4', 'n64': '3/4',
-        'gamecube': '3/4', 'wii': '3/4', 'wiiu': '3/4',
-
-        // Xbox
+        'android': '1/1', 'windows': '3/4',
+        'ps1': '3/4', 'ps2': '3/4', 'ps3': '3/4', 'ps4': '3/4', 'psp': '3/4', 'psvita': '3/4',
+        'gameboy': '3/4', 'gameboycolor': '3/4', 'gameboyadvance': '3/4', 'nds': '3/4', '3ds': '3/4',
+        'nes': '3/4', 'snes': '3/4', 'n64': '3/4', 'gamecube': '3/4', 'wii': '3/4', 'wiiu': '3/4',
         'xbox': '3/4', 'xbox360': '3/4',
-
-        // Sega
         'segagenesis': '3/4', 'segasaturn': '3/4', 'sega_dreamcast': '3/4',
-
-        // Arcade
         'mame': '3/4', 'arcade_y_mas': '3/4',
     };
 
-    // === NUEVO: Helper para obtener aspect-ratio ===
-    function getCoverRatio(category) {
-        return CONSOLE_ASPECT_RATIOS[category] || '3/4';
-    }
+    function getCoverRatio(category) { return CONSOLE_ASPECT_RATIOS[category] || '3/4'; }
+    function getPlaceholder(ratio) { return PLACEHOLDER_COVERS[ratio] || PLACEHOLDER_COVER; }
 
-    // === NUEVO: Helper para obtener placeholder según ratio ===
-    function getPlaceholder(ratio) {
-        return PLACEHOLDER_COVERS[ratio] || PLACEHOLDER_COVER;
+    function getTypeTagClass(type) {
+        switch (type) {
+            case 'rom': return 'tag-rom';
+            case 'mod': return 'tag-mod';
+            case 'port': return 'tag-port';
+            default: return 'tag-generic';
+        }
     }
 
     const TYPE_INFO = {
@@ -1035,6 +964,15 @@
         mod: { label: 'MOD', badgeClass: 'badge-mod' },
         port: { label: 'PORT', badgeClass: 'badge-port' }
     };
+
+    function getTypeInfo(type) {
+        return TYPE_INFO[type] || { label: String(type || 'N/A').toUpperCase(), badgeClass: 'badge-generic' };
+    }
+
+    function getConsoleName(key) {
+        if (!key) return 'N/A';
+        return CONSOLE_NAMES[key] || String(key).toUpperCase().replace(/_/g, ' ');
+    }
 
     const ICONOS_CONSOLA = {
         'android': '🤖', 'windows': '💻', 'psvita': '🎮', 'psp': '📀',
@@ -1046,6 +984,19 @@
         'sega_dreamcast': '💿', 'mame': '🕹️', 'arcade_y_mas': '👾'
     };
 
+    // === Solo etiqueta del TIPO (ROM/MOD/PORT) en borde derecho ===
+    function buildCoverTags(game, category) {
+        const typeInfo = getTypeInfo(game.tipo);
+        const typeClass = getTypeTagClass(game.tipo);
+        return `<span class="cover-tag cover-tag-type ${typeClass}">${escapeHtml(typeInfo.label)}</span>`;
+    }
+
+    function buildCoverTagCompact(game, category) {
+        const typeInfo = getTypeInfo(game.tipo);
+        const typeClass = getTypeTagClass(game.tipo);
+        return `<span class="cover-tag cover-tag-type ${typeClass}">${escapeHtml(typeInfo.label)}</span>`;
+    }
+
     class TickerCarousel {
         constructor(trackId, options = {}) {
             this.track = document.getElementById(trackId);
@@ -1055,89 +1006,45 @@
             this.isPaused = false;
             this.lastTimestamp = 0;
             this.userInteractUntil = 0;
-
             if (this.track) this._bindEvents();
         }
-
         _bindEvents() {
             this.track.addEventListener('mouseenter', () => this._pause());
             this.track.addEventListener('mouseleave', () => this._resume());
             this.track.addEventListener('touchstart', () => this._pause(), { passive: true });
-            this.track.addEventListener('touchend', () => {
-                this.userInteractUntil = Date.now() + 2000;
-                this._resume();
-            });
+            this.track.addEventListener('touchend', () => { this.userInteractUntil = Date.now() + 2000; this._resume(); });
             this.track.addEventListener('wheel', (e) => {
-                if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-                    this.userInteractUntil = Date.now() + 2500;
-                }
+                if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) this.userInteractUntil = Date.now() + 2500;
             }, { passive: true });
             let scrollTimeout;
             this.track.addEventListener('scroll', () => {
                 clearTimeout(scrollTimeout);
                 scrollTimeout = setTimeout(() => {
-                    if (this.isPaused && Date.now() >= this.userInteractUntil) {
-                        this._resume();
-                    }
+                    if (this.isPaused && Date.now() >= this.userInteractUntil) this._resume();
                 }, 200);
             }, { passive: true });
         }
-
-        _pause() {
-            this.isPaused = true;
-            if (this.animationId) {
-                cancelAnimationFrame(this.animationId);
-                this.animationId = null;
-            }
-        }
-
-        _resume() {
-            if (!this.isPaused) return;
-            this.isPaused = false;
-            this.lastTimestamp = 0;
-            this._tick();
-        }
-
+        _pause() { this.isPaused = true; if (this.animationId) { cancelAnimationFrame(this.animationId); this.animationId = null; } }
+        _resume() { if (!this.isPaused) return; this.isPaused = false; this.lastTimestamp = 0; this._tick(); }
         _tick(timestamp = 0) {
             if (this.isPaused) return;
-            if (Date.now() < this.userInteractUntil) {
-                this.animationId = requestAnimationFrame(() => this._tick());
-                return;
-            }
+            if (Date.now() < this.userInteractUntil) { this.animationId = requestAnimationFrame(() => this._tick()); return; }
             if (!this.lastTimestamp) this.lastTimestamp = timestamp;
             const delta = (timestamp - this.lastTimestamp) / 1000;
             this.lastTimestamp = timestamp;
             if (delta > 0 && delta < 0.5) {
                 const move = this.speed * delta;
                 const maxScroll = this.track.scrollWidth - this.track.clientWidth;
-                if (maxScroll <= 0) {
-                    // sin overflow
-                } else if (this.track.scrollLeft >= maxScroll - 2) {
-                    if (this.loop) {
-                        this.track.scrollLeft = 0;
-                    } else {
-                        this._pause();
-                        return;
-                    }
-                } else {
-                    this.track.scrollLeft += move;
-                }
+                if (maxScroll <= 0) {}
+                else if (this.track.scrollLeft >= maxScroll - 2) {
+                    if (this.loop) this.track.scrollLeft = 0;
+                    else { this._pause(); return; }
+                } else this.track.scrollLeft += move;
             }
             this.animationId = requestAnimationFrame((t) => this._tick(t));
         }
-
-        start() {
-            this.isPaused = false;
-            this.lastTimestamp = 0;
-            this._tick();
-        }
-
-        destroy() {
-            if (this.animationId) {
-                cancelAnimationFrame(this.animationId);
-                this.animationId = null;
-            }
-        }
+        start() { this.isPaused = false; this.lastTimestamp = 0; this._tick(); }
+        destroy() { if (this.animationId) { cancelAnimationFrame(this.animationId); this.animationId = null; } }
     }
 
     let latestTicker = null;
@@ -1146,10 +1053,7 @@
     function showSection(id) {
         contents.forEach(c => c.classList.remove('active'));
         const el = document.getElementById(id);
-        if (el) {
-            el.classList.add('active');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+        if (el) { el.classList.add('active'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
         setTimeout(bindNeon, 40);
     }
 
@@ -1161,12 +1065,10 @@
     }
 
     const logoHome = document.getElementById('logo-home');
-    if (logoHome) {
-        logoHome.addEventListener('click', goHome);
-    }
+    if (logoHome) logoHome.addEventListener('click', goHome);
 
     tabs.forEach(tab => {
-        tab.addEventListener('click', (e) => {
+        tab.addEventListener('click', () => {
             if (!tab.dataset.target) return;
             tabs.forEach(t => t.classList.remove('tab-active'));
             tab.classList.add('tab-active');
@@ -1191,39 +1093,12 @@
     }
 
     function escapeHtml(str) {
-        return String(str ?? '').replace(/[&<>"']/g, s => ({
-            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-        }[s]));
+        return String(str ?? '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
     }
-
-    function escapeRegExp(string) {
-        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    }
-
-    function safeUrl(url, fallback) {
-        const value = String(url || '').trim();
-        return value || fallback;
-    }
-
-    function getGameTitle(game) {
-        return game.title || game.nombre || game.name || 'Sin título';
-    }
-
-    function getGameDescription(game) {
-        return game.descripcion || game.description || '';
-    }
-
-    function getConsoleName(key) {
-        if (!key) return 'N/A';
-        return CONSOLE_NAMES[key] || String(key).toUpperCase().replace(/_/g, ' ');
-    }
-
-    function getTypeInfo(type) {
-        return TYPE_INFO[type] || {
-            label: String(type || 'N/A').toUpperCase(),
-            badgeClass: 'badge-generic'
-        };
-    }
+    function escapeRegExp(string) { return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+    function safeUrl(url, fallback) { const value = String(url || '').trim(); return value || fallback; }
+    function getGameTitle(game) { return game.title || game.nombre || game.name || 'Sin título'; }
+    function getGameDescription(game) { return game.descripcion || game.description || ''; }
 
     function formatTimestamp(timestamp) {
         if (!timestamp) return '—';
@@ -1245,10 +1120,7 @@
         const safeText = escapeHtml(text || '');
         const safeQuery = escapeHtml(query || '');
         if (!safeQuery) return safeText;
-        return safeText.replace(
-            new RegExp(`(${escapeRegExp(safeQuery)})`, 'gi'),
-            '<span style="color: var(--neon-blue); font-weight: bold;">$1</span>'
-        );
+        return safeText.replace(new RegExp(`(${escapeRegExp(safeQuery)})`, 'gi'), '<span style="color: var(--neon-blue); font-weight: bold;">$1</span>');
     }
 
     function getAllCategoryKeys() {
@@ -1256,20 +1128,10 @@
         const known = Object.keys(CONSOLE_NAMES);
         return [...new Set([...known, ...fromDb])];
     }
+    function getCategoryCount(cat) { return Array.isArray(db[cat]) ? db[cat].length : 0; }
+    function countLabel(count) { return `${count} ${count === 1 ? 'título' : 'títulos'}`; }
+    function gamesLabel(count) { return `${count} ${count === 1 ? 'juego disponible' : 'juegos disponibles'}`; }
 
-    function getCategoryCount(cat) {
-        return Array.isArray(db[cat]) ? db[cat].length : 0;
-    }
-
-    function countLabel(count) {
-        return `${count} ${count === 1 ? 'título' : 'títulos'}`;
-    }
-
-    function gamesLabel(count) {
-        return `${count} ${count === 1 ? 'juego disponible' : 'juegos disponibles'}`;
-    }
-
-    // === MODIFICADO: Aplica aspect-ratio dinámico según categoría ===
     function createGameCard(game, category, opts = {}) {
         const ratio = getCoverRatio(category);
         const ratioClass = 'cover-ratio-' + ratio.replace('/', '-');
@@ -1287,21 +1149,23 @@
         card.onclick = () => openGameModal(game, category);
         card.onkeydown = (e) => { if (e.key === 'Enter') openGameModal(game, category); };
 
+        const tags = isCompact ? buildCoverTagCompact(game, category) : buildCoverTags(game, category);
+
         card.innerHTML = `
-            <img class="cover-img ${ratioClass}" src="${escapeHtml(coverSrc)}" alt="${escapeHtml(title)}" loading="lazy"
-                 onerror="this.src='${placeholder}'">
+            <div class="cover-wrap ${ratioClass}">
+                <img class="cover-img" src="${escapeHtml(coverSrc)}" alt="${escapeHtml(title)}" loading="lazy"
+                     onerror="this.src='${placeholder}'">
+            </div>
+            ${tags}
             <h4 class="card-title">${escapeHtml(title)}</h4>
         `;
-
         return card;
     }
 
     function getAllGamesWithCategory() {
         const all = [];
         Object.entries(db).forEach(([cat, games]) => {
-            if (Array.isArray(games)) {
-                games.forEach(g => all.push({ ...g, category: cat }));
-            }
+            if (Array.isArray(games)) games.forEach(g => all.push({ ...g, category: cat }));
         });
         return all;
     }
@@ -1310,22 +1174,12 @@
         const track = document.getElementById('latest-games-track');
         if (!track) return;
         track.innerHTML = '';
-
-        const allGames = getAllGamesWithCategory()
-            .filter(g => g.timestamp)
-            .sort((a, b) => b.timestamp - a.timestamp)
-            .slice(0, 20);
-
+        const allGames = getAllGamesWithCategory().filter(g => g.timestamp).sort((a, b) => b.timestamp - a.timestamp).slice(0, 20);
         if (allGames.length === 0) {
             track.innerHTML = `<div class="text-center py-6 text-gray-400 text-sm"><i class="fa fa-inbox text-2xl mb-2 opacity-50 block"></i>Aún no hay juegos recientes.</div>`;
             return;
         }
-
-        allGames.forEach((g, i) => {
-            const card = createGameCard(g, g.category, { compact: true, delay: i * 0.03 });
-            track.appendChild(card);
-        });
-
+        allGames.forEach((g, i) => track.appendChild(createGameCard(g, g.category, { compact: true, delay: i * 0.03 })));
         bindNeon();
     }
 
@@ -1333,55 +1187,39 @@
         const track = document.getElementById('top-searched-track');
         if (!track) return;
         track.innerHTML = `<div class="text-center py-6 text-gray-400 text-sm w-full"><i class="fa fa-spinner fa-spin text-xl mb-2"></i><p>Cargando...</p></div>`;
-
         try {
             const response = await fetch('top-buscados.json');
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const data = await response.json();
-
             const games = Array.isArray(data) ? data : (data.games || []);
-
             if (games.length === 0) {
                 track.innerHTML = `<div class="text-center py-6 text-gray-400 text-sm"><i class="fa fa-inbox text-2xl mb-2 opacity-50 block"></i>El top está vacío.</div>`;
                 return;
             }
-
             track.innerHTML = '';
             games.slice(0, 20).forEach((g, i) => {
                 const category = g.category || g.consola || 'unknown';
-                const card = createGameCard(g, category, { compact: true, delay: i * 0.03 });
-                track.appendChild(card);
+                track.appendChild(createGameCard(g, category, { compact: true, delay: i * 0.03 }));
             });
-
             bindNeon();
         } catch (error) {
             console.error('Error cargando top-buscados.json:', error);
-            track.innerHTML = `
-                <div class="text-center py-6 text-gray-400 text-sm w-full">
-                    <i class="fa fa-exclamation-triangle text-2xl mb-2 opacity-50 block"></i>
-                    <p>No se pudo cargar el top.</p>
-                </div>
-            `;
+            track.innerHTML = `<div class="text-center py-6 text-gray-400 text-sm w-full"><i class="fa fa-exclamation-triangle text-2xl mb-2 opacity-50 block"></i><p>No se pudo cargar el top.</p></div>`;
         }
     }
 
     const modalReportBtn = document.getElementById('modal-report');
-    if (modalReportBtn) {
-        modalReportBtn.addEventListener('click', function () {});
-    }
+    if (modalReportBtn) modalReportBtn.addEventListener('click', function () {});
 
     const btnStart = document.getElementById('btn-start');
     if (btnStart) {
         btnStart.addEventListener('click', () => {
             const target = document.getElementById('search-anchor');
             if (!target) return;
-
             const header = document.querySelector('header');
             const nav = document.querySelector('nav');
             const stickyHeight = (header ? header.offsetHeight : 0) + (nav ? nav.offsetHeight : 0) + 20;
-
-            const targetTop = target.getBoundingClientRect().top + window.pageYOffset - stickyHeight;
-            window.scrollTo({ top: targetTop, behavior: 'smooth' });
+            window.scrollTo({ top: target.getBoundingClientRect().top + window.pageYOffset - stickyHeight, behavior: 'smooth' });
         });
     }
 
@@ -1390,26 +1228,20 @@
         const img = document.getElementById('modal-screenshot');
         const badge = document.getElementById('modal-screenshot-badge');
         const placeholder = 'https://via.placeholder.com/800x450/1a1a2e/bd00ff?text=SIN+IMAGEN';
-
         const finalUrl = safeUrl(url, currentModalCover || placeholder);
-
         const applyUrl = (targetUrl) => {
             const safeTarget = safeUrl(targetUrl, placeholder);
             img.src = safeTarget;
             stageBg.style.backgroundImage = 'url("' + safeTarget.replace(/"/g, '\\"') + '")';
         };
-
         img.dataset.errorHandled = '0';
         applyUrl(finalUrl);
-
         badge.textContent = label;
         badge.classList.toggle('fallback', !!isFallback);
-
         img.onerror = function () {
             if (this.dataset.errorHandled === '1') return;
             this.dataset.errorHandled = '1';
-            const nextFallback = (finalUrl !== currentModalCover && currentModalCover) ? currentModalCover : placeholder;
-            applyUrl(nextFallback);
+            applyUrl((finalUrl !== currentModalCover && currentModalCover) ? currentModalCover : placeholder);
         };
     }
 
@@ -1417,24 +1249,16 @@
         if (!modalScreenshots.length) return;
         currentModalScreenshot = index;
         const url = safeUrl(modalScreenshots[index], currentModalCover);
-        const label = modalScreenshots.length > 1
-            ? `Captura ${index + 1} de ${modalScreenshots.length}`
-            : 'Captura';
-
+        const label = modalScreenshots.length > 1 ? `Captura ${index + 1} de ${modalScreenshots.length}` : 'Captura';
         setModalScreenshotFromUrl(url, label, false);
-
-        document.querySelectorAll('.screenshot-thumb').forEach((thumb, i) => {
-            thumb.classList.toggle('active', i === index);
-        });
+        document.querySelectorAll('.screenshot-thumb').forEach((thumb, i) => thumb.classList.toggle('active', i === index));
     }
 
     function renderModalScreenshots(screenshots, coverUrl) {
         modalScreenshots = screenshots;
         currentModalScreenshot = 0;
-
         const thumbs = document.getElementById('modal-screenshot-thumbs');
         thumbs.innerHTML = '';
-
         if (screenshots.length > 0) {
             if (screenshots.length > 1) {
                 screenshots.forEach((url, idx) => {
@@ -1455,10 +1279,12 @@
 
     window.openGameModal = function (game, category) {
         if (!game) return;
-
         const modal = document.getElementById('game-modal');
         const modalContent = document.getElementById('modal-content');
+        const modalCoverWrap = document.getElementById('modal-cover-wrap');
         const modalCover = document.getElementById('modal-cover');
+        const modalTagConsole = document.getElementById('modal-tag-console');
+        const modalTagType = document.getElementById('modal-tag-type');
         const modalTitle = document.getElementById('modal-title');
         const modalBadges = document.getElementById('modal-badges');
         const modalDesc = document.getElementById('modal-desc');
@@ -1466,18 +1292,22 @@
 
         const consoleKey = game.consola || category || '';
         const ratio = getCoverRatio(consoleKey);
+        const ratioClass = 'cover-ratio-' + ratio.replace('/', '-');
         const placeholder = getPlaceholder(ratio);
         const prettyConsole = getConsoleName(consoleKey);
         const typeInfo = getTypeInfo(game.tipo);
+        const typeTagClass = getTypeTagClass(game.tipo);
         const screenshots = normalizeScreenshots(game);
 
         currentModalCover = safeUrl(game.cover, placeholder);
-
+        modalCoverWrap.className = `modal-cover-wrap ${ratioClass}`;
         modalCover.src = currentModalCover;
-        modalCover.onerror = function () {
-            this.onerror = null;
-            this.src = placeholder;
-        };
+        modalCover.onerror = function () { this.onerror = null; this.src = placeholder; };
+
+        modalTagConsole.style.display = 'none';
+        modalTagType.textContent = typeInfo.label;
+        modalTagType.className = `cover-tag cover-tag-type ${typeTagClass}`;
+        modalTagType.style.display = '';
 
         modalTitle.textContent = getGameTitle(game);
         modalBadges.innerHTML = `
@@ -1504,27 +1334,22 @@
         document.getElementById('modal-meta-capturas').textContent = screenshots.length ? `${screenshots.length}` : '0';
 
         renderModalScreenshots(screenshots, currentModalCover);
-
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
         modalContent.scrollTop = 0;
     };
 
     window.closeGameModal = function () {
-        const modal = document.getElementById('game-modal');
-        modal.classList.remove('active');
+        document.getElementById('game-modal').classList.remove('active');
         document.body.style.overflow = '';
     };
 
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeGameModal();
-    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeGameModal(); });
 
     async function loadData() {
         try {
             const docRef = dbFirestore.collection('sistema').doc('catalogo_por_consola');
             const doc = await docRef.get();
-
             if (doc.exists) {
                 const data = doc.data();
                 for (const [key, value] of Object.entries(data)) {
@@ -1534,10 +1359,7 @@
                     }
                 }
             }
-        } catch (e) {
-            console.error('Error cargando desde Firebase:', e);
-        }
-
+        } catch (e) { console.error('Error cargando desde Firebase:', e); }
         CATEGORIES = getAllCategoryKeys();
         renderBiblioteca();
         renderHomeRows();
@@ -1547,36 +1369,30 @@
         const grid = document.getElementById('biblioteca-grid');
         if (!grid) return;
         grid.innerHTML = '';
-
         const categories = getAllCategoryKeys()
             .filter(cat => getCategoryCount(cat) > 0)
             .sort((a, b) => getCategoryCount(b) - getCategoryCount(a) || getConsoleName(a).localeCompare(getConsoleName(b)));
-
         if (categories.length === 0) {
             grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-400"><i class="fa fa-inbox text-4xl mb-3 opacity-50"></i><p>Todavía no hay categorías con juegos.</p></div>`;
             return;
         }
-
         categories.forEach(cat => {
-            const count = getCategoryCount(cat);
             const div = document.createElement('div');
             div.className = 'folder-card p-6 text-center';
             div.onclick = () => openCategory(cat);
             div.innerHTML = `
                 <div class="text-5xl mb-4">${ICONOS_CONSOLA[cat] || '🎯'}</div>
                 <h4 class="font-neon font-bold text-lg mb-1">${escapeHtml(getConsoleName(cat))}</h4>
-                <p class="text-xs text-cyan-400 font-semibold">${countLabel(count)}</p>
+                <p class="text-xs text-cyan-400 font-semibold">${countLabel(getCategoryCount(cat))}</p>
             `;
             grid.appendChild(div);
         });
-
         bindNeon();
     }
 
     function renderHomeRows() {
         const container = document.getElementById('dynamic-home-rows');
         container.innerHTML = '';
-
         if (latestTicker) { latestTicker.destroy(); latestTicker = null; }
         if (topTicker) { topTicker.destroy(); topTicker = null; }
 
@@ -1586,13 +1402,8 @@
         latestSection.style.setProperty('--accent-to', 'var(--neon-purple)');
         latestSection.innerHTML = `
             <div class="carousel-header">
-                <div class="carousel-icon-wrap" style="background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple)); box-shadow: 0 0 14px rgba(0, 240, 255, 0.35);">
-                    <i class="fa fa-clock-o"></i>
-                </div>
-                <div>
-                    <h3 class="carousel-title neon-animated">Recién agregados</h3>
-                    <p class="carousel-subtitle">Los últimos 20 juegos añadidos</p>
-                </div>
+                <div class="carousel-icon-wrap" style="background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple)); box-shadow: 0 0 14px rgba(0, 240, 255, 0.35);"><i class="fa fa-clock-o"></i></div>
+                <div><h3 class="carousel-title neon-animated">Recién agregados</h3><p class="carousel-subtitle">Los últimos 20 juegos añadidos</p></div>
             </div>
             <div class="carousel-track" id="latest-games-track"></div>
         `;
@@ -1604,13 +1415,8 @@
         topSection.style.setProperty('--accent-to', 'var(--neon-red)');
         topSection.innerHTML = `
             <div class="carousel-header">
-                <div class="carousel-icon-wrap" style="background: linear-gradient(135deg, var(--neon-orange), var(--neon-red)); box-shadow: 0 0 14px rgba(255, 149, 0, 0.35);">
-                    <i class="fa fa-fire"></i>
-                </div>
-                <div>
-                    <h3 class="carousel-title neon-animated">Top 20 más buscados</h3>
-                    <p class="carousel-subtitle">Los juegos más populares de la comunidad</p>
-                </div>
+                <div class="carousel-icon-wrap" style="background: linear-gradient(135deg, var(--neon-orange), var(--neon-red)); box-shadow: 0 0 14px rgba(255, 149, 0, 0.35);"><i class="fa fa-fire"></i></div>
+                <div><h3 class="carousel-title neon-animated">Top 20 más buscados</h3><p class="carousel-subtitle">Los juegos más populares de la comunidad</p></div>
             </div>
             <div class="carousel-track" id="top-searched-track"></div>
         `;
@@ -1618,10 +1424,8 @@
 
         renderLatestGames();
         renderTopSearched();
-
         latestTicker = new TickerCarousel('latest-games-track', { speed: 30 });
         latestTicker.start();
-
         topTicker = new TickerCarousel('top-searched-track', { speed: 35 });
         topTicker.start();
 
@@ -1640,7 +1444,6 @@
         sortedCats.forEach(cat => {
             const displayName = getConsoleName(cat);
             const count = getCategoryCount(cat);
-
             const section = document.createElement('div');
             section.className = 'mb-10 fade-in-item';
             section.innerHTML = `
@@ -1654,18 +1457,11 @@
                 <div class="scroll-row" data-cat-row="${cat}"></div>
             `;
             container.appendChild(section);
-
             const row = section.querySelector(`[data-cat-row="${cat}"]`);
-            (db[cat] || []).slice(0, ROMS_PREVIEW).forEach((g, i) => {
-                const card = createGameCard(g, cat, { extraClass: 'shrink-0', delay: i * 0.05 });
-                row.appendChild(card);
-            });
+            (db[cat] || []).slice(0, ROMS_PREVIEW).forEach((g, i) => row.appendChild(createGameCard(g, cat, { extraClass: 'shrink-0', delay: i * 0.05 })));
         });
 
-        document.querySelectorAll('.btn-ver-mas-cat').forEach(btn => {
-            btn.onclick = () => openCategory(btn.dataset.cat);
-        });
-
+        document.querySelectorAll('.btn-ver-mas-cat').forEach(btn => { btn.onclick = () => openCategory(btn.dataset.cat); });
         bindNeon();
     }
 
@@ -1674,15 +1470,12 @@
         currentLetter = 'all';
         filteredList = [...(db[category] || [])];
         currentPage = 1;
-
         document.getElementById('cat-title').textContent = `Catálogo ${getConsoleName(category)}`;
         document.getElementById('cat-search').value = '';
         document.getElementById('cat-search-clear').classList.add('hidden');
         document.getElementById('cat-search-clear').classList.remove('block');
-
         document.querySelectorAll('.letter-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelector('.letter-btn-all').classList.add('active');
-
         renderCategoryPage();
         showSection('contenido-categoria');
         tabs.forEach(t => t.classList.remove('tab-active'));
@@ -1691,30 +1484,22 @@
     function renderCategoryPage() {
         const grid = document.getElementById('cat-grid');
         grid.innerHTML = '';
-
         const start = (currentPage - 1) * ROMS_PER_PAGE;
         const slice = filteredList.slice(start, start + ROMS_PER_PAGE);
-
         if (!slice.length) {
             grid.innerHTML = '<div class="col-span-full text-center py-12 text-gray-400"><i class="fa fa-search text-4xl mb-3 opacity-50"></i><p>Sin resultados</p></div>';
         } else {
-            slice.forEach((g, i) => {
-                const card = createGameCard(g, currentCategory, { extraClass: 'grid-card', delay: i * 0.05 });
-                grid.appendChild(card);
-            });
+            slice.forEach((g, i) => grid.appendChild(createGameCard(g, currentCategory, { extraClass: 'grid-card', delay: i * 0.05 })));
         }
-
         totalPages = Math.max(1, Math.ceil(filteredList.length / ROMS_PER_PAGE));
         document.getElementById('page-info').textContent = currentPage + ' / ' + totalPages;
         document.getElementById('prev-page').disabled = currentPage <= 1;
         document.getElementById('next-page').disabled = currentPage >= totalPages;
-
         const q = document.getElementById('cat-search').value.trim();
         const letterText = currentLetter !== 'all' ? ` (Letra: ${currentLetter})` : '';
         document.getElementById('cat-subtitle').textContent = q
             ? `${filteredList.length} resultados para "${q}"${letterText}`
             : `${gamesLabel(filteredList.length)}${letterText}`;
-
         bindNeon();
     }
 
@@ -1730,39 +1515,21 @@
     function applyFilters() {
         const q = document.getElementById('cat-search').value.trim().toLowerCase();
         let baseList = [...(db[currentCategory] || [])];
-
         if (currentLetter !== 'all') {
-            baseList = baseList.filter(g => {
-                const firstChar = getGameTitle(g).charAt(0).toUpperCase();
-                return firstChar === currentLetter;
-            });
+            baseList = baseList.filter(g => getGameTitle(g).charAt(0).toUpperCase() === currentLetter);
         }
-
-        if (q) {
-            baseList = baseList.filter(g => getGameTitle(g).toLowerCase().includes(q));
-        }
-
+        if (q) baseList = baseList.filter(g => getGameTitle(g).toLowerCase().includes(q));
         filteredList = baseList;
         currentPage = 1;
         renderCategoryPage();
     }
 
     document.getElementById('btn-volver').addEventListener('click', goHome);
-
     document.getElementById('prev-page').addEventListener('click', () => {
-        if (currentPage > 1) {
-            currentPage--;
-            renderCategoryPage();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+        if (currentPage > 1) { currentPage--; renderCategoryPage(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
     });
-
     document.getElementById('next-page').addEventListener('click', () => {
-        if (currentPage < totalPages) {
-            currentPage++;
-            renderCategoryPage();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+        if (currentPage < totalPages) { currentPage++; renderCategoryPage(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
     });
 
     const searchInput = document.getElementById('search-input');
@@ -1775,69 +1542,53 @@
     searchInput.addEventListener('input', (e) => {
         const query = e.target.value.trim().toLowerCase();
         searchClear.classList.toggle('visible', query.length > 0);
-
         if (query.length < 2) {
             searchResults.classList.remove('active');
             inicioContents.forEach(el => el.classList.remove('hidden-search'));
             return;
         }
-
         inicioContents.forEach(el => el.classList.add('hidden-search'));
-
         const results = [];
         CATEGORIES.forEach(cat => {
             (db[cat] || []).forEach(game => {
                 const title = getGameTitle(game).toLowerCase();
                 const desc = getGameDescription(game).toLowerCase();
-
-                if (title.includes(query) || desc.includes(query)) {
-                    results.push({ ...game, category: cat });
-                }
+                if (title.includes(query) || desc.includes(query)) results.push({ ...game, category: cat });
             });
         });
-
         displaySearchResults(results, query);
     });
 
     function displaySearchResults(results, query) {
         searchGrid.innerHTML = '';
         searchCount.textContent = `${results.length} resultado${results.length !== 1 ? 's' : ''} encontrado${results.length !== 1 ? 's' : ''}`;
-
         if (results.length === 0) {
-            searchGrid.innerHTML = `
-                <div class="no-results col-span-full">
-                    <i class="fa fa-search"></i>
-                    <p>No se encontraron ROMs para "${escapeHtml(query)}"</p>
-                </div>
-            `;
+            searchGrid.innerHTML = `<div class="no-results col-span-full"><i class="fa fa-search"></i><p>No se encontraron ROMs para "${escapeHtml(query)}"</p></div>`;
         } else {
             results.forEach((game, index) => {
                 const ratio = getCoverRatio(game.category);
+                const ratioClass = 'cover-ratio-' + ratio.replace('/', '-');
                 const placeholder = getPlaceholder(ratio);
                 const coverSrc = safeUrl(game.cover, placeholder);
                 const title = getGameTitle(game);
+                const tags = buildCoverTagCompact(game, game.category);
 
                 const item = document.createElement('div');
                 item.className = 'search-result-item cursor-pointer';
                 item.style.animationDelay = `${index * 0.05}s`;
-                item.onclick = () => {
-                    searchResults.classList.remove('active');
-                    openGameModal(game, game.category);
-                };
-
+                item.onclick = () => { searchResults.classList.remove('active'); openGameModal(game, game.category); };
                 item.innerHTML = `
-                    <img class="search-result-cover cover-ratio-${ratio.replace('/', '-')}" 
-                         src="${escapeHtml(coverSrc)}" alt="${escapeHtml(title)}"
-                         onerror="this.src='${placeholder}'">
+                    <div class="search-result-cover-wrap ${ratioClass}">
+                        <img class="search-result-cover" src="${escapeHtml(coverSrc)}" alt="${escapeHtml(title)}" onerror="this.src='${placeholder}'">
+                        ${tags}
+                    </div>
                     <div class="search-result-info">
                         <div class="search-result-title">${highlightText(title, query)}</div>
                     </div>
                 `;
-
                 searchGrid.appendChild(item);
             });
         }
-
         searchResults.classList.add('active');
     }
 
@@ -1850,75 +1601,57 @@
     });
 
     document.addEventListener('click', (e) => {
-        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
-            searchResults.classList.remove('active');
-        }
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) searchResults.classList.remove('active');
     });
 
     function loadNews() {
         const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
-        const todayISO = `${year}-${month}-${day}`;
-
+        const todayISO = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
         newsData = [
             { id: 1, fecha: todayISO, titulo: 'PLATAFORMA', categoria: 'cyan-400', texto: 'La plataforma es nueva y estamos actualizando la información diariamente.' },
             { id: 2, fecha: todayISO, titulo: 'NUEVO', categoria: 'green-400', texto: 'Nuevas ROMs y juegos agregados.' },
             { id: 3, fecha: todayISO, titulo: 'MEJORA', categoria: 'purple-400', texto: 'Estamos tratando de mejorar la experiencia de los usuarios. Comparte la app.' }
         ];
-
         renderNews();
     }
 
     function formatDate(dateString) {
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return new Date(dateString).toLocaleDateString('es-ES', options);
+        return new Date(dateString).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
     }
 
     function renderNews() {
         const container = document.getElementById('news-container');
         const dateElement = document.getElementById('news-date');
-
         if (newsData.length === 0) {
             container.innerHTML = '<p class="text-center text-gray-400 py-8">No hay novedades disponibles</p>';
             dateElement.textContent = '';
             return;
         }
-
         if (newsData[0].fecha) dateElement.textContent = formatDate(newsData[0].fecha);
-
         container.innerHTML = newsData.map((news, index) => `
             <div class="news-item ${index === 0 ? 'active' : ''}" data-index="${index}">
                 <p class="news-text"><strong class="text-${news.categoria || 'green-400'}">${news.titulo}:</strong> ${news.texto}</p>
             </div>
         `).join('');
-
         startNewsRotation();
     }
 
     function startNewsRotation() {
         if (newsRotationInterval) clearInterval(newsRotationInterval);
-
         if (newsData.length > 1) {
             newsRotationInterval = setInterval(() => {
                 const items = document.querySelectorAll('.news-item');
                 if (items.length === 0) return;
-
                 items[currentNewsIndex].classList.remove('active');
                 currentNewsIndex = (currentNewsIndex + 1) % newsData.length;
                 items[currentNewsIndex].classList.add('active');
-
-                if (newsData[currentNewsIndex].fecha) {
-                    document.getElementById('news-date').textContent = formatDate(newsData[currentNewsIndex].fecha);
-                }
+                if (newsData[currentNewsIndex].fecha) document.getElementById('news-date').textContent = formatDate(newsData[currentNewsIndex].fecha);
             }, 5000);
         }
     }
 
     const catSearchInput = document.getElementById('cat-search');
     const catSearchClear = document.getElementById('cat-search-clear');
-
     if (catSearchInput && catSearchClear) {
         catSearchInput.addEventListener('input', () => {
             const hasValue = catSearchInput.value.trim().length > 0;
@@ -1926,7 +1659,6 @@
             catSearchClear.classList.toggle('block', hasValue);
             applyFilters();
         });
-
         catSearchClear.addEventListener('click', () => {
             catSearchInput.value = '';
             catSearchClear.classList.add('hidden');
