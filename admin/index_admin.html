@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Centro administrativo | Admin Pro 3.2</title>
+    <title>Centro administrativo | Admin Pro 3.3</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -106,9 +106,6 @@
         .toast.success { border-left-color: #00c851; }
         .toast.info { border-left-color: #00bcd4; }
 
-        /* ============================================
-           VALIDADOR DE URLs - ESTILOS
-        ============================================ */
         .val-filtro-grupo {
             display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;
             margin-bottom: 1rem; padding: 1rem;
@@ -220,9 +217,6 @@
         .val-url-list::-webkit-scrollbar-track { background: rgba(184, 134, 11, 0.1); border-radius: 4px; }
         .val-url-list::-webkit-scrollbar-thumb { background: linear-gradient(var(--oro-oscuro), var(--oro-intenso)); border-radius: 4px; }
 
-        /* ============================================
-           SECCIÓN ROTAS - Auditoría
-        ============================================ */
         .val-rotas-container {
             margin-top: 1.5rem;
             background: linear-gradient(135deg, rgba(255, 50, 50, 0.08), rgba(255, 50, 50, 0.02));
@@ -349,9 +343,6 @@
             margin-top: 0.3rem; text-align: center;
         }
 
-        /* ============================================
-           MODAL EDICIÓN URL ROTA
-        ============================================ */
         #modal-editar-url-rota .info-juego-roto {
             background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 215, 0, 0.2);
             border-radius: 0.6rem; padding: 0.8rem; margin-bottom: 1rem;
@@ -446,7 +437,7 @@
         <i class="fa fa-user-circle-o titulo-dorado text-7xl mb-6"></i>
         <h1 class="font-gamer text-2xl sm:text-3xl titulo-dorado mb-2">BIENVENIDO</h1>
         <h2 class="text-xl sm:text-2xl text-white mb-1" id="nombre-admin-display">ADMIN</h2>
-        <p class="text-amber-400/70 mb-10 text-base sm:text-lg">Sistema de Gestión de Catálogo v3.2</p>
+        <p class="text-amber-400/70 mb-10 text-base sm:text-lg">Sistema de Gestión de Catálogo v3.3</p>
         
         <button id="btn-ir-al-panel" class="btn-soberano w-full text-base sm:text-xl py-4 sm:py-5 mb-4 shadow-lg shadow-yellow-500/20">
             <i class="fa fa-upload mr-2"></i> SUBIR ROMS / GESTIONAR
@@ -705,7 +696,6 @@
         </div>
     </header>
 
-    <!-- ESTADÍSTICAS DE VALIDACIÓN -->
     <div class="val-stats-grid">
         <div class="val-stat total">
             <div class="num" id="val-stat-total">0</div>
@@ -725,7 +715,6 @@
         </div>
     </div>
 
-    <!-- FILTROS -->
     <div class="marco-real p-4 sm:p-5 mb-4">
         <h3 class="font-gamer text-sm sm:text-base titulo-dorado mb-3 flex items-center gap-2">
             <i class="fa fa-filter"></i> CONFIGURACIÓN DEL ANÁLISIS
@@ -796,7 +785,6 @@
         </p>
     </div>
 
-    <!-- LISTA DE URLs (todas) -->
     <div class="marco-real p-4 sm:p-5">
         <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
             <h3 class="font-gamer text-sm sm:text-base titulo-dorado flex items-center gap-2">
@@ -815,7 +803,6 @@
         </div>
     </div>
 
-    <!-- SECCIÓN URLs ROTAS (Auditoría) -->
     <div id="val-rotas-container" class="val-rotas-container" style="display:none;">
         <div class="val-rotas-header">
             <div class="val-rotas-title">
@@ -1449,21 +1436,67 @@ document.getElementById('formEditar').onsubmit = async (e) => {
 };
 
 // ==========================================
-// VALIDADOR DE URLs
+// 🔥 VALIDADOR DE URLs - VERSIÓN 3.3
+// Mejorado específicamente para descargas
 // ==========================================
+
+// Dominios conocidos que requieren estrategia especial
+const DOMINIOS_PROBLEMATICOS = [
+    'mediafire.com',
+    'mega.nz', 'mega.co.nz',
+    'minecrfapkmod.com',
+    'apkadmin.com',
+    'uploadhaven.com',
+    'usersdrive.com',
+    'zippyshare.com',
+    'solidfiles.com',
+    'anonfiles.com',
+    'dropbox.com',
+    'drive.google.com',
+    '1fichier.com',
+    'uptobox.com',
+    'uptofile.com',
+    'file.io',
+    'sendspace.com',
+    '4shared.com',
+    'mediafire.com',
+    'gofile.io',
+    'pixeldrain.com',
+    'androidapksfree.com',
+    'apkdone.com',
+    'apkmirror.com',
+    'apkpure.com',
+    'revdl.com',
+    'apkmb.com',
+    'happy-mod.com',
+    'dodi-repacks.site',
+    'fitgirl-repacks.site'
+];
+
 const ValidadorURLs = {
     urls: [],
     cancelado: false,
     procesando: false,
     concurrencia: 5,
-    cacheKey: 'gmh_url_validation_cache_v1',
+    cacheKey: 'gmh_url_validation_cache_v2',
     tiempos: [],
+    
+    // Detecta si una URL pertenece a un dominio problemático
+    esDominioProblematico(url) {
+        try {
+            const host = new URL(url).hostname.toLowerCase();
+            return DOMINIOS_PROBLEMATICOS.some(d => host.includes(d));
+        } catch (e) {
+            return false;
+        }
+    },
     
     async inicializar() {
         if (listaJuegos.length === 0) await cargarLista();
         this.poblarFiltroConsolas();
         this.urls = [];
         this.renderizar();
+        this.renderizarRotas();
         this.actualizarStats();
     },
     
@@ -1588,48 +1621,260 @@ const ValidadorURLs = {
         return aplicadas;
     },
     
-    async validarUna(urlObj, intentos = 3) {
+    // ==========================================
+    // 🔥 VALIDACIÓN DE DESCARGAS (Estrategia especial)
+    // ==========================================
+    async validarDescarga(urlObj) {
         const inicio = performance.now();
         urlObj.status = 'checking';
         this.renderItem(urlObj);
+        
+        const intentos = 2;
+        
         for (let intento = 1; intento <= intentos; intento++) {
-            if (this.cancelado) { urlObj.status = 'pending'; this.renderItem(urlObj); return; }
+            if (this.cancelado) {
+                urlObj.status = 'pending';
+                this.renderItem(urlObj);
+                return;
+            }
+            
+            try {
+                // User-Agent de navegador real
+                const headers = {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+                    'Accept-Language': 'es-ES,es;q=0.9,en;q=0.8',
+                    'Accept-Encoding': 'gzip, deflate, br'
+                };
+                
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s para descargas
+                
+                // 🔥 ESTRATEGIA: GET con redirect: follow, sin Range, sin HEAD
+                const response = await fetch(urlObj.url, {
+                    method: 'GET',
+                    mode: 'cors',
+                    credentials: 'omit',
+                    redirect: 'follow',
+                    signal: controller.signal,
+                    headers: headers,
+                    cache: 'no-cache'
+                });
+                
+                clearTimeout(timeoutId);
+                urlObj.tiempoMs = Math.round(performance.now() - inicio);
+                
+                // 🔥 Para descargas, aceptar MUCHOS más códigos como OK
+                // 200-299: éxito
+                // 301, 302, 303, 307, 308: redirects (fetch los sigue automáticamente)
+                if (response.ok) {
+                    urlObj.status = 'ok';
+                    urlObj.codigoHttp = response.status;
+                    this.renderItem(urlObj);
+                    this.actualizarStats();
+                    return;
+                }
+                
+                // Algunos sitios devuelven códigos raros pero sirven el archivo
+                // Aceptar también 403 si es MediaFire (a veces bloquea pero el link funciona)
+                if (response.status === 403 || response.status === 405 || response.status === 451) {
+                    // Posible bloqueo anti-bot, pero el link puede funcionar en navegador
+                    // Intentar fallback con Image/Link test
+                    const funciona = await this.testFallbackNavegador(urlObj.url);
+                    urlObj.tiempoMs = Math.round(performance.now() - inicio);
+                    
+                    if (funciona) {
+                        urlObj.status = 'ok';
+                        urlObj.codigoHttp = `${response.status}*`; // asterisco = validado con fallback
+                        this.renderItem(urlObj);
+                        this.actualizarStats();
+                        return;
+                    }
+                }
+                
+                // Errores definitivos
+                if (response.status === 404 || response.status === 410) {
+                    urlObj.status = 'error';
+                    urlObj.codigoHttp = response.status;
+                    this.renderItem(urlObj);
+                    this.actualizarStats();
+                    return;
+                }
+                
+                // Otros códigos: reintentar
+                throw new Error('HTTP ' + response.status);
+                
+            } catch (err) {
+                // Si es error de CORS o red, intentar fallback
+                if (err.name === 'TypeError' || err.message.includes('Failed to fetch') || err.message.includes('CORS')) {
+                    const funciona = await this.testFallbackNavegador(urlObj.url);
+                    urlObj.tiempoMs = Math.round(performance.now() - inicio);
+                    
+                    if (funciona) {
+                        urlObj.status = 'ok';
+                        urlObj.codigoHttp = 'OK*'; // asterisco = validado con fallback
+                        this.renderItem(urlObj);
+                        this.actualizarStats();
+                        return;
+                    }
+                }
+                
+                if (intento === intentos) {
+                    urlObj.tiempoMs = Math.round(performance.now() - inicio);
+                    urlObj.status = 'error';
+                    urlObj.codigoHttp = err.name === 'AbortError' ? 'TIMEOUT' : 'ERR';
+                    this.renderItem(urlObj);
+                    this.actualizarStats();
+                    return;
+                }
+                await new Promise(r => setTimeout(r, 1000 * intento));
+            }
+        }
+    },
+    
+    // 🔥 Fallback: intentar cargar como Image() o Link preconnect
+    // Esto permite validar URLs con CORS bloqueado
+    testFallbackNavegador(url) {
+        return new Promise((resolve) => {
+            const timeout = setTimeout(() => resolve(false), 8000);
+            
+            // Intento 1: Cargar como imagen (solo sirve si es imagen, pero algunos sitios sirven HTML con imagen)
+            const img = new Image();
+            img.onload = () => { clearTimeout(timeout); resolve(true); };
+            img.onerror = () => {
+                // Intento 2: Crear un <link rel="preconnect"> para ver si el dominio responde
+                clearTimeout(timeout);
+                this.testDominioConPreconnect(url).then(resolve);
+            };
+            img.src = url + (url.includes('?') ? '&' : '?') + '_t=' + Date.now();
+        });
+    },
+    
+    // Test del dominio: si el servidor responde al menos con TCP, asumimos que el link funciona
+    testDominioConPreconnect(url) {
+        return new Promise((resolve) => {
+            try {
+                const host = new URL(url).origin;
+                const timeout = setTimeout(() => resolve(false), 6000);
+                
+                const link = document.createElement('link');
+                link.rel = 'preconnect';
+                link.href = host;
+                
+                // Si se añade al DOM sin error, el navegador puede conectar
+                document.head.appendChild(link);
+                
+                // Hacer un fetch con mode: no-cors (no podemos leer respuesta, pero vemos si conecta)
+                fetch(url, { 
+                    method: 'GET', 
+                    mode: 'no-cors', 
+                    cache: 'no-cache',
+                    redirect: 'follow'
+                })
+                .then(() => {
+                    clearTimeout(timeout);
+                    document.head.removeChild(link);
+                    resolve(true); // Si no-cors funciona, el link responde
+                })
+                .catch(() => {
+                    clearTimeout(timeout);
+                    document.head.removeChild(link);
+                    resolve(false);
+                });
+            } catch (e) {
+                resolve(false);
+            }
+        });
+    },
+    
+    // ==========================================
+    // VALIDACIÓN NORMAL (imágenes: portadas y capturas)
+    // ==========================================
+    async validarImagen(urlObj, intentos = 3) {
+        const inicio = performance.now();
+        urlObj.status = 'checking';
+        this.renderItem(urlObj);
+        
+        for (let intento = 1; intento <= intentos; intento++) {
+            if (this.cancelado) {
+                urlObj.status = 'pending';
+                this.renderItem(urlObj);
+                return;
+            }
+            
             try {
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 15000);
                 let response;
+                
                 try {
-                    response = await fetch(urlObj.url, { method: 'HEAD', mode: 'cors', signal: controller.signal, cache: 'no-cache' });
+                    response = await fetch(urlObj.url, {
+                        method: 'HEAD',
+                        mode: 'cors',
+                        signal: controller.signal,
+                        cache: 'no-cache'
+                    });
                 } catch (headErr) {
                     clearTimeout(timeoutId);
                     const controller2 = new AbortController();
                     const timeoutId2 = setTimeout(() => controller2.abort(), 15000);
                     try {
                         response = await fetch(urlObj.url, {
-                            method: 'GET', mode: 'cors', signal: controller2.signal,
-                            headers: { 'Range': 'bytes=0-0' }, cache: 'no-cache'
+                            method: 'GET',
+                            mode: 'cors',
+                            signal: controller2.signal,
+                            headers: { 'Range': 'bytes=0-0' },
+                            cache: 'no-cache'
                         });
                         clearTimeout(timeoutId2);
-                    } catch (getErr) { clearTimeout(timeoutId2); throw getErr; }
+                    } catch (getErr) {
+                        clearTimeout(timeoutId2);
+                        throw getErr;
+                    }
                 }
+                
                 clearTimeout(timeoutId);
                 urlObj.tiempoMs = Math.round(performance.now() - inicio);
+                
                 if (response.ok || response.status === 206) {
-                    urlObj.status = 'ok'; urlObj.codigoHttp = response.status;
-                    this.renderItem(urlObj); this.actualizarStats(); return;
+                    urlObj.status = 'ok';
+                    urlObj.codigoHttp = response.status;
+                    this.renderItem(urlObj);
+                    this.actualizarStats();
+                    return;
                 } else if (response.status === 404 || response.status === 410 || response.status === 403) {
-                    urlObj.status = 'error'; urlObj.codigoHttp = response.status;
-                    this.renderItem(urlObj); this.actualizarStats(); return;
-                } else { throw new Error('HTTP ' + response.status); }
+                    urlObj.status = 'error';
+                    urlObj.codigoHttp = response.status;
+                    this.renderItem(urlObj);
+                    this.actualizarStats();
+                    return;
+                } else {
+                    throw new Error('HTTP ' + response.status);
+                }
             } catch (err) {
                 if (intento === intentos) {
                     urlObj.tiempoMs = Math.round(performance.now() - inicio);
                     urlObj.status = 'error';
                     urlObj.codigoHttp = err.name === 'AbortError' ? 'TIMEOUT' : 'ERR';
-                    this.renderItem(urlObj); this.actualizarStats(); return;
+                    this.renderItem(urlObj);
+                    this.actualizarStats();
+                    return;
                 }
                 await new Promise(r => setTimeout(r, 500 * intento));
             }
+        }
+    },
+    
+    // ==========================================
+    // Dispatcher principal: elige la estrategia según el tipo
+    // ==========================================
+    async validarUna(urlObj) {
+        if (urlObj.tipoUrl === 'download') {
+            // 🔥 DESCARGAS: estrategia especial
+            await this.validarDescarga(urlObj);
+        } else {
+            // IMÁGENES: estrategia normal (HEAD + Range)
+            await this.validarImagen(urlObj);
         }
     },
     
@@ -1682,7 +1927,7 @@ const ValidadorURLs = {
         const err = urlsAValidar.filter(u => u.status === 'error').length;
         this.guardarCache();
         this.actualizarStats();
-        this.renderizarRotas(); // 🔥 MOSTRAR ROTAS AUTOMÁTICAMENTE
+        this.renderizarRotas();
         if (this.cancelado) {
             mostrarToast(`Validación cancelada. ${completadas}/${total} analizadas.`, 'info');
         } else {
@@ -1728,19 +1973,25 @@ const ValidadorURLs = {
     renderItemHTML(u) {
         const tipoUrlIcono = u.tipoUrl === 'cover' ? '📷' : (u.tipoUrl === 'screenshot' ? '🖼️' : '⬇️');
         const estadoTexto = {
-            'ok': '✅ OK',
+            'ok': u.codigoHttp && String(u.codigoHttp).includes('*') ? '✅ OK (fallback)' : '✅ OK',
             'error': `❌ ${u.codigoHttp || 'ERR'}`,
             'pending': '⏳ Pendiente',
-            'checking': '🔄 Analizando...',
+            'checking': u.tipoUrl === 'download' ? '🔄 Analizando descarga...' : '🔄 Analizando...',
             'eliminada': '🗑️ Eliminada'
         }[u.status];
         const urlCorta = u.url.length > 70 ? u.url.substring(0, 35) + '...' + u.url.substring(u.url.length - 30) : u.url;
         const thumbSrc = u.tipoUrl !== 'download' ? u.url : 'https://via.placeholder.com/45x60/1a1400/ffd700?text=DL';
+        
+        // Si es descarga y dominio problemático, mostrar aviso
+        const avisoDominio = (u.tipoUrl === 'download' && this.esDominioProblematico(u.url)) 
+            ? '<span style="color: #ffa500; font-size: 0.65rem;" title="Dominio con protecciones especiales">⚡</span>' 
+            : '';
+        
         return `
         <div class="val-url-item status-${u.status}" data-url-id="${u.id}">
             <img class="val-url-thumb" src="${thumbSrc}" onerror="this.onerror=null; this.src='https://via.placeholder.com/45x60/1a1400/ff4444?text=X';" loading="lazy" alt="">
             <div class="val-url-info">
-                <div class="val-url-title" title="${u.titulo}">${u.titulo}</div>
+                <div class="val-url-title" title="${u.titulo}">${u.titulo} ${avisoDominio}</div>
                 <div class="val-url-meta">
                     <span class="val-url-badge ${u.tipo}">${(u.tipo || 'N/A').toUpperCase()}</span>
                     <span class="val-url-badge ${u.tipoUrl}">${tipoUrlIcono} ${u.tipoUrl}</span>
@@ -1779,7 +2030,6 @@ const ValidadorURLs = {
         document.getElementById('val-stat-pending').textContent = pending;
     },
     
-    // 🔥 RENDERIZAR SECCIÓN DE ROTAS
     renderizarRotas() {
         const container = document.getElementById('val-rotas-container');
         const lista = document.getElementById('val-rotas-lista');
@@ -1793,7 +2043,6 @@ const ValidadorURLs = {
         container.style.display = 'block';
         document.getElementById('val-rotas-count').textContent = rotas.length;
         
-        // Ordenar por tipo de URL para agrupar visualmente: portadas → capturas → descargas
         const orden = { cover: 1, screenshot: 2, download: 3 };
         rotas.sort((a, b) => (orden[a.tipoUrl] || 9) - (orden[b.tipoUrl] || 9));
         
@@ -1806,22 +2055,17 @@ const ValidadorURLs = {
         const thumbSrc = u.tipoUrl !== 'download' ? u.url : 'https://via.placeholder.com/70x90/1a1400/ff4444?text=DL';
         const fechaSubida = u.timestamp ? formatearFecha(u.timestamp) : 'N/A';
         
-        // Generar botones de acción según el tipo
         let botonesHTML = '';
-        
-        // Botón REEMPLAZAR (disponible para los 3 tipos)
         botonesHTML += `<button class="val-rota-btn reemplazar" onclick="ValidadorURLs.abrirModalReparar(${u.id})">
             <i class="fa fa-wrench"></i> Reemplazar
         </button>`;
         
-        // Botón ELIMINAR (solo para capturas)
         if (u.tipoUrl === 'screenshot') {
             botonesHTML += `<button class="val-rota-btn eliminar-captura" onclick="ValidadorURLs.eliminarCapturaRota(${u.id})">
                 <i class="fa fa-trash"></i> Eliminar captura
             </button>`;
         }
         
-        // Advertencia para portadas y descargas (no se pueden eliminar desde acá)
         if (u.tipoUrl === 'cover') {
             botonesHTML += `<div class="val-rota-warning">
                 <i class="fa fa-info-circle"></i> Para quitar el juego, usá "Cargar ROMs"
@@ -1832,7 +2076,6 @@ const ValidadorURLs = {
             </div>`;
         }
         
-        // Botón "Ir al editor completo"
         botonesHTML += `<button class="val-rota-btn ir-editor" onclick="ValidadorURLs.irAEditorCompleto('${u.juegoId}', '${u.consola}')">
             <i class="fa fa-external-link"></i> Editor completo
         </button>`;
@@ -1863,7 +2106,6 @@ const ValidadorURLs = {
         </div>`;
     },
     
-    // 🔥 ABRIR MODAL PARA REPARAR URL
     abrirModalReparar(id) {
         const u = this.urls.find(x => x.id === id);
         if (!u) return;
@@ -1881,7 +2123,6 @@ const ValidadorURLs = {
         document.getElementById('roto-url-actual').textContent = u.url;
         document.getElementById('roto-codigo-error').innerHTML = `<i class="fa fa-exclamation-triangle"></i> Código de error: <strong>HTTP ${u.codigoHttp || 'ERR'}</strong>`;
         
-        // Configurar según tipo de URL
         const imagenContainer = document.getElementById('roto-imagen-container');
         const nuevaLabel = document.getElementById('roto-nueva-label');
         const preview = document.getElementById('roto-img-preview');
@@ -1906,7 +2147,6 @@ const ValidadorURLs = {
         document.getElementById('modal-editar-url-rota').style.display = 'flex';
     },
     
-    // 🔥 ELIMINAR CAPTURA ROTA (solo screenshots)
     async eliminarCapturaRota(id) {
         const u = this.urls.find(x => x.id === id);
         if (!u || u.tipoUrl !== 'screenshot') {
@@ -1925,7 +2165,6 @@ const ValidadorURLs = {
         abrirModal('ELIMINANDO', 'Actualizando base de datos...', 20);
         
         try {
-            // Encontrar el índice de la captura en el juego
             const urlLimpia = limpiarUrl(u.url);
             const idx = (juego.screenshots || []).findIndex(s => limpiarUrl(s) === urlLimpia);
             
@@ -1935,19 +2174,16 @@ const ValidadorURLs = {
                 return;
             }
             
-            // Actualizar el juego local
             juego.screenshots.splice(idx, 1);
             if (juego.screenshotsPaths && juego.screenshotsPaths[idx]) {
                 const pathABorrar = juego.screenshotsPaths[idx];
                 juego.screenshotsPaths.splice(idx, 1);
                 
-                // Borrar de GitHub (después de actualizar DB)
                 document.getElementById('detalle-modal').textContent = 'Eliminando imagen de GitHub...';
                 document.getElementById('barra-progreso').style.width = '70%';
                 await borrarArchivoGitHub(pathABorrar);
             }
             
-            // Actualizar Firestore
             const docRef = db.collection('sistema').doc('catalogo_por_consola');
             const doc = await docRef.get();
             const data = doc.data();
@@ -1961,7 +2197,6 @@ const ValidadorURLs = {
                 }
             }
             
-            // Marcar como eliminada en el validador
             u.status = 'eliminada';
             this.renderItem(u);
             this.renderizarRotas();
@@ -1973,20 +2208,16 @@ const ValidadorURLs = {
         }
     },
     
-    // 🔥 IR AL EDITOR COMPLETO DEL JUEGO
     async irAEditorCompleto(juegoId, consola) {
         if (!confirm('¿Ir al editor completo del juego?\n\nSe cerrará el validador y se abrirá el panel principal con el editor.')) return;
         
-        // Cambiar de panel
         document.getElementById('panel-validador').style.display = 'none';
         document.getElementById('panel-principal').style.display = 'block';
         
-        // Asegurar que la lista esté cargada
         if (listaJuegos.length === 0) {
             await cargarLista();
         }
         
-        // Abrir el modal de edición
         setTimeout(() => {
             editarJuego(juegoId, consola);
         }, 100);
@@ -2023,7 +2254,7 @@ const ValidadorURLs = {
     }
 };
 
-// 🔥 MANEJO DE SUBIDA EN MODAL DE REPARACIÓN
+// Manejo de subida en modal de reparación
 document.getElementById('roto-img-input').onchange = async (e) => {
     const arch = e.target.files[0];
     if (!arch) return;
@@ -2058,7 +2289,7 @@ document.getElementById('roto-img-input').onchange = async (e) => {
     e.target.value = '';
 };
 
-// 🔥 GUARDAR REPARACIÓN DE URL
+// Guardar reparación
 document.getElementById('form-reparar-url').onsubmit = async (e) => {
     e.preventDefault();
     const urlId = parseInt(document.getElementById('roto-url-id').value);
@@ -2099,7 +2330,6 @@ document.getElementById('form-reparar-url').onsubmit = async (e) => {
             juego.link = nuevaUrl;
         }
         
-        // Actualizar Firestore
         const docRef = db.collection('sistema').doc('catalogo_por_consola');
         const doc = await docRef.get();
         const data = doc.data();
@@ -2123,12 +2353,10 @@ document.getElementById('form-reparar-url').onsubmit = async (e) => {
         document.getElementById('detalle-modal').textContent = 'Eliminando archivo viejo de GitHub...';
         document.getElementById('barra-progreso').style.width = '70%';
         
-        // Borrar el archivo viejo de GitHub (si era de GitHub)
         if (pathViejo && pathViejo !== nuevoPath) {
             await borrarArchivoGitHub(pathViejo);
         }
         
-        // Actualizar la URL en el validador
         u.url = nuevaUrl;
         u.path = nuevoPath;
         u.status = 'ok';
