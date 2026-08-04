@@ -366,10 +366,6 @@
         .cover-ratio-16-9 { aspect-ratio: 16/9; }
         .cover-ratio-9-16 { aspect-ratio: 9/16; }
 
-        /* ============================================================
-           ETIQUETA VERTICAL DEL TIPO (ROM/MOD/PORT)
-           Borde derecho, sobre la línea neón, texto vertical
-        ============================================================ */
         .cover-tag {
             position: absolute;
             top: 50%;
@@ -398,7 +394,6 @@
             border-left: none;
         }
 
-        /* ROM = NARANJA */
         .tag-rom {
             background: rgba(180, 90, 0, 0.92);
             border: 1px solid rgba(255, 160, 30, 0.8);
@@ -407,7 +402,6 @@
             box-shadow: 0 0 12px rgba(255, 120, 0, 0.4), inset 0 0 8px rgba(255, 160, 30, 0.15);
         }
 
-        /* MOD = ROSA */
         .tag-mod {
             background: rgba(140, 0, 90, 0.92);
             border: 1px solid rgba(255, 60, 180, 0.8);
@@ -416,7 +410,6 @@
             box-shadow: 0 0 12px rgba(255, 0, 150, 0.4), inset 0 0 8px rgba(255, 80, 200, 0.15);
         }
 
-        /* PORT = VERDE */
         .tag-port {
             background: rgba(0, 110, 65, 0.92);
             border: 1px solid rgba(0, 230, 140, 0.8);
@@ -425,7 +418,6 @@
             box-shadow: 0 0 12px rgba(0, 200, 120, 0.4), inset 0 0 8px rgba(0, 255, 160, 0.15);
         }
 
-        /* GENÉRICO = GRIS */
         .tag-generic {
             background: rgba(60, 60, 75, 0.92);
             border: 1px solid rgba(150, 150, 170, 0.6);
@@ -434,28 +426,24 @@
             box-shadow: 0 0 8px rgba(100, 100, 120, 0.3);
         }
 
-        /* Tamaños tarjetas normales */
         .game-card:not(.game-card-compact) .cover-tag {
             font-size: 10px;
             padding: 12px 4px;
         }
         .game-card:not(.game-card-compact) .cover-tag-type { right: -10px; }
 
-        /* Modal */
         .modal-cover-wrap .cover-tag {
             font-size: 10px;
             padding: 14px 4px;
         }
         .modal-cover-wrap .cover-tag-type { right: -10px; }
 
-        /* Búsqueda: más pequeñas */
         .search-result-cover-wrap .cover-tag {
             font-size: 8px;
             padding: 8px 2px;
         }
         .search-result-cover-wrap .cover-tag-type { right: -7px; }
 
-        /* Compactas (ticker) */
         .game-card-compact .cover-tag {
             font-size: 8px;
             padding: 8px 2px;
@@ -502,6 +490,7 @@
         }
         .btn-report:hover { background: rgba(255, 0, 85, 0.16); box-shadow: 0 0 18px rgba(255, 0, 85, 0.2); transform: translateY(-1px); }
         .btn-report:active { transform: scale(0.98); }
+        .btn-report:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .btn-page {
             background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.32); color: var(--neon-blue);
@@ -643,6 +632,243 @@
         .meta-label { display: block; font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: #8b93a7; font-weight: 800; margin-bottom: 4px; }
         .meta-value { display: block; font-size: 13px; font-weight: 700; color: #fff; word-break: break-word; line-height: 1.3; }
 
+        /* ============================================
+           SISTEMA DE REPORTES DE USUARIOS
+        ============================================ */
+        #modal-reportar { z-index: 10000; }
+        #modal-reportar .modal-content {
+            max-width: 500px;
+            border-color: var(--neon-red);
+            box-shadow: 0 0 60px rgba(255, 0, 85, 0.35), inset 0 0 40px rgba(255, 0, 85, 0.05);
+        }
+
+        .report-header {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 16px; padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 0, 85, 0.2);
+        }
+        .report-header-icon {
+            width: 48px; height: 48px; border-radius: 12px;
+            background: linear-gradient(135deg, rgba(255, 0, 85, 0.2), rgba(255, 149, 0, 0.15));
+            border: 1px solid rgba(255, 0, 85, 0.4);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; color: var(--neon-red);
+            box-shadow: 0 0 20px rgba(255, 0, 85, 0.2);
+            flex-shrink: 0;
+        }
+        .report-header-text { flex: 1; text-align: left; min-width: 0; }
+        .report-header-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.15rem; font-weight: 800;
+            color: var(--neon-red);
+            text-shadow: 0 0 10px rgba(255, 0, 85, 0.4);
+            margin: 0 0 2px;
+        }
+        .report-header-sub {
+            font-size: 0.75rem; color: #9ca3af; margin: 0;
+        }
+
+        .report-game-info {
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 16px;
+            text-align: left;
+        }
+        .report-game-thumb {
+            width: 45px; height: 60px; border-radius: 6px;
+            object-fit: cover; border: 1px solid rgba(0, 240, 255, 0.3);
+            flex-shrink: 0; background: #000;
+        }
+        .report-game-details { flex: 1; min-width: 0; }
+        .report-game-title {
+            font-weight: 700; font-size: 0.9rem; color: #fff;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            margin-bottom: 2px;
+        }
+        .report-game-meta {
+            font-size: 0.72rem; color: #9ca3af;
+            display: flex; gap: 6px; flex-wrap: wrap;
+        }
+
+        .report-type-label {
+            display: block; font-size: 0.75rem; text-transform: uppercase;
+            letter-spacing: 0.08em; color: var(--neon-red); font-weight: 800;
+            margin-bottom: 8px; text-align: left;
+        }
+
+        .report-type-grid {
+            display: grid; grid-template-columns: 1fr; gap: 8px;
+            margin-bottom: 16px;
+        }
+        @media (min-width: 480px) {
+            .report-type-grid { grid-template-columns: 1fr 1fr 1fr; }
+        }
+
+        .report-type-option {
+            position: relative; cursor: pointer;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 12px 8px;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        .report-type-option:hover {
+            border-color: rgba(255, 0, 85, 0.4);
+            background: rgba(255, 0, 85, 0.05);
+            transform: translateY(-1px);
+        }
+        .report-type-option input[type="radio"] {
+            position: absolute; opacity: 0; pointer-events: none;
+        }
+        .report-type-option.selected {
+            border-color: var(--neon-red);
+            background: rgba(255, 0, 85, 0.12);
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.25);
+        }
+        .report-type-icon {
+            font-size: 1.6rem; margin-bottom: 4px;
+            display: block;
+        }
+        .report-type-text {
+            font-size: 0.78rem; font-weight: 700; color: #fff;
+            display: block; line-height: 1.2;
+        }
+
+        .report-message-label {
+            display: block; font-size: 0.75rem; text-transform: uppercase;
+            letter-spacing: 0.08em; color: var(--neon-blue); font-weight: 800;
+            margin-bottom: 6px; text-align: left;
+        }
+        .report-message-textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.9rem;
+            padding: 10px 12px;
+            resize: vertical;
+            min-height: 70px;
+            max-height: 150px;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .report-message-textarea:focus {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.25);
+        }
+        .report-message-textarea::placeholder { color: rgba(156, 163, 175, 0.5); }
+
+        .report-counter {
+            text-align: right; font-size: 0.7rem; color: #6b7280;
+            margin-top: 4px;
+        }
+        .report-counter.warn { color: var(--neon-orange); }
+        .report-counter.danger { color: var(--neon-red); }
+
+        .report-actions {
+            display: flex; gap: 10px; margin-top: 16px;
+        }
+        .report-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid;
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .report-btn:active { transform: scale(0.97); }
+        .report-btn.cancel {
+            background: rgba(107, 114, 128, 0.15);
+            border-color: rgba(107, 114, 128, 0.4);
+            color: #9ca3af;
+        }
+        .report-btn.cancel:hover {
+            background: rgba(107, 114, 128, 0.25);
+            color: #fff;
+        }
+        .report-btn.submit {
+            background: rgba(255, 0, 85, 0.15);
+            border-color: rgba(255, 0, 85, 0.5);
+            color: var(--neon-red);
+            box-shadow: 0 0 12px rgba(255, 0, 85, 0.15);
+        }
+        .report-btn.submit:hover:not(:disabled) {
+            background: rgba(255, 0, 85, 0.25);
+            box-shadow: 0 0 20px rgba(255, 0, 85, 0.35);
+        }
+        .report-btn.submit:disabled {
+            opacity: 0.4; cursor: not-allowed;
+        }
+
+        /* ============================================
+           SISTEMA DE TOASTS
+        ============================================ */
+        #toast-container {
+            position: fixed; bottom: 20px; right: 20px;
+            z-index: 10001;
+            display: flex; flex-direction: column; gap: 10px;
+            pointer-events: none;
+            max-width: 350px;
+        }
+        @media (max-width: 480px) {
+            #toast-container {
+                left: 10px; right: 10px; bottom: 15px;
+                max-width: none;
+            }
+        }
+
+        .toast {
+            background: rgba(8, 10, 18, 0.96);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-left: 4px solid var(--neon-blue);
+            color: #fff;
+            padding: 12px 16px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 240, 255, 0.15);
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: flex; align-items: center; gap: 10px;
+            pointer-events: auto;
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            font-weight: 600;
+        }
+        .toast.show { transform: translateX(0); }
+        .toast.success {
+            border-left-color: var(--neon-green);
+            border-color: rgba(0, 255, 148, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 148, 0.15);
+        }
+        .toast.error {
+            border-left-color: var(--neon-red);
+            border-color: rgba(255, 0, 85, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 0, 85, 0.15);
+        }
+        .toast.warn {
+            border-left-color: var(--neon-orange);
+            border-color: rgba(255, 149, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 149, 0, 0.15);
+        }
+        .toast-icon {
+            font-size: 1.2rem; flex-shrink: 0;
+        }
+        .toast.success .toast-icon { color: var(--neon-green); text-shadow: 0 0 8px var(--neon-green); }
+        .toast.error .toast-icon { color: var(--neon-red); text-shadow: 0 0 8px var(--neon-red); }
+        .toast.warn .toast-icon { color: var(--neon-orange); text-shadow: 0 0 8px var(--neon-orange); }
+        .toast.info .toast-icon { color: var(--neon-blue); text-shadow: 0 0 8px var(--neon-blue); }
+        .toast-text { flex: 1; font-size: 0.88rem; line-height: 1.3; }
+
         @media (max-width: 560px) {
             .modal-content { padding: 18px; }
             .modal-top { flex-direction: column; text-align: center; padding-right: 0; }
@@ -665,6 +891,8 @@
     </style>
 </head>
 <body>
+
+<div id="toast-container"></div>
 
 <header class="sticky top-0 z-50 header-glass px-4 py-3">
     <div class="max-w-7xl mx-auto flex items-center gap-4">
@@ -869,7 +1097,7 @@
         <div class="modal-desc-title">Descripción</div>
         <p id="modal-desc" class="modal-desc"></p>
         <a id="modal-download" href="#" target="_blank" rel="noopener noreferrer" class="btn-neon modal-download-btn"><i class="fa fa-download"></i> Descargar</a>
-        <button id="modal-report" class="btn-report" type="button"><i class="fa fa-flag"></i> Report</button>
+        <button id="modal-report" class="btn-report" type="button"><i class="fa fa-flag"></i> Reportar problema</button>
         <div class="modal-extra">
             <div class="modal-extra-title">Información adicional</div>
             <div class="modal-meta">
@@ -881,6 +1109,79 @@
                 <div class="meta-item"><span class="meta-label">Capturas</span><span class="meta-value" id="modal-meta-capturas">—</span></div>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- ============================================
+     MODAL DE REPORTES DE USUARIOS
+============================================ -->
+<div id="modal-reportar" class="modal-overlay" onclick="if(event.target === this) closeReportModal()">
+    <div class="modal-content">
+        <button class="modal-close-btn" onclick="closeReportModal()" aria-label="Cerrar"><i class="fa fa-times"></i></button>
+
+        <div class="report-header">
+            <div class="report-header-icon"><i class="fa fa-flag"></i></div>
+            <div class="report-header-text">
+                <h3 class="report-header-title">Reportar Problema</h3>
+                <p class="report-header-sub">Ayudanos a mejorar el catálogo</p>
+            </div>
+        </div>
+
+        <div class="report-game-info">
+            <img id="report-game-thumb" class="report-game-thumb" src="" alt="">
+            <div class="report-game-details">
+                <div class="report-game-title" id="report-game-title">—</div>
+                <div class="report-game-meta">
+                    <span id="report-game-console">—</span>
+                    <span>·</span>
+                    <span id="report-game-type">—</span>
+                </div>
+            </div>
+        </div>
+
+        <form id="form-reportar">
+            <label class="report-type-label">
+                <i class="fa fa-list-ul"></i> ¿Qué problema encontraste?
+            </label>
+            <div class="report-type-grid" id="report-type-grid">
+                <label class="report-type-option" data-type="link_caido">
+                    <input type="radio" name="report-type" value="link_caido">
+                    <span class="report-type-icon">🔗</span>
+                    <span class="report-type-text">Link caído</span>
+                </label>
+                <label class="report-type-option" data-type="juego_incorrecto">
+                    <input type="radio" name="report-type" value="juego_incorrecto">
+                    <span class="report-type-icon">⚠️</span>
+                    <span class="report-type-text">Juego incorrecto</span>
+                </label>
+                <label class="report-type-option" data-type="otro">
+                    <input type="radio" name="report-type" value="otro">
+                    <span class="report-type-icon">📝</span>
+                    <span class="report-type-text">Otro</span>
+                </label>
+            </div>
+
+            <label class="report-message-label" for="report-message">
+                <i class="fa fa-comment"></i> Descripción (opcional)
+            </label>
+            <textarea
+                id="report-message"
+                class="report-message-textarea"
+                placeholder="Contanos más detalles del problema..."
+                maxlength="300"
+                rows="3"
+            ></textarea>
+            <div class="report-counter" id="report-counter">0 / 300</div>
+
+            <div class="report-actions">
+                <button type="button" class="report-btn cancel" onclick="closeReportModal()">
+                    <i class="fa fa-times"></i> Cancelar
+                </button>
+                <button type="submit" class="report-btn submit" id="report-submit-btn" disabled>
+                    <i class="fa fa-paper-plane"></i> Enviar reporte
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -922,6 +1223,9 @@
     let modalScreenshots = [];
     let currentModalScreenshot = 0;
     let currentModalCover = '';
+
+    // 🔥 Juego actualmente abierto en el modal (para reportes)
+    let currentGameModal = null;
 
     const tabs = document.querySelectorAll('.tab-btn-chip');
     const contents = document.querySelectorAll('.tab-content');
@@ -984,7 +1288,6 @@
         'sega_dreamcast': '💿', 'mame': '🕹️', 'arcade_y_mas': '👾'
     };
 
-    // === Solo etiqueta del TIPO (ROM/MOD/PORT) en borde derecho ===
     function buildCoverTags(game, category) {
         const typeInfo = getTypeInfo(game.tipo);
         const typeClass = getTypeTagClass(game.tipo);
@@ -1208,9 +1511,6 @@
         }
     }
 
-    const modalReportBtn = document.getElementById('modal-report');
-    if (modalReportBtn) modalReportBtn.addEventListener('click', function () {});
-
     const btnStart = document.getElementById('btn-start');
     if (btnStart) {
         btnStart.addEventListener('click', () => {
@@ -1279,6 +1579,10 @@
 
     window.openGameModal = function (game, category) {
         if (!game) return;
+
+        // 🔥 Guardar referencia para reportes
+        currentGameModal = { game, category };
+
         const modal = document.getElementById('game-modal');
         const modalContent = document.getElementById('modal-content');
         const modalCoverWrap = document.getElementById('modal-cover-wrap');
@@ -1342,9 +1646,16 @@
     window.closeGameModal = function () {
         document.getElementById('game-modal').classList.remove('active');
         document.body.style.overflow = '';
+        // No limpiamos currentGameModal para que el modal de reporte
+        // pueda acceder a los datos si se abre desde acá
     };
 
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeGameModal(); });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeGameModal();
+            closeReportModal();
+        }
+    });
 
     async function loadData() {
         try {
@@ -1668,6 +1979,268 @@
         });
     }
 
+    // ==========================================
+    // 🔥 SISTEMA DE TOASTS (notificaciones)
+    // ==========================================
+    function showToast(mensaje, tipo = 'info', duracion = 4000) {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+
+        const iconos = {
+            success: 'fa-check-circle',
+            error: 'fa-exclamation-circle',
+            warn: 'fa-exclamation-triangle',
+            info: 'fa-info-circle'
+        };
+
+        const toast = document.createElement('div');
+        toast.className = `toast ${tipo}`;
+        toast.innerHTML = `
+            <i class="fa ${iconos[tipo] || iconos.info} toast-icon"></i>
+            <span class="toast-text">${escapeHtml(mensaje)}</span>
+        `;
+        container.appendChild(toast);
+
+        // Trigger animación
+        requestAnimationFrame(() => {
+            toast.classList.add('show');
+        });
+
+        // Auto-eliminar
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => {
+                if (toast.parentNode) toast.parentNode.removeChild(toast);
+            }, 400);
+        }, duracion);
+    }
+
+    // ==========================================
+    // 🔥 SISTEMA DE REPORTES DE USUARIOS
+    // ==========================================
+    const REPORT_STORAGE_KEY = 'gmh_user_reports_v1';
+    const REPORT_COOLDOWN_MS = 24 * 60 * 60 * 1000; // 24 horas entre reportes del mismo juego
+    const REPORT_MAX_POR_JUEGO = 3; // Máximo 3 reportes históricos por juego
+
+    /**
+     * Obtiene los reportes guardados en localStorage del usuario actual
+     */
+    function getReportesLocales() {
+        try {
+            const data = localStorage.getItem(REPORT_STORAGE_KEY);
+            return data ? JSON.parse(data) : {};
+        } catch (e) {
+            return {};
+        }
+    }
+
+    /**
+     * Guarda un reporte en localStorage (anti-spam)
+     */
+    function guardarReporteLocal(juegoId) {
+        const reportes = getReportesLocales();
+        if (!reportes[juegoId]) reportes[juegoId] = [];
+        reportes[juegoId].push(Date.now());
+        // Mantener solo los últimos 10 para no llenar localStorage
+        if (reportes[juegoId].length > 10) {
+            reportes[juegoId] = reportes[juegoId].slice(-10);
+        }
+        try {
+            localStorage.setItem(REPORT_STORAGE_KEY, JSON.stringify(reportes));
+        } catch (e) {
+            console.warn('No se pudo guardar reporte local:', e);
+        }
+    }
+
+    /**
+     * Verifica si el usuario puede reportar un juego
+     * @returns { { puede: boolean, razon?: string } }
+     */
+    function puedeReportar(juegoId) {
+        const reportes = getReportesLocales();
+        const historial = reportes[juegoId] || [];
+
+        // Limpiar reportes muy antiguos (más de 30 días)
+        const ahora = Date.now();
+        const recientes = historial.filter(t => ahora - t < 30 * 24 * 60 * 60 * 1000);
+
+        // Verificar límite total por juego
+        if (recientes.length >= REPORT_MAX_POR_JUEGO) {
+            return {
+                puede: false,
+                razon: `Ya reportaste este juego ${REPORT_MAX_POR_JUEGO} veces. Contactá al admin si el problema persiste.`
+            };
+        }
+
+        // Verificar cooldown (último reporte)
+        if (recientes.length > 0) {
+            const ultimo = Math.max(...recientes);
+            const tiempoPasado = ahora - ultimo;
+            if (tiempoPasado < REPORT_COOLDOWN_MS) {
+                const horasRestantes = Math.ceil((REPORT_COOLDOWN_MS - tiempoPasado) / (60 * 60 * 1000));
+                return {
+                    puede: false,
+                    razon: `Ya reportaste este juego recientemente. Podés volver a reportar en ${horasRestantes}h.`
+                };
+            }
+        }
+
+        return { puede: true };
+    }
+
+    /**
+     * Abre el modal de reportes con los datos del juego actual
+     */
+    window.openReportModal = function () {
+        if (!currentGameModal) {
+            showToast('No hay juego seleccionado', 'error');
+            return;
+        }
+
+        const { game, category } = currentGameModal;
+        const juegoId = game.id;
+
+        // Verificar si puede reportar
+        const verificacion = puedeReportar(juegoId);
+        if (!verificacion.puede) {
+            showToast(verificacion.razon, 'warn', 5000);
+            return;
+        }
+
+        // Cargar datos del juego en el modal
+        const consoleKey = game.consola || category || '';
+        const ratio = getCoverRatio(consoleKey);
+        const placeholder = getPlaceholder(ratio);
+        const coverSrc = safeUrl(game.cover, placeholder);
+
+        document.getElementById('report-game-thumb').src = coverSrc;
+        document.getElementById('report-game-thumb').onerror = function () {
+            this.onerror = null;
+            this.src = placeholder;
+        };
+        document.getElementById('report-game-title').textContent = getGameTitle(game);
+        document.getElementById('report-game-console').textContent = getConsoleName(consoleKey);
+        document.getElementById('report-game-type').textContent = getTypeInfo(game.tipo).label;
+
+        // Resetear formulario
+        document.querySelectorAll('.report-type-option').forEach(opt => opt.classList.remove('selected'));
+        document.querySelectorAll('input[name="report-type"]').forEach(r => r.checked = false);
+        document.getElementById('report-message').value = '';
+        document.getElementById('report-counter').textContent = '0 / 300';
+        document.getElementById('report-counter').className = 'report-counter';
+        document.getElementById('report-submit-btn').disabled = true;
+
+        // Abrir modal
+        document.getElementById('modal-reportar').classList.add('active');
+    };
+
+    window.closeReportModal = function () {
+        document.getElementById('modal-reportar').classList.remove('active');
+    };
+
+    // Selección visual de tipo de reporte
+    document.querySelectorAll('.report-type-option').forEach(option => {
+        option.addEventListener('click', () => {
+            document.querySelectorAll('.report-type-option').forEach(o => o.classList.remove('selected'));
+            option.classList.add('selected');
+            const radio = option.querySelector('input[type="radio"]');
+            if (radio) radio.checked = true;
+            updateSubmitButton();
+        });
+    });
+
+    // Contador de caracteres del mensaje
+    const reportMessage = document.getElementById('report-message');
+    const reportCounter = document.getElementById('report-counter');
+
+    reportMessage.addEventListener('input', () => {
+        const len = reportMessage.value.length;
+        reportCounter.textContent = `${len} / 300`;
+        if (len > 280) reportCounter.className = 'report-counter danger';
+        else if (len > 200) reportCounter.className = 'report-counter warn';
+        else reportCounter.className = 'report-counter';
+    });
+
+    function updateSubmitButton() {
+        const tipoSeleccionado = document.querySelector('input[name="report-type"]:checked');
+        document.getElementById('report-submit-btn').disabled = !tipoSeleccionado;
+    }
+
+    // Listener del botón Report en el modal del juego
+    const modalReportBtn = document.getElementById('modal-report');
+    if (modalReportBtn) {
+        modalReportBtn.addEventListener('click', () => {
+            openReportModal();
+        });
+    }
+
+    // Submit del formulario de reporte
+    document.getElementById('form-reportar').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if (!currentGameModal) {
+            showToast('Error: no hay juego seleccionado', 'error');
+            return;
+        }
+
+        const { game, category } = currentGameModal;
+        const juegoId = game.id;
+
+        // Doble verificación anti-spam
+        const verificacion = puedeReportar(juegoId);
+        if (!verificacion.puede) {
+            showToast(verificacion.razon, 'warn', 5000);
+            return;
+        }
+
+        const tipoInput = document.querySelector('input[name="report-type"]:checked');
+        if (!tipoInput) {
+            showToast('Seleccioná un tipo de problema', 'warn');
+            return;
+        }
+
+        const tipo = tipoInput.value;
+        const mensaje = reportMessage.value.trim();
+        const consoleKey = game.consola || category || '';
+
+        // Deshabilitar botón para evitar doble submit
+        const submitBtn = document.getElementById('report-submit-btn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Enviando...';
+
+        try {
+            const reporteData = {
+                juegoId: juegoId,
+                titulo: getGameTitle(game),
+                consola: consoleKey,
+                cover: game.cover || '',
+                tipo: tipo,
+                mensaje: mensaje,
+                usuario: 'anonimo', // En el futuro se puede integrar con login
+                timestamp: Date.now(),
+                resuelto: false
+            };
+
+            // Guardar en Firestore
+            await dbFirestore.collection('reportes').add(reporteData);
+
+            // Guardar localmente para anti-spam
+            guardarReporteLocal(juegoId);
+
+            // Cerrar modal y notificar
+            closeReportModal();
+            showToast('✅ Reporte enviado. ¡Gracias por ayudarnos!', 'success', 4500);
+
+        } catch (error) {
+            console.error('Error al enviar reporte:', error);
+            showToast('Error al enviar el reporte. Intentá de nuevo.', 'error', 5000);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fa fa-paper-plane"></i> Enviar reporte';
+        }
+    });
+
+    // Inicialización
     loadData();
     loadNews();
     bindNeon();
