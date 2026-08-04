@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NeonHub | Admin Pro 3.0</title>
+    <title>Centro administrativo | Admin Pro 3.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -28,6 +28,7 @@
                 radial-gradient(circle at 15% 15%, rgba(255, 215, 0, 0.08) 0%, transparent 40%),
                 radial-gradient(circle at 85% 85%, rgba(184, 134, 11, 0.05) 0%, transparent 40%);
             color: #fff; min-height: 100vh; overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
         }
 
         .font-gamer { font-family: 'Orbitron', sans-serif; letter-spacing: 0.5px; }
@@ -55,6 +56,13 @@
             background: rgba(10, 8, 0, 0.8); border: 1px solid var(--oro-oscuro);
             color: var(--oro-brillante); border-radius: 0.8rem; padding: 0.9rem 1.2rem;
             width: 100%; outline: none; transition: all 0.3s; font-size: 1rem;
+            -webkit-appearance: none; appearance: none;
+        }
+        select.input-lujo {
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23ffd700' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 2.5rem;
         }
         .input-lujo:focus { border-color: var(--oro-puro); box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.15); }
 
@@ -82,6 +90,7 @@
 
         .vista-previa { max-width: 100%; max-height: 200px; border-radius: 0.75rem; border: 2px dashed var(--oro-oscuro); display: none; margin-top: 1rem; object-fit: cover; }
         .vista-previa-mini { width: 80px; height: 80px; border-radius: 0.5rem; border: 1px solid var(--oro-oscuro); object-fit: cover; background: #000; }
+        .vista-previa-edit { width: 100%; max-height: 150px; border-radius: 0.5rem; border: 1px solid var(--oro-oscuro); object-fit: cover; background: #000; display: none; }
 
         #panel-principal { display: none; }
         #pantalla-bienvenida { display: none; }
@@ -89,15 +98,43 @@
         .modal-global { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 9999; padding: 1rem; }
         .caja-modal { background: var(--panel-oro); border: 1px solid var(--oro-intenso); border-radius: 1.5rem; padding: 2rem; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
 
-        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
-        .toast { background: rgba(20, 16, 0, 0.95); border-left: 4px solid var(--oro-puro); color: #fff; padding: 1rem 1.5rem; border-radius: 0.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); display: flex; align-items: center; gap: 10px; max-width: 350px; }
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { background: rgba(20, 16, 0, 0.95); border-left: 4px solid var(--oro-puro); color: #fff; padding: 1rem 1.5rem; border-radius: 0.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); display: flex; align-items: center; gap: 10px; max-width: 350px; pointer-events: auto; }
         .toast.show { transform: translateX(0); }
         .toast.error { border-left-color: #ff4444; }
         .toast.success { border-left-color: #00c851; }
 
-        @media (max-width: 768px) {
+        @media (max-width: 640px) {
+            #toast-container { left: 10px; right: 10px; bottom: 15px; align-items: center; }
+            .toast { max-width: 100%; font-size: 0.9rem; padding: 0.8rem 1rem; }
+            .pantalla-completa { padding: 1rem; }
+            .caja-centro { padding: 2rem 1.5rem; }
+            .caja-centro h1 { font-size: 1.8rem !important; }
+            .caja-centro .fa { font-size: 3rem !important; }
+            .btn-soberano { font-size: 0.9rem; padding: 0.9rem 1rem; }
+            .input-lujo { font-size: 16px; padding: 0.8rem 1rem; }
+            #panel-principal { padding: 0.5rem; }
+            .marco-real { padding: 1.2rem !important; border-radius: 1rem; }
+            .elemento-lista { padding: 1rem; border-radius: 0.8rem; }
+            .elemento-lista img { width: 60px !important; height: 80px !important; }
+            .tarjeta-estadistica { padding: 0.8rem; }
+            .tarjeta-estadistica p:first-child { font-size: 1.5rem !important; }
+            .modal-global { padding: 0.5rem; }
+            .caja-modal { padding: 1.5rem 1rem; }
+            .boton-accion { padding: 0.5rem 0.8rem; font-size: 0.85rem; }
+            .grid-responsive { grid-template-columns: 1fr !important; }
+            #panel-principal header { flex-direction: column; align-items: flex-start !important; gap: 0.8rem; }
+            #panel-principal header h1 { font-size: 1.6rem !important; }
+        }
+
+        @media (min-width: 641px) and (max-width: 768px) {
             .grid-responsive { grid-template-columns: 1fr !important; }
             .btn-soberano { width: 100%; }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+            .btn-soberano:hover, .boton-accion:hover { transform: none; box-shadow: none; }
+            .elemento-lista:hover { border-color: rgba(255, 215, 0, 0.15); background: linear-gradient(90deg, rgba(255, 215, 0, 0.05), transparent); }
         }
     </style>
 </head>
@@ -109,7 +146,7 @@
 <div id="modal-proceso" class="modal-global">
     <div class="caja-modal">
         <i id="icono-modal" class="fa fa-cog fa-spin fa-3x titulo-dorado mb-4"></i>
-        <h2 id="titulo-modal" class="font-gamer text-2xl titulo-dorado">PROCESANDO</h2>
+        <h2 id="titulo-modal" class="font-gamer text-xl sm:text-2xl titulo-dorado">PROCESANDO</h2>
         <p id="detalle-modal" class="text-amber-300 my-4 text-sm"></p>
         <div class="w-full h-2 bg-amber-900/30 rounded-full overflow-hidden mb-6">
             <div id="barra-progreso" class="h-full bg-gradient-to-r from-yellow-600 to-yellow-300 transition-all duration-300" style="width: 0%"></div>
@@ -132,14 +169,15 @@
     </div>
 </div>
 
-<!-- 2. PANTALLA DE BIENVENIDA (NUEVA) -->
+<!-- 2. PANTALLA DE BIENVENIDA -->
 <div id="pantalla-bienvenida" class="pantalla-completa">
     <div class="marco-real caja-centro">
         <i class="fa fa-user-circle-o titulo-dorado text-7xl mb-6"></i>
-        <h1 class="font-gamer text-3xl titulo-dorado mb-2">BIENVENIDO, <span id="nombre-admin-display" class="text-white">ADMIN</span></h1>
-        <p class="text-amber-400/70 mb-10 text-lg">Sistema de Gestión de Catálogo v3.0</p>
+        <h1 class="font-gamer text-2xl sm:text-3xl titulo-dorado mb-2">BIENVENIDO</h1>
+        <h2 class="text-xl sm:text-2xl text-white mb-1" id="nombre-admin-display">ADMIN</h2>
+        <p class="text-amber-400/70 mb-10 text-base sm:text-lg">Sistema de Gestión de Catálogo v3.0</p>
         
-        <button id="btn-ir-al-panel" class="btn-soberano w-full text-xl py-5 mb-4 shadow-lg shadow-yellow-500/20">
+        <button id="btn-ir-al-panel" class="btn-soberano w-full text-base sm:text-xl py-4 sm:py-5 mb-4 shadow-lg shadow-yellow-500/20">
             <i class="fa fa-upload mr-2"></i> SUBIR ROMS / GESTIONAR
         </button>
         
@@ -150,44 +188,45 @@
 </div>
 
 <!-- 3. PANEL PRINCIPAL -->
-<div id="panel-principal" class="max-w-7xl mx-auto px-4 py-6 md:py-10">
-    <header class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-            <h1 class="font-gamer text-3xl md:text-4xl titulo-dorado">CATÁLOGO <span class="text-sm align-top bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded border border-yellow-500/30">ADMIN</span></h1>
-            <p class="text-amber-400/70 text-sm mt-1"><i class="fa fa-database text-green-400"></i> Base de datos estructurada por plataformas</p>
+<div id="panel-principal" class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-10">
+    <header class="mb-6 sm:mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div class="w-full md:w-auto">
+            <h1 class="font-gamer text-xl sm:text-3xl md:text-4xl titulo-dorado">CATÁLOGO <span class="text-xs sm:text-sm align-top bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded border border-yellow-500/30">ADMIN</span></h1>
+            <p class="text-amber-400/70 text-xs sm:text-sm mt-1"><i class="fa fa-database text-green-400"></i> Base de datos estructurada por plataformas</p>
+            <p class="text-green-400 text-xs mt-1"><i class="fa fa-user"></i> Conectado: <span class="font-bold" id="admin-header-name">-</span></p>
         </div>
-        <button id="btn-volver-inicio" class="boton-accion bg-amber-900/30 text-amber-200 border border-amber-600/50 hover:bg-amber-900/50">
-            <i class="fa fa-arrow-left"></i> Volver al Inicio
+        <button id="btn-volver-inicio" class="boton-accion bg-amber-900/30 text-amber-200 border border-amber-600/50 hover:bg-amber-900/50 w-full md:w-auto">
+            <i class="fa fa-arrow-left"></i> <span class="hidden sm:inline">Volver al </span>Inicio
         </button>
     </header>
 
     <!-- ESTADÍSTICAS -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 mb-6 sm:mb-8">
         <div class="tarjeta-estadistica text-center">
-            <p class="font-gamer text-3xl md:text-4xl titulo-dorado" id="total">0</p>
-            <p class="text-amber-500/70 text-sm uppercase tracking-wider">Total Juegos</p>
+            <p class="font-gamer text-2xl sm:text-3xl md:text-4xl titulo-dorado" id="total">0</p>
+            <p class="text-amber-500/70 text-xs sm:text-sm uppercase tracking-wider">Total</p>
         </div>
         <div class="tarjeta-estadistica text-center">
-            <p class="font-gamer text-3xl md:text-4xl text-yellow-300" id="roms">0</p>
-            <p class="text-amber-500/70 text-sm uppercase tracking-wider">ROMs</p>
+            <p class="font-gamer text-2xl sm:text-3xl md:text-4xl text-yellow-300" id="roms">0</p>
+            <p class="text-amber-500/70 text-xs sm:text-sm uppercase tracking-wider">ROMs</p>
         </div>
         <div class="tarjeta-estadistica text-center">
-            <p class="font-gamer text-3xl md:text-4xl text-pink-400" id="mods">0</p>
-            <p class="text-amber-500/70 text-sm uppercase tracking-wider">MODs</p>
+            <p class="font-gamer text-2xl sm:text-3xl md:text-4xl text-pink-400" id="mods">0</p>
+            <p class="text-amber-500/70 text-xs sm:text-sm uppercase tracking-wider">MODs</p>
         </div>
         <div class="tarjeta-estadistica text-center">
-            <p class="font-gamer text-3xl md:text-4xl text-cyan-400" id="ports">0</p>
-            <p class="text-amber-500/70 text-sm uppercase tracking-wider">PORTs</p>
+            <p class="font-gamer text-2xl sm:text-3xl md:text-4xl text-cyan-400" id="ports">0</p>
+            <p class="text-amber-500/70 text-xs sm:text-sm uppercase tracking-wider">PORTs</p>
         </div>
     </div>
 
-    <div class="grid grid-responsive gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
         <!-- FORMULARIO -->
-        <div class="marco-real p-6 md:p-8">
-            <h2 class="font-gamer text-xl md:text-2xl mb-6 titulo-dorado flex items-center gap-2">
+        <div class="marco-real p-4 sm:p-6 md:p-8">
+            <h2 class="font-gamer text-lg sm:text-xl md:text-2xl mb-4 sm:mb-6 titulo-dorado flex items-center gap-2">
                 <i class="fa fa-plus-circle"></i> NUEVO JUEGO
             </h2>
-            <form id="form-juego" class="space-y-5">
+            <form id="form-juego" class="space-y-4 sm:space-y-5">
                 <select id="consola" class="input-lujo" required>
                     <option value="">-- Seleccionar Plataforma --</option>
                     <option value="android">Android</option>
@@ -218,28 +257,28 @@
                     <option value="arcade_y_mas">Arcade y Más</option>
                 </select>
                 
-                <div class="grid grid-cols-3 gap-3">
-                    <label class="cursor-pointer border border-yellow-600/30 bg-yellow-900/10 rounded-xl p-3 text-center hover:bg-yellow-900/20 transition-colors has-[:checked]:border-yellow-400 has-[:checked]:bg-yellow-900/30">
+                <div class="grid grid-cols-3 gap-2 sm:gap-3">
+                    <label class="cursor-pointer border border-yellow-600/30 bg-yellow-900/10 rounded-xl p-2 sm:p-3 text-center hover:bg-yellow-900/20 transition-colors has-[:checked]:border-yellow-400 has-[:checked]:bg-yellow-900/30">
                         <input type="radio" name="tipo" value="rom" checked class="accent-yellow-400 hidden"> 
-                        <span class="text-yellow-300 font-bold text-sm">ROM</span>
+                        <span class="text-yellow-300 font-bold text-xs sm:text-sm">ROM</span>
                     </label>
-                    <label class="cursor-pointer border border-pink-600/30 bg-pink-900/10 rounded-xl p-3 text-center hover:bg-pink-900/20 transition-colors has-[:checked]:border-pink-400 has-[:checked]:bg-pink-900/30">
+                    <label class="cursor-pointer border border-pink-600/30 bg-pink-900/10 rounded-xl p-2 sm:p-3 text-center hover:bg-pink-900/20 transition-colors has-[:checked]:border-pink-400 has-[:checked]:bg-pink-900/30">
                         <input type="radio" name="tipo" value="mod" class="accent-pink-400 hidden"> 
-                        <span class="text-pink-300 font-bold text-sm">MOD</span>
+                        <span class="text-pink-300 font-bold text-xs sm:text-sm">MOD</span>
                     </label>
-                    <label class="cursor-pointer border border-cyan-600/30 bg-cyan-900/10 rounded-xl p-3 text-center hover:bg-cyan-900/20 transition-colors has-[:checked]:border-cyan-400 has-[:checked]:bg-cyan-900/30">
+                    <label class="cursor-pointer border border-cyan-600/30 bg-cyan-900/10 rounded-xl p-2 sm:p-3 text-center hover:bg-cyan-900/20 transition-colors has-[:checked]:border-cyan-400 has-[:checked]:bg-cyan-900/30">
                         <input type="radio" name="tipo" value="port" class="accent-cyan-400 hidden"> 
-                        <span class="text-cyan-300 font-bold text-sm">PORT</span>
+                        <span class="text-cyan-300 font-bold text-xs sm:text-sm">PORT</span>
                     </label>
                 </div>
 
                 <input type="text" id="titulo" class="input-lujo" placeholder="Título del Juego" required>
                 <input type="text" id="idJuego" class="input-lujo" placeholder="ID Interno (Opcional)">
 
-                <div class="border border-dashed border-amber-700/50 rounded-xl p-4 bg-black/20">
-                    <p class="text-amber-400/70 text-sm mb-3 font-bold">📷 PORTADA</p>
+                <div class="border border-dashed border-amber-700/50 rounded-xl p-3 sm:p-4 bg-black/20">
+                    <p class="text-amber-400/70 text-xs sm:text-sm mb-3 font-bold">📷 PORTADA</p>
                     <input type="file" id="imgPortada" accept="image/*" class="hidden">
-                    <button type="button" onclick="document.getElementById('imgPortada').click()" class="btn-soberano w-full text-sm">
+                    <button type="button" onclick="document.getElementById('imgPortada').click()" class="btn-soberano w-full text-xs sm:text-sm">
                         <i class="fa fa-cloud-upload"></i> SELECCIONAR IMAGEN
                     </button>
                     <img id="prevPortada" class="vista-previa mx-auto shadow-lg">
@@ -247,10 +286,10 @@
                     <input type="hidden" id="coverPath">
                 </div>
 
-                <div class="border border-dashed border-amber-700/50 rounded-xl p-4 bg-black/20">
-                    <p class="text-amber-400/70 text-sm mb-3 font-bold">🖼️ CAPTURAS (Múltiple)</p>
+                <div class="border border-dashed border-amber-700/50 rounded-xl p-3 sm:p-4 bg-black/20">
+                    <p class="text-amber-400/70 text-xs sm:text-sm mb-3 font-bold">🖼️ CAPTURAS (Múltiple)</p>
                     <input type="file" id="imgCapturas" accept="image/*" multiple class="hidden">
-                    <button type="button" onclick="document.getElementById('imgCapturas').click()" class="boton-accion bg-blue-900/20 text-blue-300 border border-blue-600/40 w-full hover:bg-blue-900/40">
+                    <button type="button" onclick="document.getElementById('imgCapturas').click()" class="boton-accion bg-blue-900/20 text-blue-300 border border-blue-600/40 w-full hover:bg-blue-900/40 text-xs sm:text-sm">
                         <i class="fa fa-images"></i> SELECCIONAR CAPTURAS
                     </button>
                     <div id="prevCapturas" class="flex flex-wrap gap-2 mt-3"></div>
@@ -260,67 +299,114 @@
                 <input type="url" id="link" class="input-lujo" placeholder="Enlace de Descarga" required>
                 <textarea id="descripcion" class="input-lujo" placeholder="Descripción breve..." rows="3"></textarea>
                 
-                <button type="submit" class="btn-soberano w-full text-lg mt-4">
+                <button type="submit" class="btn-soberano w-full text-sm sm:text-lg mt-4">
                     <i class="fa fa-save"></i> GUARDAR EN BASE DE DATOS
                 </button>
             </form>
         </div>
 
         <!-- LISTADO -->
-        <div class="marco-real p-6 md:p-8 flex flex-col h-full">
-            <h2 class="font-gamer text-xl md:text-2xl mb-6 titulo-dorado flex items-center gap-2">
+        <div class="marco-real p-4 sm:p-6 md:p-8 flex flex-col h-full">
+            <h2 class="font-gamer text-lg sm:text-xl md:text-2xl mb-4 sm:mb-6 titulo-dorado flex items-center gap-2">
                 <i class="fa fa-list"></i> CATÁLOGO COMPLETO
             </h2>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
-                <div class="relative">
-                    <i class="fa fa-search absolute left-4 top-1/2 -translate-y-1/2 text-amber-600"></i>
-                    <input type="text" id="buscar" class="input-lujo pl-10" placeholder="Buscar por nombre...">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mb-4 sm:mb-6">
+                <div class="relative sm:col-span-2 lg:col-span-1">
+                    <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-amber-600"></i>
+                    <input type="text" id="buscar" class="input-lujo pl-9 sm:pl-10 text-sm" placeholder="Buscar por nombre...">
                 </div>
-                <select id="filtroTipo" class="input-lujo">
+                <select id="filtroTipo" class="input-lujo text-sm">
                     <option value="">Todos los tipos</option>
                     <option value="rom">ROMs</option><option value="mod">MODs</option><option value="port">PORTs</option>
                 </select>
-                <select id="filtroConsola" class="input-lujo">
+                <select id="filtroConsola" class="input-lujo text-sm">
                     <option value="">Todas las plataformas</option>
+                </select>
+                <select id="filtroAdmin" class="input-lujo text-sm border-green-600/40 bg-green-900/10">
+                    <option value="todos">🌍 Ver todos los juegos</option>
+                    <option value="mio">👤 Solo mis subidas</option>
                 </select>
             </div>
 
-            <div id="lista" class="space-y-3 flex-1 overflow-y-auto pr-2 barra-dorada max-h-[600px]">
+            <div id="lista" class="space-y-2 sm:space-y-3 flex-1 overflow-y-auto pr-1 barra-dorada max-h-[50vh] sm:max-h-[600px]">
                 <div class="text-center py-10 text-amber-500/50">
                     <i class="fa fa-circle-o-notch fa-spin text-3xl mb-3"></i>
-                    <p>Cargando catálogo...</p>
+                    <p class="text-sm">Cargando catálogo...</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL EDITAR -->
+    <!-- MODAL EDITAR MEJORADO -->
     <div id="modal-editar" class="modal-global">
-        <div class="marco-real p-6 md:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <h2 class="font-gamer text-2xl mb-6 titulo-dorado border-b border-amber-700/30 pb-4">EDITAR JUEGO</h2>
-            <form id="formEditar" class="space-y-4">
+        <div class="marco-real p-4 sm:p-6 md:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <h2 class="font-gamer text-lg sm:text-2xl mb-4 sm:mb-6 titulo-dorado border-b border-amber-700/30 pb-3 sm:pb-4">EDITAR JUEGO</h2>
+            
+            <!-- REGISTRO DUAL DE ADMINISTRADORES -->
+            <div class="mb-3 sm:mb-4 p-3 sm:p-4 bg-gradient-to-r from-blue-900/20 to-amber-900/20 rounded-lg border border-blue-500/30 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <p class="text-blue-300 text-xs sm:text-sm"><i class="fa fa-user"></i> Subido por: <span id="edit-subido-por" class="font-bold text-white">-</span></p>
+                <p class="text-amber-300 text-xs sm:text-sm"><i class="fa fa-pencil"></i> Editado por: <span id="edit-editado-por" class="font-bold text-white">-</span></p>
+            </div>
+
+            <form id="formEditar" class="space-y-3 sm:space-y-4">
                 <input type="hidden" id="editId">
-                <input type="hidden" id="editConsolaOriginal"> <!-- Para saber de qué array sacarlo -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <select id="editConsola" class="input-lujo"></select>
-                    <input type="text" id="editIdJuego" class="input-lujo" placeholder="ID Interno">
+                <input type="hidden" id="editConsolaOriginal">
+                <input type="hidden" id="editUploadedBy">
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                    <select id="editConsola" class="input-lujo text-sm"></select>
+                    <input type="text" id="editIdJuego" class="input-lujo text-sm" placeholder="ID Interno">
                 </div>
                 
-                <div class="flex gap-4 justify-center py-2">
-                    <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="editTipo" value="rom" class="accent-yellow-400"> ROM</label>
-                    <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="editTipo" value="mod" class="accent-pink-400"> MOD</label>
-                    <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="editTipo" value="port" class="accent-cyan-400"> PORT</label>
+                <div class="flex flex-wrap gap-3 sm:gap-4 justify-center py-2">
+                    <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="editTipo" value="rom" class="accent-yellow-400"> <span class="text-sm">ROM</span></label>
+                    <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="editTipo" value="mod" class="accent-pink-400"> <span class="text-sm">MOD</span></label>
+                    <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="editTipo" value="port" class="accent-cyan-400"> <span class="text-sm">PORT</span></label>
                 </div>
 
-                <input type="text" id="editTitulo" class="input-lujo" placeholder="Título" required>
-                <input type="url" id="editCover" class="input-lujo" placeholder="URL Portada">
-                <textarea id="editCapturas" class="input-lujo" placeholder="URLs de capturas (una por línea)" rows="4"></textarea>
-                <input type="url" id="editLink" class="input-lujo" placeholder="Enlace de Descarga" required>
-                <textarea id="editDesc" class="input-lujo" placeholder="Descripción" rows="3"></textarea>
+                <input type="text" id="editTitulo" class="input-lujo text-sm" placeholder="Título" required>
+
+                <!-- SECCIÓN PORTADA EDITABLE -->
+                <div class="border border-dashed border-amber-700/50 rounded-xl p-3 bg-black/20">
+                    <p class="text-amber-400/70 text-xs sm:text-sm mb-2 font-bold">📷 PORTADA</p>
+                    <div class="relative mb-3">
+                        <img id="edit-cover-preview" class="vista-previa-edit mx-auto" style="display:none;">
+                        <p id="edit-cover-no-img" class="text-center text-gray-500 text-sm py-4 hidden">Sin portada actual</p>
+                        <button type="button" id="btn-delete-edit-cover" class="hidden absolute top-2 right-2 bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg hover:bg-red-700 active:scale-95 transition-transform">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input type="file" id="edit-imgPortada" accept="image/*" class="hidden">
+                        <button type="button" onclick="document.getElementById('edit-imgPortada').click()" class="boton-accion bg-blue-900/20 text-blue-300 border border-blue-600/40 flex-1 text-xs sm:text-sm">
+                            <i class="fa fa-upload"></i> Subir/Reemplazar
+                        </button>
+                        <input type="url" id="editCoverUrlInput" class="input-lujo text-xs flex-1" placeholder="O pega URL directa">
+                    </div>
+                </div>
+
+                <!-- SECCIÓN CAPTURAS EDITABLE -->
+                <div class="border border-dashed border-amber-700/50 rounded-xl p-3 bg-black/20">
+                    <p class="text-amber-400/70 text-xs sm:text-sm mb-2 font-bold">🖼️ CAPTURAS</p>
+                    <div id="edit-capturas-grid" class="flex flex-wrap gap-2 mb-3">
+                        <!-- Las capturas se inyectan aquí -->
+                    </div>
+                    <p id="edit-capturas-no-img" class="text-center text-gray-500 text-sm py-2 hidden">Sin capturas actuales</p>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input type="file" id="edit-imgCapturas" accept="image/*" multiple class="hidden">
+                        <button type="button" onclick="document.getElementById('edit-imgCapturas').click()" class="boton-accion bg-blue-900/20 text-blue-300 border border-blue-600/40 flex-1 text-xs sm:text-sm">
+                            <i class="fa fa-plus"></i> Agregar nuevas
+                        </button>
+                        <textarea id="editCapturasUrlInput" class="input-lujo text-xs flex-1" placeholder="O pega URLs (una por línea)" rows="2"></textarea>
+                    </div>
+                </div>
+
+                <input type="url" id="editLink" class="input-lujo text-sm" placeholder="Enlace de Descarga" required>
+                <textarea id="editDesc" class="input-lujo text-sm" placeholder="Descripción" rows="3"></textarea>
                 
-                <div class="flex gap-4 pt-4">
-                    <button type="submit" class="btn-soberano flex-1">ACTUALIZAR REGISTRO</button>
+                <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4">
+                    <button type="submit" class="btn-soberano flex-1 text-sm">ACTUALIZAR REGISTRO</button>
                     <button type="button" onclick="document.getElementById('modal-editar').style.display='none'" class="boton-accion bg-gray-800 text-gray-300 border border-gray-600 flex-1">CANCELAR</button>
                 </div>
             </form>
@@ -354,6 +440,52 @@ let github = { token: '' };
 let listaJuegos = [];
 let capturasTemp = [];
 let adminActual = '';
+
+// Variables para el manejo de imágenes en edición
+let editCoverPathToDelete = '';
+let editCapturasPathsToDelete = [];
+let editCapturasUrlsToKeep = [];
+
+// ==========================================
+// 🌟 COMPRESOR DE IMÁGENES INTEGRADO 🌟
+// Reduce el tamaño manteniendo buena calidad antes de subir a GitHub
+// ==========================================
+function comprimirImagen(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 800; // Ancho máximo ideal para portadas/capturas
+                const MAX_HEIGHT = 800;
+                let width = img.width;
+                let height = img.height;
+
+                // Escalar proporcionalmente si excede los límites
+                if (width > height) {
+                    if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                } else {
+                    if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // Convertir a JPEG con 75% de calidad (excelente balance peso/calidad)
+                canvas.toBlob((blob) => {
+                    resolve(blob);
+                }, 'image/jpeg', 0.75);
+            };
+            img.onerror = reject;
+        };
+        reader.onerror = reject;
+    });
+}
 
 // ==========================================
 // UTILIDADES DE UI
@@ -418,7 +550,7 @@ async function subirArchivoGitHub(blob, rutaDest) {
         const response = await fetch(`https://api.github.com/repos/${CFG.user}/${CFG.repo}/contents/${rutaDest}`, {
             method: 'PUT',
             headers: { 'Authorization': `token ${github.token}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: `📤 Subida Admin: ${rutaDest}`, content: base64, branch: CFG.rama })
+            body: JSON.stringify({ message: `📤 Subida/Edición por ${adminActual}: ${rutaDest}`, content: base64, branch: CFG.rama })
         });
 
         if (!response.ok) {
@@ -445,7 +577,7 @@ async function borrarArchivoGitHub(path) {
         const delResp = await fetch(`https://api.github.com/repos/${CFG.user}/${CFG.repo}/contents/${path}`, {
             method: 'DELETE',
             headers: { 'Authorization': `token ${github.token}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: '🗑️ Eliminación limpia Admin', sha: sha, branch: CFG.rama })
+            body: JSON.stringify({ message: `🗑️ Eliminación por ${adminActual}`, sha: sha, branch: CFG.rama })
         });
         return delResp.ok;
     } catch (e) {
@@ -455,20 +587,19 @@ async function borrarArchivoGitHub(path) {
 }
 
 // ==========================================
-// INICIALIZACIÓN DE BASE DE DATOS (ESTRUCTURA SOLICITADA)
+// INICIALIZACIÓN DE BASE DE DATOS
 // ==========================================
 async function inicializarBaseDeDatos() {
     const docRef = db.collection('sistema').doc('catalogo_por_consola');
     const doc = await docRef.get();
     
     if (!doc.exists) {
-        // Creamos la estructura exacta que pediste, vacía
         const estructuraInicial = {
             android: [], windows: [], psvita: [], psp: [], ps1: [], ps2: [], ps3: [], ps4: [],
             nes: [], snes: [], n64: [], gamecube: [], wii: [], wiiu: [], gameboy: [],
             gameboycolor: [], gameboyadvance: [], nds: [], '3ds': [], xbox: [], xbox360: [],
             segagenesis: [], segasaturn: [], sega_dreamcast: [], mame: [], arcade_y_mas: [],
-            github_token: "TU_TOKEN_AQUI" // Se actualiza en el login
+            github_token: "TU_TOKEN_AQUI"
         };
         await docRef.set(estructuraInicial);
     } else {
@@ -485,13 +616,12 @@ document.getElementById('form-login').onsubmit = async (e) => {
     abrirModal('CONECTANDO', 'Validando credenciales...', 30);
     
     try {
-        // Primero aseguramos que la DB existe para leer el token si está ahí
         await inicializarBaseDeDatos();
         
         const snap = await db.collection('sistema').doc('config').get();
         if (snap.exists) {
             const dat = snap.data();
-            if (dat.github_token) github.token = dat.github_token; // Fallback si está en config
+            if (dat.github_token) github.token = dat.github_token;
             
             const adminEncontrado = dat.admins?.find(a => a.usuario === document.getElementById('usuario').value && a.pass === document.getElementById('clave').value);
             
@@ -500,6 +630,10 @@ document.getElementById('form-login').onsubmit = async (e) => {
                 document.getElementById('pantalla-login').style.display = 'none';
                 document.getElementById('pantalla-bienvenida').style.display = 'flex';
                 document.getElementById('nombre-admin-display').textContent = adminActual.toUpperCase();
+                document.getElementById('admin-header-name').textContent = adminActual;
+                
+                document.querySelector('#filtroAdmin option[value="mio"]').textContent = `👤 Solo mis subidas (${adminActual})`;
+                
                 cerrarModal();
                 mostrarToast(`Bienvenido, ${adminActual}`, 'success');
                 return;
@@ -511,7 +645,6 @@ document.getElementById('form-login').onsubmit = async (e) => {
     }
 };
 
-// Botón "Subir ROMs / Gestionar"
 document.getElementById('btn-ir-al-panel').onclick = async () => {
     document.getElementById('pantalla-bienvenida').style.display = 'none';
     document.getElementById('panel-principal').style.display = 'block';
@@ -520,29 +653,30 @@ document.getElementById('btn-ir-al-panel').onclick = async () => {
     cerrarModal();
 };
 
-// Botón "Volver al Inicio" (desde el panel)
 document.getElementById('btn-volver-inicio').onclick = () => {
     document.getElementById('panel-principal').style.display = 'none';
     document.getElementById('pantalla-bienvenida').style.display = 'flex';
 };
 
-// Botón "Cerrar Sesión"
 document.getElementById('btn-logout-bienvenida').onclick = () => {
     location.reload();
 };
 
 // ==========================================
-// MANEJO DE IMÁGENES
+// MANEJO DE IMÁGENES (CON COMPRESIÓN)
 // ==========================================
 document.getElementById('imgPortada').onchange = async (e) => {
     const arch = e.target.files[0]; if (!arch) return;
     if (arch.size > 5 * 1024 * 1024) { mostrarToast('La imagen excede 5MB.', 'error'); e.target.value = ''; return; }
 
-    abrirModal('SUBIENDO PORTADA', 'Procesando imagen...', 50);
+    abrirModal('OPTIMIZANDO', 'Comprimiendo imagen para ahorrar espacio...', 30);
     try {
+        const blobComprimido = await comprimirImagen(arch);
+        abrirModal('SUBIENDO PORTADA', 'Enviando a GitHub...', 70);
+        
         const idUnico = Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
         const ruta = `portadas/portada_${idUnico}.jpg`;
-        const resultado = await subirArchivoGitHub(arch, ruta);
+        const resultado = await subirArchivoGitHub(blobComprimido, ruta);
         
         document.getElementById('coverUrl').value = resultado.url;
         document.getElementById('coverPath').value = resultado.path;
@@ -552,7 +686,7 @@ document.getElementById('imgPortada').onchange = async (e) => {
         img.style.display = 'block';
         
         cerrarModal();
-        mostrarToast('Portada subida correctamente', 'success');
+        mostrarToast('Portada optimizada y subida', 'success');
     } catch (err) {
         cerrarModal();
         modalError('Fallo al subir: ' + err.message);
@@ -565,11 +699,14 @@ document.getElementById('imgCapturas').onchange = async (e) => {
     
     for (let i = 0; i < archs.length; i++) {
         if (archs[i].size > 5 * 1024 * 1024) { mostrarToast(`La imagen ${archs[i].name} excede 5MB. Se omite.`, 'error'); continue; }
-        abrirModal('SUBIENDO CAPTURAS', `Procesando ${i + 1} de ${archs.length}...`, ((i + 1) / archs.length) * 100);
+        abrirModal('OPTIMIZANDO', `Comprimiendo ${i + 1} de ${archs.length}...`, (i / archs.length) * 50);
         try {
+            const blobComprimido = await comprimirImagen(archs[i]);
+            abrirModal('SUBIENDO CAPTURAS', `Enviando ${i + 1} de ${archs.length}...`, 50 + ((i + 1) / archs.length) * 50);
+            
             const idUnico = Date.now().toString(36) + i;
             const ruta = `capturas/capt_${idUnico}.jpg`;
-            const resultado = await subirArchivoGitHub(archs[i], ruta);
+            const resultado = await subirArchivoGitHub(blobComprimido, ruta);
             capturasTemp.push(resultado);
             
             const img = document.createElement('img'); img.src = resultado.url; img.className = 'vista-previa-mini';
@@ -578,7 +715,7 @@ document.getElementById('imgCapturas').onchange = async (e) => {
     }
     document.getElementById('capturasData').value = JSON.stringify(capturasTemp);
     cerrarModal();
-    if (capturasTemp.length > 0) mostrarToast(`${capturasTemp.length} capturas subidas`, 'success');
+    if (capturasTemp.length > 0) mostrarToast(`${capturasTemp.length} capturas optimizadas y subidas`, 'success');
 };
 
 // ==========================================
@@ -590,21 +727,18 @@ async function cargarLista() {
         if (!doc.exists) return;
         const data = doc.data();
         
-        // Aplanamos el objeto a un array único para la vista, inyectando la propiedad 'consola'
         listaJuegos = [];
         for (const [nombreConsola, juegosArray] of Object.entries(data)) {
             if (Array.isArray(juegosArray)) {
                 juegosArray.forEach(juego => {
-                    juego.consola = nombreConsola; // Aseguramos que cada juego sepa a qué consola pertenece
+                    juego.consola = nombreConsola;
                     listaJuegos.push(juego);
                 });
             }
         }
         
-        // Ordenar por fecha (más reciente primero)
         listaJuegos.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
         
-        // Actualizar estadísticas
         document.getElementById('total').textContent = listaJuegos.length;
         document.getElementById('roms').textContent = listaJuegos.filter(x => x.tipo === 'rom').length;
         document.getElementById('mods').textContent = listaJuegos.filter(x => x.tipo === 'mod').length;
@@ -625,15 +759,23 @@ function poblarFiltroConsolas() {
         consolas.map(c => `<option value="${c}">${c.toUpperCase()}</option>`).join('');
 }
 
+function formatearFecha(timestamp) {
+    if (!timestamp) return 'N/A';
+    const fecha = new Date(timestamp);
+    return fecha.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute:'2-digit' });
+}
+
 function renderizarLista() {
     const busqueda = document.getElementById('buscar').value.toLowerCase();
     const tipoFiltro = document.getElementById('filtroTipo').value;
     const consolaFiltro = document.getElementById('filtroConsola').value;
+    const adminFiltro = document.getElementById('filtroAdmin').value;
     
     const filtrados = listaJuegos.filter(j => 
         (!busqueda || (j.title && j.title.toLowerCase().includes(busqueda))) && 
         (!tipoFiltro || j.tipo === tipoFiltro) && 
-        (!consolaFiltro || j.consola === consolaFiltro)
+        (!consolaFiltro || j.consola === consolaFiltro) &&
+        (adminFiltro === 'todos' || j.uploadedBy === adminActual)
     );
     
     const contenedor = document.getElementById('lista');
@@ -644,25 +786,31 @@ function renderizarLista() {
     
     contenedor.innerHTML = filtrados.map(j => {
         const tipoColor = j.tipo === 'rom' ? 'text-yellow-300' : (j.tipo === 'mod' ? 'text-pink-400' : 'text-cyan-400');
+        const subidoPor = j.uploadedBy || 'Desconocido';
+        const editadoBadge = j.editedBy ? `<span class="text-xs text-amber-400/80 ml-2" title="Editado por ${j.editedBy}"><i class="fa fa-pencil"></i></span>` : '';
+        
         return `
-        <div class="elemento-lista p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div class="flex items-center gap-4 w-full sm:w-auto">
+        <div class="elemento-lista p-3 sm:p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
+            <div class="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
                 <img src="${j.cover || 'https://via.placeholder.com/80x100/1a1400/ffd700?text=No+Img'}" 
-                     class="w-16 h-20 object-cover rounded-lg border border-amber-700/50 shadow-md" 
+                     class="w-14 h-18 sm:w-16 sm:h-20 object-cover rounded-lg border border-amber-700/50 shadow-md flex-shrink-0" 
                      onerror="this.src='https://via.placeholder.com/80x100/1a1400/ffd700?text=Error'">
                 <div class="flex-1 min-w-0">
-                    <h3 class="font-bold text-lg truncate text-white">${j.title || 'Sin título'}</h3>
-                    <p class="text-sm text-amber-400/70 flex items-center gap-2 flex-wrap">
+                    <h3 class="font-bold text-base sm:text-lg truncate text-white flex items-center">
+                        ${j.title || 'Sin título'} ${editadoBadge}
+                    </h3>
+                    <p class="text-xs sm:text-sm text-amber-400/70 flex items-center gap-2 flex-wrap mt-1">
                         <span class="bg-amber-900/30 px-2 py-0.5 rounded text-xs border border-amber-700/30 uppercase">${j.consola || 'N/A'}</span>
                         <span class="${tipoColor} font-bold uppercase text-xs">${j.tipo || 'N/A'}</span>
                     </p>
+                    <p class="text-xs text-blue-400/80 mt-1 truncate"><i class="fa fa-user"></i> ${subidoPor}</p>
                 </div>
             </div>
-            <div class="flex gap-2 w-full sm:w-auto justify-end">
-                <button onclick="editarJuego('${j.id}', '${j.consola}')" class="boton-accion boton-editar flex-1 sm:flex-none" title="Editar">
+            <div class="flex gap-2 w-full sm:w-auto justify-end sm:justify-start">
+                <button onclick="editarJuego('${j.id}', '${j.consola}')" class="boton-accion boton-editar flex-1 sm:flex-none text-xs sm:text-sm" title="Editar">
                     <i class="fa fa-pencil"></i> <span class="hidden sm:inline">Editar</span>
                 </button>
-                <button onclick="borrarJuego('${j.id}', '${j.consola}')" class="boton-accion boton-borrar flex-1 sm:flex-none" title="Eliminar">
+                <button onclick="borrarJuego('${j.id}', '${j.consola}')" class="boton-accion boton-borrar flex-1 sm:flex-none text-xs sm:text-sm" title="Eliminar">
                     <i class="fa fa-trash"></i> <span class="hidden sm:inline">Borrar</span>
                 </button>
             </div>
@@ -671,7 +819,7 @@ function renderizarLista() {
     }).join('');
 }
 
-// --- GUARDAR NUEVO (Usa arrayUnion para agregar al array de la consola específica) ---
+// --- GUARDAR NUEVO ---
 document.getElementById('form-juego').onsubmit = async (e) => {
     e.preventDefault();
     const btn = e.target.querySelector('button[type="submit"]');
@@ -681,7 +829,7 @@ document.getElementById('form-juego').onsubmit = async (e) => {
     try {
         const consolaSeleccionada = document.getElementById('consola').value;
         const nuevoJuego = {
-            id: Date.now().toString(), // ID único para poder identificarlo en el array
+            id: Date.now().toString(),
             consola: consolaSeleccionada,
             tipo: document.querySelector('[name="tipo"]:checked').value,
             title: document.getElementById('titulo').value,
@@ -692,15 +840,14 @@ document.getElementById('form-juego').onsubmit = async (e) => {
             screenshotsPaths: capturasTemp.map(c => c.path),
             link: document.getElementById('link').value,
             descripcion: document.getElementById('descripcion').value,
+            uploadedBy: adminActual,
             timestamp: Date.now()
         };
         
-        // Agregamos el objeto al array de la consola correspondiente de forma atómica
         await db.collection('sistema').doc('catalogo_por_consola').update({
             [consolaSeleccionada]: firebase.firestore.FieldValue.arrayUnion(nuevoJuego)
         });
         
-        // Limpiar formulario
         e.target.reset(); 
         document.getElementById('prevPortada').style.display = 'none';
         document.getElementById('prevCapturas').innerHTML = '';
@@ -709,7 +856,7 @@ document.getElementById('form-juego').onsubmit = async (e) => {
         document.getElementById('capturasData').value = '';
         capturasTemp = [];
         
-        mostrarToast('Juego guardado exitosamente en la plataforma', 'success');
+        mostrarToast(`Juego guardado por ${adminActual}`, 'success');
         await cargarLista();
     } catch (err) {
         mostrarToast('Error al guardar: ' + err.message, 'error');
@@ -719,7 +866,7 @@ document.getElementById('form-juego').onsubmit = async (e) => {
     }
 };
 
-// --- BORRAR (Lee, filtra el array y guarda) ---
+// --- BORRAR ---
 window.borrarJuego = async function(idJuego, consola) {
     if (!confirm("⚠️ ¿ESTÁS SEGURO?\n\nSe eliminarán las imágenes de GitHub y el registro de este array.")) return;
     
@@ -750,10 +897,7 @@ window.borrarJuego = async function(idJuego, consola) {
         const doc = await docRef.get();
         const data = doc.data();
         
-        // Filtramos el array para quitar el juego con ese ID
         const nuevoArray = (data[consola] || []).filter(j => j.id !== idJuego);
-        
-        // Actualizamos SOLO el campo de esa consola
         await docRef.update({ [consola]: nuevoArray });
         
         modalExito("Juego e imágenes eliminados perfectamente.");
@@ -763,67 +907,223 @@ window.borrarJuego = async function(idJuego, consola) {
     }
 };
 
-// --- EDITAR ---
+// ==========================================
+// LÓGICA DE EDICIÓN MEJORADA (IMÁGENES + COMPRESIÓN)
+// ==========================================
 window.editarJuego = function(id, consolaOriginal) {
     const j = listaJuegos.find(x => x.id === id);
     if (!j) return;
     
+    editCoverPathToDelete = '';
+    editCapturasPathsToDelete = [];
+    editCapturasUrlsToKeep = [...(j.screenshots || [])];
+    
     document.getElementById('editId').value = id;
-    document.getElementById('editConsolaOriginal').value = consolaOriginal; // Guardamos de dónde viene
+    document.getElementById('editConsolaOriginal').value = consolaOriginal;
+    document.getElementById('editUploadedBy').value = j.uploadedBy || 'Desconocido';
     document.getElementById('editConsola').value = j.consola || '';
+    
+    // REGISTRO DUAL VISIBLE
+    document.getElementById('edit-subido-por').textContent = j.uploadedBy || 'Desconocido';
+    document.getElementById('edit-editado-por').textContent = j.editedBy ? `${j.editedBy} (${formatearFecha(j.editTimestamp)})` : 'Nunca editado';
     
     const radioTipo = document.querySelector(`[name="editTipo"][value="${j.tipo}"]`);
     if (radioTipo) radioTipo.checked = true;
     
     document.getElementById('editTitulo').value = j.title || '';
     document.getElementById('editIdJuego').value = j.idJuego || '';
-    document.getElementById('editCover').value = j.cover || '';
-    document.getElementById('editCapturas').value = (j.screenshots || []).join('\n');
     document.getElementById('editLink').value = j.link || '';
     document.getElementById('editDesc').value = j.descripcion || '';
+
+    // Configurar Portada
+    const coverPreview = document.getElementById('edit-cover-preview');
+    const coverNoImg = document.getElementById('edit-cover-no-img');
+    const btnDeleteCover = document.getElementById('btn-delete-edit-cover');
+    const coverUrlInput = document.getElementById('editCoverUrlInput');
     
+    coverUrlInput.value = j.cover || '';
+    if (j.cover) {
+        coverPreview.src = j.cover;
+        coverPreview.style.display = 'block';
+        coverNoImg.classList.add('hidden');
+        btnDeleteCover.classList.remove('hidden');
+        editCoverPathToDelete = j.coverPath || '';
+    } else {
+        coverPreview.style.display = 'none';
+        coverNoImg.classList.remove('hidden');
+        btnDeleteCover.classList.add('hidden');
+    }
+
+    renderizarCapturasEdit(j.screenshots || [], j.screenshotsPaths || []);
+    document.getElementById('editCapturasUrlInput').value = '';
+
     document.getElementById('modal-editar').style.display = 'flex';
 };
 
+function renderizarCapturasEdit(urls, paths) {
+    const grid = document.getElementById('edit-capturas-grid');
+    const noImg = document.getElementById('edit-capturas-no-img');
+    grid.innerHTML = '';
+    
+    if (urls.length === 0) {
+        noImg.classList.remove('hidden');
+        return;
+    }
+    noImg.classList.add('hidden');
+    
+    urls.forEach((url, index) => {
+        const div = document.createElement('div');
+        div.className = 'relative group';
+        div.innerHTML = `
+            <img src="${url}" class="w-20 h-20 object-cover rounded-lg border border-amber-700/50">
+            <button type="button" onclick="eliminarCapturaEdit(${index})" class="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg hover:bg-red-700 active:scale-95 transition-transform text-xs">
+                <i class="fa fa-times"></i>
+            </button>
+        `;
+        grid.appendChild(div);
+    });
+}
+
+window.eliminarCapturaEdit = function(index) {
+    const juego = listaJuegos.find(x => x.id === document.getElementById('editId').value);
+    if (!juego) return;
+    
+    const path = juego.screenshotsPaths ? juego.screenshotsPaths[index] : '';
+    if (path) {
+        editCapturasPathsToDelete.push(path);
+    }
+    
+    editCapturasUrlsToKeep.splice(index, 1);
+    renderizarCapturasEdit(editCapturasUrlsToKeep, []);
+};
+
+// Manejar subida de nueva portada en edición (CON COMPRESIÓN)
+document.getElementById('edit-imgPortada').onchange = async (e) => {
+    const arch = e.target.files[0]; if (!arch) return;
+    if (arch.size > 5 * 1024 * 1024) { mostrarToast('La imagen excede 5MB.', 'error'); e.target.value = ''; return; }
+
+    abrirModal('OPTIMIZANDO', 'Comprimiendo nueva portada...', 30);
+    try {
+        const blobComprimido = await comprimirImagen(arch);
+        abrirModal('SUBIENDO PORTADA', 'Enviando a GitHub...', 70);
+        
+        const idUnico = Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+        const ruta = `portadas/portada_edit_${idUnico}.jpg`;
+        const resultado = await subirArchivoGitHub(blobComprimido, ruta);
+        
+        const juego = listaJuegos.find(x => x.id === document.getElementById('editId').value);
+        if (juego && juego.coverPath) {
+            editCoverPathToDelete = juego.coverPath; // Marcar anterior para borrar
+        }
+        
+        document.getElementById('edit-cover-preview').src = resultado.url;
+        document.getElementById('edit-cover-preview').style.display = 'block';
+        document.getElementById('edit-cover-no-img').classList.add('hidden');
+        document.getElementById('btn-delete-edit-cover').classList.remove('hidden');
+        document.getElementById('editCoverUrlInput').value = resultado.url;
+        
+        cerrarModal();
+        mostrarToast('Nueva portada optimizada y lista', 'success');
+    } catch (err) {
+        cerrarModal();
+        modalError('Fallo al subir: ' + err.message);
+    }
+};
+
+document.getElementById('btn-delete-edit-cover').onclick = function() {
+    const juego = listaJuegos.find(x => x.id === document.getElementById('editId').value);
+    if (juego && juego.coverPath) {
+        editCoverPathToDelete = juego.coverPath;
+    }
+    document.getElementById('edit-cover-preview').style.display = 'none';
+    document.getElementById('edit-cover-no-img').classList.remove('hidden');
+    document.getElementById('btn-delete-edit-cover').classList.add('hidden');
+    document.getElementById('editCoverUrlInput').value = '';
+};
+
+// Manejar subida de nuevas capturas en edición (CON COMPRESIÓN)
+document.getElementById('edit-imgCapturas').onchange = async (e) => {
+    const archs = [...e.target.files]; if (archs.length === 0) return;
+    
+    for (let i = 0; i < archs.length; i++) {
+        if (archs[i].size > 5 * 1024 * 1024) { mostrarToast(`La imagen ${archs[i].name} excede 5MB. Se omite.`, 'error'); continue; }
+        abrirModal('OPTIMIZANDO', `Comprimiendo ${i + 1} de ${archs.length}...`, (i / archs.length) * 50);
+        try {
+            const blobComprimido = await comprimirImagen(archs[i]);
+            abrirModal('SUBIENDO CAPTURA', `Enviando ${i + 1} de ${archs.length}...`, 50 + ((i + 1) / archs.length) * 50);
+            
+            const idUnico = Date.now().toString(36) + i;
+            const ruta = `capturas/capt_edit_${idUnico}.jpg`;
+            const resultado = await subirArchivoGitHub(blobComprimido, ruta);
+            
+            editCapturasUrlsToKeep.push(resultado.url);
+        } catch (err) { mostrarToast(`Error al subir ${archs[i].name}`, 'error'); }
+    }
+    
+    renderizarCapturasEdit(editCapturasUrlsToKeep, []);
+    cerrarModal();
+    mostrarToast(`${archs.length} capturas optimizadas y agregadas`, 'success');
+    e.target.value = '';
+};
+
+// --- GUARDAR EDICIÓN ---
 document.getElementById('formEditar').onsubmit = async (e) => {
     e.preventDefault();
     const id = document.getElementById('editId').value;
     const consolaOriginal = document.getElementById('editConsolaOriginal').value;
     const nuevaConsola = document.getElementById('editConsola').value;
+    const uploadedByOriginal = document.getElementById('editUploadedBy').value;
     
     const btn = e.target.querySelector('button[type="submit"]');
     btn.disabled = true;
     btn.textContent = 'ACTUALIZANDO...';
 
     try {
+        // 1. Eliminar imágenes marcadas para borrar de GitHub
+        if (editCoverPathToDelete) {
+            await borrarArchivoGitHub(editCoverPathToDelete);
+        }
+        for (const path of editCapturasPathsToDelete) {
+            await borrarArchivoGitHub(path);
+        }
+
+        const coverUrlFinal = document.getElementById('editCoverUrlInput').value;
+        let coverPathFinal = '';
+        if (coverUrlFinal && coverUrlFinal.includes('raw.githubusercontent.com')) {
+            coverPathFinal = coverUrlFinal.split('main/')[1] || '';
+        }
+
+        const urlsPegadas = document.getElementById('editCapturasUrlInput').value.split('\n').map(u => u.trim()).filter(u => u);
+        const capturasFinales = [...new Set([...editCapturasUrlsToKeep, ...urlsPegadas])];
+
         const docRef = db.collection('sistema').doc('catalogo_por_consola');
         const doc = await docRef.get();
         const data = doc.data();
 
-        // 1. Eliminar de la consola original
         if (data[consolaOriginal]) {
             data[consolaOriginal] = data[consolaOriginal].filter(j => j.id !== id);
         }
 
-        // 2. Crear el objeto actualizado
         const juegoActualizado = {
             id: id,
             consola: nuevaConsola,
             tipo: document.querySelector('[name="editTipo"]:checked').value,
             title: document.getElementById('editTitulo').value,
             idJuego: document.getElementById('editIdJuego').value,
-            cover: document.getElementById('editCover').value,
-            screenshots: document.getElementById('editCapturas').value.split('\n').map(u => u.trim()).filter(u => u),
+            cover: coverUrlFinal,
+            coverPath: coverPathFinal,
+            screenshots: capturasFinales,
             link: document.getElementById('editLink').value,
             descripcion: document.getElementById('editDesc').value,
-            timestamp: Date.now()
+            uploadedBy: uploadedByOriginal, // Se mantiene el original
+            editedBy: adminActual,          // Se registra quién editó
+            editTimestamp: Date.now(),      // Se registra cuándo se editó
+            timestamp: Date.now()           // Se actualiza para ordenamiento
         };
 
-        // 3. Agregar a la nueva consola (o la misma si no cambió)
         if (!data[nuevaConsola]) data[nuevaConsola] = [];
         data[nuevaConsola].push(juegoActualizado);
 
-        // 4. Guardar los cambios en los campos correspondientes
         const updates = {};
         updates[consolaOriginal] = data[consolaOriginal];
         if (consolaOriginal !== nuevaConsola) {
@@ -833,7 +1133,7 @@ document.getElementById('formEditar').onsubmit = async (e) => {
         await docRef.update(updates);
 
         document.getElementById('modal-editar').style.display = 'none';
-        mostrarToast('Juego actualizado correctamente', 'success');
+        mostrarToast('Juego actualizado por ' + adminActual, 'success');
         await cargarLista();
     } catch (err) {
         mostrarToast('Error al actualizar: ' + err.message, 'error');
@@ -850,12 +1150,24 @@ document.getElementById('cerrar-modal-proceso').onclick = cerrarModal;
 document.getElementById('buscar').oninput = renderizarLista;
 document.getElementById('filtroTipo').onchange = renderizarLista;
 document.getElementById('filtroConsola').onchange = renderizarLista;
+document.getElementById('filtroAdmin').onchange = renderizarLista;
 
 window.onclick = function(event) {
     if (event.target.classList.contains('modal-global')) {
         event.target.style.display = 'none';
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const consolas = ['android', 'windows', 'psp', 'psvita', 'ps1', 'ps2', 'ps3', 'ps4', 'nes', 'snes', 'n64', 'gamecube', 'wii', 'wiiu', 'gameboy', 'gameboycolor', 'gameboyadvance', 'nds', '3ds', 'xbox', 'xbox360', 'segagenesis', 'segasaturn', 'sega_dreamcast', 'mame', 'arcade_y_mas'];
+    const selectEditar = document.getElementById('editConsola');
+    consolas.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c.toUpperCase();
+        selectEditar.appendChild(opt);
+    });
+});
 </script>
 </body>
 </html>

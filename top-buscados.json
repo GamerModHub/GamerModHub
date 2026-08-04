@@ -1,0 +1,20 @@
+[
+  {
+    "title": "GTA San Andreas",
+    "cover": "https://raw.githubusercontent.com/conocimientos777/Portadas/main/portadas/portada_mscfiplg6y6k6.jpg",
+    "consola": "ps2",
+    "tipo": "rom",
+    "descripcion": "El clásico de Rockstar Games.",
+    "link": "https://drive.google.com/file/d/12TbZ9oH217vtd1zgsH9sL5panqEtK1jT/view?usp=drivesdk",
+    "category": "ps2"
+  },
+  {
+    "title": "Pokemon Esmeralda",
+    "cover": "https://ejemplo.com/pokemon.jpg",
+    "consola": "gameboyadvance",
+    "tipo": "rom",
+    "descripcion": "La aventura Pokémon definitiva.",
+    "link": "https://ejemplo.com/descarga",
+    "category": "gameboyadvance"
+  }
+]
