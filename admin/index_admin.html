@@ -10,339 +10,122 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap');
-
-        :root {
-            --oro-brillante: #fff5c0;
-            --oro-puro: #ffd700;
-            --oro-intenso: #f5b800;
-            --oro-oscuro: #b8860b;
-            --oro-sombra: #8b6914;
-            --negro-real: #050400;
-            --panel-oro: rgba(20, 16, 0, 0.9);
-        }
-
-        * { font-family: 'Rajdhani', sans-serif; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body {
-            background-color: var(--negro-real);
-            background-image: 
-                radial-gradient(circle at 15% 15%, rgba(255, 215, 0, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 85% 85%, rgba(184, 134, 11, 0.05) 0%, transparent 40%);
-            color: #fff; min-height: 100vh; overflow-x: hidden;
-        }
-
-        .font-gamer { font-family: 'Orbitron', sans-serif; letter-spacing: 0.5px; }
-        .marco-real {
-            background: var(--panel-oro);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 215, 0, 0.1);
-            border-radius: 1.2rem;
-        }
-        .titulo-dorado { color: var(--oro-puro); text-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
-        
-        .btn-soberano {
-            background: linear-gradient(135deg, var(--oro-sombra), var(--oro-intenso), var(--oro-puro));
-            border: 1px solid var(--oro-brillante); color: #000; padding: 1rem 1.5rem; border-radius: 0.8rem;
-            font-weight: 800; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            text-transform: uppercase; letter-spacing: 1px;
-        }
-        .btn-soberano:active { transform: scale(0.97); }
-        .btn-soberano:hover { box-shadow: 0 0 25px rgba(255, 215, 0, 0.6); transform: translateY(-2px); }
-        .btn-soberano:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-
-        .input-lujo {
-            background: rgba(10, 8, 0, 0.8); border: 1px solid var(--oro-oscuro);
-            color: var(--oro-brillante); border-radius: 0.8rem; padding: 0.9rem 1.2rem;
-            width: 100%; outline: none; transition: all 0.3s; font-size: 1rem;
-            -webkit-appearance: none; appearance: none;
-        }
-        select.input-lujo, .input-lujo[type="file"] {
-            background-image: none;
-        }
-        select.input-lujo {
-            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23ffd700' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            padding-right: 2.5rem;
-        }
-        .input-lujo:focus { border-color: var(--oro-puro); box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.15); }
-        textarea.input-lujo { resize: vertical; min-height: 80px; }
-
-        .tarjeta-estadistica {
-            background: linear-gradient(160deg, rgba(255, 215, 0, 0.1), rgba(184, 134, 11, 0.02));
-            border-radius: 1rem; padding: 1.2rem; border: 1px solid rgba(255, 215, 0, 0.2);
-        }
-
-        .elemento-lista {
-            background: linear-gradient(90deg, rgba(255, 215, 0, 0.05), transparent);
-            border: 1px solid rgba(255, 215, 0, 0.15); border-radius: 1rem; transition: all 0.3s;
-        }
-        .elemento-lista:hover { border-color: var(--oro-puro); background: rgba(255, 215, 0, 0.08); }
-
-        .boton-accion { padding: 0.6rem 1rem; border-radius: 0.6rem; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; }
-        .boton-accion:active { transform: scale(0.95); }
-        .boton-accion:disabled { opacity: 0.5; cursor: not-allowed; }
-        .boton-editar { background: rgba(255, 193, 7, 0.2); color: #ffeb3b; border: 1px solid rgba(255, 193, 7, 0.4); }
-        .boton-borrar { background: rgba(255, 50, 50, 0.2); color: #ff6666; border: 1px solid rgba(255, 50, 50, 0.4); }
-        .boton-nuevo { background: rgba(0, 200, 100, 0.2); color: #66ffaa; border: 1px solid rgba(0, 200, 100, 0.4); }
-
-        .pantalla-completa { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 1.5rem; }
-        .caja-centro { width: 100%; max-width: 500px; text-align: center; padding: 3rem 2rem; }
-
-        .pantalla-oculta { display: none !important; }
-
-        .modal-global { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 9999; padding: 1rem; }
-        .modal-global.activo { display: flex; }
-        .caja-modal { background: var(--panel-oro); border: 1px solid var(--oro-intenso); border-radius: 1.5rem; padding: 2rem; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
-
-        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 10001; display: flex; flex-direction: column; gap: 10px; pointer-events: none; max-width: 380px; }
-        .toast { background: rgba(20, 16, 0, 0.96); border-left: 4px solid var(--oro-puro); color: #fff; padding: 1rem 1.5rem; border-radius: 0.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); display: flex; align-items: center; gap: 10px; pointer-events: auto; border: 1px solid rgba(255, 215, 0, 0.3); }
-        .toast.show { transform: translateX(0); }
-        .toast.error { border-left-color: #ff4444; }
-        .toast.success { border-left-color: #00c851; }
-        .toast.warn { border-left-color: #ffa500; }
-        .toast.info { border-left-color: #00bcd4; }
-
-        /* Tabs del panel */
-        .admin-tab {
-            padding: 0.7rem 1.2rem;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            border-radius: 0.6rem;
-            color: #d4af37;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.25s;
-            font-size: 0.9rem;
-            white-space: nowrap;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-        .admin-tab:hover { border-color: var(--oro-puro); transform: translateY(-1px); }
-        .admin-tab.active {
-            background: linear-gradient(135deg, var(--oro-sombra), var(--oro-intenso));
-            color: #000; border-color: var(--oro-brillante);
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
-        }
-
-        .admin-tabs-wrap {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid rgba(255, 215, 0, 0.15);
-        }
-
-        .panel-seccion { display: none; }
-        .panel-seccion.activa { display: block; animation: fadeInPanel 0.4s ease; }
-        @keyframes fadeInPanel { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Preview de imagen */
-        .preview-box {
-            border: 2px dashed var(--oro-oscuro);
-            border-radius: 0.8rem;
-            padding: 1rem;
-            min-height: 120px;
-            display: flex; align-items: center; justify-content: center;
-            background: rgba(0, 0, 0, 0.3);
-            margin-top: 0.5rem;
-        }
-        .preview-box img {
-            max-width: 100%; max-height: 200px;
-            border-radius: 0.5rem;
-            object-fit: contain;
-        }
-        .preview-box .placeholder-text {
-            color: rgba(255, 215, 0, 0.4);
-            font-size: 0.85rem;
-            text-align: center;
-        }
-
-        /* Grid de items */
-        .items-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1rem;
-        }
-
-        .item-card {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            border-radius: 1rem;
-            overflow: hidden;
-            transition: all 0.3s;
-        }
-        .item-card:hover {
-            border-color: var(--oro-puro);
-            box-shadow: 0 8px 24px rgba(255, 215, 0, 0.15);
-            transform: translateY(-3px);
-        }
-        .item-card-img {
-            width: 100%;
-            aspect-ratio: 16/10;
-            object-fit: cover;
-            display: block;
-            background: #000;
-        }
-        .item-card-body { padding: 1rem; }
-        .item-card-title {
-            font-weight: 800; color: #fff; font-size: 1.05rem;
-            margin-bottom: 0.4rem;
-            display: -webkit-box;
-            -webkit-line-clamp: 1;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-        .item-card-meta {
-            display: flex; gap: 0.4rem; flex-wrap: wrap;
-            margin-bottom: 0.5rem;
-        }
-        .item-card-badge {
-            display: inline-flex; align-items: center; gap: 0.3rem;
-            background: rgba(255, 215, 0, 0.1);
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            color: var(--oro-brillante);
-            padding: 0.2rem 0.6rem; border-radius: 999px;
-            font-size: 0.7rem; font-weight: 700;
-            text-transform: uppercase;
-        }
-        .item-card-desc {
-            color: #b8b090;
-            font-size: 0.85rem;
-            line-height: 1.4;
-            margin-bottom: 0.8rem;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            min-height: 2.4em;
-        }
-        .item-card-actions {
-            display: flex; gap: 0.5rem;
-        }
-        .item-card-actions .boton-accion { flex: 1; font-size: 0.8rem; padding: 0.5rem; }
-
-        /* Chips de filtro */
-        .filter-chip {
-            padding: 0.45rem 1rem;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 215, 0, 0.25);
-            border-radius: 999px;
-            color: #b8a860;
-            font-size: 0.85rem; font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .filter-chip:hover { border-color: var(--oro-puro); color: var(--oro-puro); }
-        .filter-chip.active {
-            background: rgba(255, 215, 0, 0.15);
-            border-color: var(--oro-puro);
-            color: var(--oro-puro);
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-        }
-
-        /* Barra de progreso */
-        .progress-bar {
-            height: 8px; background: rgba(255, 215, 0, 0.1);
-            border-radius: 4px; overflow: hidden;
-            margin: 1rem 0;
-        }
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--oro-oscuro), var(--oro-puro));
-            width: 0%; transition: width 0.3s;
-        }
-
-        /* Tabs de categorías para MODS */
-        .category-selector {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        .category-option {
-            padding: 0.8rem;
-            background: rgba(0, 0, 0, 0.3);
-            border: 2px solid rgba(255, 215, 0, 0.2);
-            border-radius: 0.6rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-        }
-        .category-option:hover { border-color: var(--oro-puro); }
-        .category-option.selected {
-            border-color: var(--oro-puro);
-            background: rgba(255, 215, 0, 0.1);
-            box-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
-        }
-        .category-option .icono { font-size: 1.5rem; margin-bottom: 0.3rem; }
-        .category-option .nombre { font-size: 0.8rem; font-weight: 700; color: #fff; }
-
-        /* Reportes */
-        .reporte-card {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 100, 50, 0.3);
-            border-radius: 0.8rem;
-            padding: 1rem;
-            margin-bottom: 0.8rem;
-        }
-        .reporte-card.resuelto { opacity: 0.5; border-left: 4px solid #00c851; }
-        .reporte-card.pendiente { border-left: 4px solid #ff9500; }
-
-        /* Top buscados */
-        .top-item {
-            display: flex; align-items: center; gap: 1rem;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            border-radius: 0.8rem;
-            padding: 0.8rem;
-            margin-bottom: 0.5rem;
-        }
-        .top-item-pos {
-            width: 36px; height: 36px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--oro-sombra), var(--oro-puro));
-            color: #000;
-            font-weight: 800;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-            font-family: 'Orbitron', sans-serif;
-        }
-        .top-item-info { flex: 1; min-width: 0; }
-        .top-item-title { font-weight: 700; color: #fff; }
-        .top-item-console { font-size: 0.8rem; color: #b8a860; }
-
-        /* Selector de color para novedades */
-        .color-picker {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 0.5rem;
-        }
-        .color-option {
-            aspect-ratio: 1;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            border: 3px solid transparent;
-            transition: all 0.2s;
-        }
-        .color-option.selected { border-color: #fff; transform: scale(1.1); }
-        .color-option.cyan-400 { background: #22d3ee; }
-        .color-option.green-400 { background: #4ade80; }
-        .color-option.purple-400 { background: #c084fc; }
-        .color-option.pink-400 { background: #f472b6; }
-        .color-option.orange-400 { background: #fb923c; }
-        .color-option.red-400 { background: #f87171; }
-
-        @media (max-width: 640px) {
-            #toast-container { left: 10px; right: 10px; bottom: 15px; max-width: none; }
-            .toast { padding: 0.8rem 1rem; font-size: 0.9rem; }
-            .pantalla-completa { padding: 1rem; }
-            .caja-centro { padding: 2rem 1.5rem; }
-            .items-grid { grid-template-columns: 1fr; }
-            .category-selector { grid-template-columns: repeat(2, 1fr); }
+        :root{--oro-brillante:#fff5c0;--oro-puro:#ffd700;--oro-intenso:#f5b800;--oro-oscuro:#b8860b;--oro-sombra:#8b6914;--negro-real:#050400;--panel-oro:rgba(20,16,0,0.9)}
+        *{font-family:'Rajdhani',sans-serif;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+        body{background-color:var(--negro-real);background-image:radial-gradient(circle at 15% 15%,rgba(255,215,0,0.08) 0%,transparent 40%),radial-gradient(circle at 85% 85%,rgba(184,134,11,0.05) 0%,transparent 40%);color:#fff;min-height:100vh;overflow-x:hidden}
+        .font-gamer{font-family:'Orbitron',sans-serif;letter-spacing:0.5px}
+        .marco-real{background:var(--panel-oro);backdrop-filter:blur(12px);border:1px solid rgba(255,215,0,0.3);box-shadow:0 8px 32px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,215,0,0.1);border-radius:1.2rem}
+        .titulo-dorado{color:var(--oro-puro);text-shadow:0 0 15px rgba(255,215,0,0.4)}
+        .btn-soberano{background:linear-gradient(135deg,var(--oro-sombra),var(--oro-intenso),var(--oro-puro));border:1px solid var(--oro-brillante);color:#000;padding:1rem 1.5rem;border-radius:0.8rem;font-weight:800;cursor:pointer;transition:all 0.3s;text-transform:uppercase;letter-spacing:1px}
+        .btn-soberano:active{transform:scale(0.97)}
+        .btn-soberano:hover{box-shadow:0 0 25px rgba(255,215,0,0.6);transform:translateY(-2px)}
+        .btn-soberano:disabled{opacity:0.6;cursor:not-allowed;transform:none}
+        .input-lujo{background:rgba(10,8,0,0.8);border:1px solid var(--oro-oscuro);color:var(--oro-brillante);border-radius:0.8rem;padding:0.9rem 1.2rem;width:100%;outline:none;transition:all 0.3s;font-size:1rem;-webkit-appearance:none;appearance:none}
+        select.input-lujo{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23ffd700' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;padding-right:2.5rem}
+        .input-lujo:focus{border-color:var(--oro-puro);box-shadow:0 0 0 3px rgba(255,215,0,0.15)}
+        textarea.input-lujo{resize:vertical;min-height:80px}
+        .tarjeta-estadistica{background:linear-gradient(160deg,rgba(255,215,0,0.1),rgba(184,134,11,0.02));border-radius:1rem;padding:1.2rem;border:1px solid rgba(255,215,0,0.2)}
+        .elemento-lista{background:linear-gradient(90deg,rgba(255,215,0,0.05),transparent);border:1px solid rgba(255,215,0,0.15);border-radius:1rem;transition:all 0.3s}
+        .elemento-lista:hover{border-color:var(--oro-puro);background:rgba(255,215,0,0.08)}
+        .boton-accion{padding:0.6rem 1rem;border-radius:0.6rem;font-weight:700;border:none;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;justify-content:center;gap:0.5rem}
+        .boton-accion:active{transform:scale(0.95)}
+        .boton-accion:disabled{opacity:0.5;cursor:not-allowed}
+        .boton-editar{background:rgba(255,193,7,0.2);color:#ffeb3b;border:1px solid rgba(255,193,7,0.4)}
+        .boton-borrar{background:rgba(255,50,50,0.2);color:#ff6666;border:1px solid rgba(255,50,50,0.4)}
+        .boton-nuevo{background:rgba(0,200,100,0.2);color:#66ffaa;border:1px solid rgba(0,200,100,0.4)}
+        .pantalla-completa{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1.5rem}
+        .caja-centro{width:100%;max-width:500px;text-align:center;padding:3rem 2rem}
+        .pantalla-oculta{display:none!important}
+        .modal-global{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:9999;padding:1rem}
+        .modal-global.activo{display:flex}
+        .caja-modal{background:var(--panel-oro);border:1px solid var(--oro-intenso);border-radius:1.5rem;padding:2rem;width:100%;max-width:400px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,0.8)}
+        #toast-container{position:fixed;bottom:20px;right:20px;z-index:10001;display:flex;flex-direction:column;gap:10px;pointer-events:none;max-width:380px}
+        .toast{background:rgba(20,16,0,0.96);border-left:4px solid var(--oro-puro);color:#fff;padding:1rem 1.5rem;border-radius:0.5rem;box-shadow:0 10px 30px rgba(0,0,0,0.5);transform:translateX(120%);transition:transform 0.4s cubic-bezier(0.68,-0.55,0.265,1.55);display:flex;align-items:center;gap:10px;pointer-events:auto;border:1px solid rgba(255,215,0,0.3)}
+        .toast.show{transform:translateX(0)}
+        .toast.error{border-left-color:#ff4444}
+        .toast.success{border-left-color:#00c851}
+        .toast.warn{border-left-color:#ffa500}
+        .toast.info{border-left-color:#00bcd4}
+        .admin-tab{padding:0.7rem 1.2rem;background:rgba(0,0,0,0.4);border:1px solid rgba(255,215,0,0.2);border-radius:0.6rem;color:#d4af37;font-weight:700;cursor:pointer;transition:all 0.25s;font-size:0.9rem;white-space:nowrap;display:inline-flex;align-items:center;gap:0.4rem}
+        .admin-tab:hover{border-color:var(--oro-puro);transform:translateY(-1px)}
+        .admin-tab.active{background:linear-gradient(135deg,var(--oro-sombra),var(--oro-intenso));color:#000;border-color:var(--oro-brillante);box-shadow:0 0 15px rgba(255,215,0,0.4)}
+        .admin-tabs-wrap{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid rgba(255,215,0,0.15)}
+        .panel-seccion{display:none}
+        .panel-seccion.activa{display:block;animation:fadeInPanel 0.4s ease}
+        @keyframes fadeInPanel{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        .preview-box{border:2px dashed var(--oro-oscuro);border-radius:0.8rem;padding:1rem;min-height:120px;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.3);margin-top:0.5rem}
+        .preview-box img{max-width:100%;max-height:200px;border-radius:0.5rem;object-fit:contain}
+        .preview-box .placeholder-text{color:rgba(255,215,0,0.4);font-size:0.85rem;text-align:center}
+        .items-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem}
+        .item-card{background:rgba(0,0,0,0.4);border:1px solid rgba(255,215,0,0.2);border-radius:1rem;overflow:hidden;transition:all 0.3s}
+        .item-card:hover{border-color:var(--oro-puro);box-shadow:0 8px 24px rgba(255,215,0,0.15);transform:translateY(-3px)}
+        .item-card-img{width:100%;aspect-ratio:16/10;object-fit:cover;display:block;background:#000}
+        .item-card-body{padding:1rem}
+        .item-card-title{font-weight:800;color:#fff;font-size:1.05rem;margin-bottom:0.4rem;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+        .item-card-meta{display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.5rem}
+        .item-card-badge{display:inline-flex;align-items:center;gap:0.3rem;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);color:var(--oro-brillante);padding:0.2rem 0.6rem;border-radius:999px;font-size:0.7rem;font-weight:700;text-transform:uppercase}
+        .item-card-desc{color:#b8b090;font-size:0.85rem;line-height:1.4;margin-bottom:0.8rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.4em}
+        .item-card-actions{display:flex;gap:0.5rem}
+        .item-card-actions .boton-accion{flex:1;font-size:0.8rem;padding:0.5rem}
+        .filter-chip{padding:0.45rem 1rem;background:rgba(0,0,0,0.4);border:1px solid rgba(255,215,0,0.25);border-radius:999px;color:#b8a860;font-size:0.85rem;font-weight:700;cursor:pointer;transition:all 0.2s}
+        .filter-chip:hover{border-color:var(--oro-puro);color:var(--oro-puro)}
+        .filter-chip.active{background:rgba(255,215,0,0.15);border-color:var(--oro-puro);color:var(--oro-puro);box-shadow:0 0 10px rgba(255,215,0,0.3)}
+        .progress-bar{height:8px;background:rgba(255,215,0,0.1);border-radius:4px;overflow:hidden;margin:1rem 0}
+        .progress-fill{height:100%;background:linear-gradient(90deg,var(--oro-oscuro),var(--oro-puro));width:0%;transition:width 0.3s}
+        .category-selector{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:0.5rem;margin-bottom:1rem}
+        .category-option{padding:0.8rem;background:rgba(0,0,0,0.3);border:2px solid rgba(255,215,0,0.2);border-radius:0.6rem;cursor:pointer;transition:all 0.2s;text-align:center}
+        .category-option:hover{border-color:var(--oro-puro)}
+        .category-option.selected{border-color:var(--oro-puro);background:rgba(255,215,0,0.1);box-shadow:0 0 12px rgba(255,215,0,0.3)}
+        .category-option .icono{font-size:1.5rem;margin-bottom:0.3rem}
+        .category-option .nombre{font-size:0.8rem;font-weight:700;color:#fff}
+        .reporte-card{background:rgba(0,0,0,0.4);border:1px solid rgba(255,100,50,0.3);border-radius:0.8rem;padding:1rem;margin-bottom:0.8rem}
+        .reporte-card.resuelto{opacity:0.5;border-left:4px solid #00c851}
+        .reporte-card.pendiente{border-left:4px solid #ff9500}
+        .top-item{display:flex;align-items:center;gap:1rem;background:rgba(0,0,0,0.4);border:1px solid rgba(255,215,0,0.2);border-radius:0.8rem;padding:0.8rem;margin-bottom:0.5rem}
+        .top-item-pos{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--oro-sombra),var(--oro-puro));color:#000;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Orbitron',sans-serif}
+        .top-item-info{flex:1;min-width:0}
+        .top-item-title{font-weight:700;color:#fff}
+        .top-item-console{font-size:0.8rem;color:#b8a860}
+        .color-picker{display:grid;grid-template-columns:repeat(6,1fr);gap:0.5rem}
+        .color-option{aspect-ratio:1;border-radius:0.5rem;cursor:pointer;border:3px solid transparent;transition:all 0.2s}
+        .color-option.selected{border-color:#fff;transform:scale(1.1)}
+        .color-option.cyan-400{background:#22d3ee}
+        .color-option.green-400{background:#4ade80}
+        .color-option.purple-400{background:#c084fc}
+        .color-option.pink-400{background:#f472b6}
+        .color-option.orange-400{background:#fb923c}
+        .color-option.red-400{background:#f87171}
+        .val-url-item{background:rgba(0,0,0,0.35);border:1px solid rgba(255,215,0,0.1);border-radius:0.7rem;padding:0.75rem;margin-bottom:0.5rem;display:flex;align-items:center;gap:0.75rem;font-size:0.85rem;transition:all 0.2s}
+        .val-url-item:hover{background:rgba(255,215,0,0.05);border-color:rgba(255,215,0,0.2)}
+        .val-url-item.status-ok{border-left:3px solid #00c851}
+        .val-url-item.status-error{border-left:3px solid #ff4444;background:rgba(255,50,50,0.05)}
+        .val-url-item.status-pending{border-left:3px solid #ffa500}
+        .val-url-item.status-checking{border-left:3px solid #00bcd4;animation:pulse-border 1s infinite}
+        @keyframes pulse-border{0%,100%{border-left-color:#00bcd4}50%{border-left-color:#00e5ff}}
+        .val-url-thumb{width:45px;height:60px;border-radius:0.4rem;object-fit:cover;border:1px solid rgba(255,215,0,0.2);background:#000;flex-shrink:0}
+        .val-url-info{flex:1;min-width:0}
+        .val-url-title{font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .val-url-meta{font-size:0.7rem;color:rgba(255,215,0,0.6);margin-top:0.2rem;display:flex;gap:0.5rem;flex-wrap:wrap}
+        .val-url-status{font-size:0.7rem;font-weight:700;padding:0.3rem 0.6rem;border-radius:0.4rem;text-align:center;min-width:80px;flex-shrink:0}
+        .val-url-status.ok{background:rgba(0,200,80,0.2);color:#00c851}
+        .val-url-status.error{background:rgba(255,50,50,0.2);color:#ff4444}
+        .val-url-status.pending{background:rgba(255,165,0,0.2);color:#ffa500}
+        .val-url-status.checking{background:rgba(0,188,212,0.2);color:#00bcd4}
+        .huerfana-item{background:rgba(0,0,0,0.35);border:1px solid rgba(255,165,0,0.25);border-left:3px solid #ffa500;border-radius:0.6rem;padding:0.6rem;margin-bottom:0.5rem;display:flex;align-items:center;gap:0.8rem;transition:all 0.2s}
+        .huerfana-item:hover{background:rgba(255,165,0,0.05)}
+        .huerfana-item.selected{background:rgba(255,50,50,0.1);border-left-color:#ff4444;border-color:rgba(255,50,50,0.4)}
+        .huerfana-thumb{width:50px;height:65px;border-radius:0.4rem;object-fit:cover;border:1px solid rgba(255,165,0,0.3);background:#000;flex-shrink:0}
+        .huerfana-info{flex:1;min-width:0}
+        .huerfana-path{font-size:0.8rem;color:var(--oro-brillante);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .huerfana-meta{font-size:0.7rem;color:rgba(255,215,0,0.5);margin-top:0.2rem}
+        .huerfana-checkbox{width:20px;height:20px;accent-color:var(--oro-puro);cursor:pointer;flex-shrink:0}
+        @media(max-width:640px){
+            #toast-container{left:10px;right:10px;bottom:15px;max-width:none}
+            .toast{padding:0.8rem 1rem;font-size:0.9rem}
+            .pantalla-completa{padding:1rem}
+            .caja-centro{padding:2rem 1.5rem}
+            .items-grid{grid-template-columns:1fr}
+            .category-selector{grid-template-columns:repeat(2,1fr)}
         }
     </style>
 </head>
@@ -361,13 +144,12 @@
     </div>
 </div>
 
-<!-- 1. LOGIN -->
+<!-- LOGIN -->
 <div id="pantalla-login" class="pantalla-completa">
     <div class="marco-real caja-centro">
         <i class="fa fa-shield titulo-dorado text-5xl mb-4"></i>
         <h1 class="font-gamer text-2xl titulo-dorado mb-2">PANEL DE ADMINISTRACIÓN</h1>
         <p class="text-amber-500/60 text-sm mb-5">Sistema de Gestión Seguro</p>
-        
         <div class="text-left bg-red-900/10 border border-red-600/30 rounded-lg p-3 mb-6">
             <div class="flex items-start gap-2">
                 <i class="fa fa-exclamation-triangle text-orange-400 mt-1"></i>
@@ -377,7 +159,6 @@
                 </div>
             </div>
         </div>
-
         <form id="form-login" class="space-y-4">
             <input type="text" id="usuario" class="input-lujo" placeholder="Usuario" required autocomplete="username">
             <input type="password" id="clave" class="input-lujo" placeholder="Contraseña" required autocomplete="current-password">
@@ -386,48 +167,41 @@
     </div>
 </div>
 
-<!-- 2. BIENVENIDA -->
+<!-- BIENVENIDA -->
 <div id="pantalla-bienvenida" class="pantalla-completa pantalla-oculta">
-    <div class="marco-real caja-centro" style="max-width: 600px;">
+    <div class="marco-real caja-centro" style="max-width:600px;">
         <i class="fa fa-user-circle-o titulo-dorado text-7xl mb-6"></i>
         <h1 class="font-gamer text-2xl titulo-dorado mb-2">BIENVENIDO</h1>
         <h2 class="text-xl text-white mb-1" id="nombre-admin-display">ADMIN</h2>
         <p class="text-amber-400/70 mb-8 text-base">Sistema de Gestión de Catálogo v3.5</p>
-        
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
-            <button id="btn-ir-roms" class="btn-soberano text-sm py-4"><i class="fa fa-gamepad mr-2"></i> SUBIR ROMS / GESTIONAR</button>
-            <button id="btn-ir-validador" class="btn-soberano text-sm py-4" style="background: linear-gradient(135deg, #0066cc, #00aaff, #66ccff);"><i class="fa fa-check-circle mr-2"></i> VALIDAR URLs</button>
-            <button id="btn-ir-huerfanas" class="btn-soberano text-sm py-4" style="background: linear-gradient(135deg, #cc6600, #ff9500, #ffcc66);"><i class="fa fa-ghost mr-2"></i> FOTOS HUÉRFANAS</button>
-            <button id="btn-ir-reportes" class="btn-soberano text-sm py-4" style="background: linear-gradient(135deg, #990033, #ff0055, #ff6688);"><i class="fa fa-flag mr-2"></i> REPORTES DE USUARIOS</button>
-            <button id="btn-ir-emuladores" class="btn-soberano text-sm py-4" style="background: linear-gradient(135deg, #6600cc, #bd00ff, #e066ff);"><i class="fa fa-microchip mr-2"></i> EMULADORES</button>
-            <button id="btn-ir-apps" class="btn-soberano text-sm py-4" style="background: linear-gradient(135deg, #009933, #34c759, #66ff99);"><i class="fa fa-android mr-2"></i> APLICACIONES</button>
-            <button id="btn-ir-mods" class="btn-soberano text-sm py-4" style="background: linear-gradient(135deg, #cc0066, #ff00aa, #ff66cc);"><i class="fa fa-paint-brush mr-2"></i> MODS Y TEXTURAS</button>
-            <button id="btn-ir-archivos" class="btn-soberano text-sm py-4" style="background: linear-gradient(135deg, #cc6600, #ff9500, #ffcc66);"><i class="fa fa-folder-open-o mr-2"></i> ARCHIVOS GAMER</button>
-            <button id="btn-ir-novedades" class="btn-soberano text-sm py-4" style="background: linear-gradient(135deg, #006699, #00aacc, #66ddff);"><i class="fa fa-bullhorn mr-2"></i> NOVEDADES</button>
-            <button id="btn-ir-top" class="btn-soberano text-sm py-4" style="background: linear-gradient(135deg, #cc3300, #ff6600, #ff9966);"><i class="fa fa-fire mr-2"></i> TOP BUSCADOS</button>
+            <button onclick="irAPanel('roms')" class="btn-soberano text-sm py-4"><i class="fa fa-gamepad mr-2"></i> SUBIR ROMS / GESTIONAR</button>
+            <button onclick="irAPanel('validador')" class="btn-soberano text-sm py-4" style="background:linear-gradient(135deg,#0066cc,#00aaff,#66ccff)"><i class="fa fa-check-circle mr-2"></i> VALIDAR URLs</button>
+            <button onclick="irAPanel('huerfanas')" class="btn-soberano text-sm py-4" style="background:linear-gradient(135deg,#cc6600,#ff9500,#ffcc66)"><i class="fa fa-ghost mr-2"></i> FOTOS HUÉRFANAS</button>
+            <button onclick="irAPanel('reportes')" class="btn-soberano text-sm py-4" style="background:linear-gradient(135deg,#990033,#ff0055,#ff6688)"><i class="fa fa-flag mr-2"></i> REPORTES DE USUARIOS</button>
+            <button onclick="irAPanel('emuladores')" class="btn-soberano text-sm py-4" style="background:linear-gradient(135deg,#6600cc,#bd00ff,#e066ff)"><i class="fa fa-microchip mr-2"></i> EMULADORES</button>
+            <button onclick="irAPanel('apps')" class="btn-soberano text-sm py-4" style="background:linear-gradient(135deg,#009933,#34c759,#66ff99)"><i class="fa fa-android mr-2"></i> APLICACIONES</button>
+            <button onclick="irAPanel('mods')" class="btn-soberano text-sm py-4" style="background:linear-gradient(135deg,#cc0066,#ff00aa,#ff66cc)"><i class="fa fa-paint-brush mr-2"></i> MODS Y TEXTURAS</button>
+            <button onclick="irAPanel('archivos')" class="btn-soberano text-sm py-4" style="background:linear-gradient(135deg,#cc6600,#ff9500,#ffcc66)"><i class="fa fa-folder-open-o mr-2"></i> ARCHIVOS GAMER</button>
+            <button onclick="irAPanel('novedades')" class="btn-soberano text-sm py-4" style="background:linear-gradient(135deg,#006699,#00aacc,#66ddff)"><i class="fa fa-bullhorn mr-2"></i> NOVEDADES</button>
+            <button onclick="irAPanel('top')" class="btn-soberano text-sm py-4" style="background:linear-gradient(135deg,#cc3300,#ff6600,#ff9966)"><i class="fa fa-fire mr-2"></i> TOP BUSCADOS</button>
         </div>
-
         <button id="btn-logout" class="boton-accion bg-red-900/30 text-red-300 border border-red-600/50 w-full py-3 mt-4 hover:bg-red-900/50">
             <i class="fa fa-sign-out mr-2"></i> Cerrar Sesión
         </button>
     </div>
 </div>
 
-<!-- 3. PANEL PRINCIPAL (con tabs) -->
+<!-- PANEL PRINCIPAL -->
 <div id="panel-principal" class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 pantalla-oculta">
     <header class="mb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
         <div>
-            <h1 class="font-gamer text-lg sm:text-2xl titulo-dorado flex items-center gap-2">
-                <i class="fa fa-crown"></i> CENTRO DE CONTROL
-            </h1>
+            <h1 class="font-gamer text-lg sm:text-2xl titulo-dorado flex items-center gap-2"><i class="fa fa-crown"></i> CENTRO DE CONTROL</h1>
             <p class="text-green-400 text-xs mt-1"><i class="fa fa-user"></i> <span id="admin-name-header">-</span></p>
         </div>
-        <button id="btn-volver-bienvenida" class="boton-accion bg-amber-900/30 text-amber-200 border border-amber-600/50">
-            <i class="fa fa-arrow-left"></i> Volver
-        </button>
+        <button id="btn-volver-bienvenida" class="boton-accion bg-amber-900/30 text-amber-200 border border-amber-600/50"><i class="fa fa-arrow-left"></i> Volver</button>
     </header>
 
-    <!-- TABS -->
     <div class="admin-tabs-wrap">
         <button class="admin-tab active" data-tab="roms"><i class="fa fa-gamepad"></i> ROMs</button>
         <button class="admin-tab" data-tab="emuladores"><i class="fa fa-microchip"></i> Emuladores</button>
@@ -437,31 +211,18 @@
         <button class="admin-tab" data-tab="novedades"><i class="fa fa-bullhorn"></i> Novedades</button>
         <button class="admin-tab" data-tab="top"><i class="fa fa-fire"></i> Top</button>
         <button class="admin-tab" data-tab="reportes"><i class="fa fa-flag"></i> Reportes</button>
+        <button class="admin-tab" data-tab="validador"><i class="fa fa-check-circle"></i> Validar URLs</button>
+        <button class="admin-tab" data-tab="huerfanas"><i class="fa fa-ghost"></i> Huérfanas</button>
     </div>
 
-    <!-- ============================================ -->
-    <!-- SECCIÓN: ROMs (existente, simplificado) -->
-    <!-- ============================================ -->
+    <!-- ROMs -->
     <div id="seccion-roms" class="panel-seccion activa">
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
-            <div class="tarjeta-estadistica text-center">
-                <p class="font-gamer text-2xl titulo-dorado" id="stat-roms-total">0</p>
-                <p class="text-amber-500/70 text-xs uppercase">Total</p>
-            </div>
-            <div class="tarjeta-estadistica text-center">
-                <p class="font-gamer text-2xl text-yellow-300" id="stat-roms-roms">0</p>
-                <p class="text-amber-500/70 text-xs uppercase">ROMs</p>
-            </div>
-            <div class="tarjeta-estadistica text-center">
-                <p class="font-gamer text-2xl text-pink-400" id="stat-roms-mods">0</p>
-                <p class="text-amber-500/70 text-xs uppercase">MODs</p>
-            </div>
-            <div class="tarjeta-estadistica text-center">
-                <p class="font-gamer text-2xl text-cyan-400" id="stat-roms-ports">0</p>
-                <p class="text-amber-500/70 text-xs uppercase">PORTs</p>
-            </div>
+            <div class="tarjeta-estadistica text-center"><p class="font-gamer text-2xl titulo-dorado" id="stat-roms-total">0</p><p class="text-amber-500/70 text-xs uppercase">Total</p></div>
+            <div class="tarjeta-estadistica text-center"><p class="font-gamer text-2xl text-yellow-300" id="stat-roms-roms">0</p><p class="text-amber-500/70 text-xs uppercase">ROMs</p></div>
+            <div class="tarjeta-estadistica text-center"><p class="font-gamer text-2xl text-pink-400" id="stat-roms-mods">0</p><p class="text-amber-500/70 text-xs uppercase">MODs</p></div>
+            <div class="tarjeta-estadistica text-center"><p class="font-gamer text-2xl text-cyan-400" id="stat-roms-ports">0</p><p class="text-amber-500/70 text-xs uppercase">PORTs</p></div>
         </div>
-
         <div class="marco-real p-4 mb-4">
             <h3 class="font-gamer titulo-dorado mb-3"><i class="fa fa-plus-circle"></i> NUEVO JUEGO</h3>
             <form id="form-juego" class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -482,15 +243,9 @@
                     <option value="mame">MAME</option><option value="arcade_y_mas">Arcade</option>
                 </select>
                 <div class="flex gap-2">
-                    <label class="flex-1 cursor-pointer border border-yellow-600/30 bg-yellow-900/10 rounded-lg p-2 text-center has-[:checked]:border-yellow-400 has-[:checked]:bg-yellow-900/30">
-                        <input type="radio" name="juego-tipo" value="rom" checked class="hidden"><span class="text-yellow-300 font-bold text-sm">ROM</span>
-                    </label>
-                    <label class="flex-1 cursor-pointer border border-pink-600/30 bg-pink-900/10 rounded-lg p-2 text-center has-[:checked]:border-pink-400 has-[:checked]:bg-pink-900/30">
-                        <input type="radio" name="juego-tipo" value="mod" class="hidden"><span class="text-pink-300 font-bold text-sm">MOD</span>
-                    </label>
-                    <label class="flex-1 cursor-pointer border border-cyan-600/30 bg-cyan-900/10 rounded-lg p-2 text-center has-[:checked]:border-cyan-400 has-[:checked]:bg-cyan-900/30">
-                        <input type="radio" name="juego-tipo" value="port" class="hidden"><span class="text-cyan-300 font-bold text-sm">PORT</span>
-                    </label>
+                    <label class="flex-1 cursor-pointer border border-yellow-600/30 bg-yellow-900/10 rounded-lg p-2 text-center has-[:checked]:border-yellow-400 has-[:checked]:bg-yellow-900/30"><input type="radio" name="juego-tipo" value="rom" checked class="hidden"><span class="text-yellow-300 font-bold text-sm">ROM</span></label>
+                    <label class="flex-1 cursor-pointer border border-pink-600/30 bg-pink-900/10 rounded-lg p-2 text-center has-[:checked]:border-pink-400 has-[:checked]:bg-pink-900/30"><input type="radio" name="juego-tipo" value="mod" class="hidden"><span class="text-pink-300 font-bold text-sm">MOD</span></label>
+                    <label class="flex-1 cursor-pointer border border-cyan-600/30 bg-cyan-900/10 rounded-lg p-2 text-center has-[:checked]:border-cyan-400 has-[:checked]:bg-cyan-900/30"><input type="radio" name="juego-tipo" value="port" class="hidden"><span class="text-cyan-300 font-bold text-sm">PORT</span></label>
                 </div>
                 <input type="text" id="juego-titulo" class="input-lujo" placeholder="Título *" required>
                 <input type="text" id="juego-idinterno" class="input-lujo" placeholder="ID Interno (opcional)">
@@ -509,16 +264,12 @@
                 <button type="submit" class="btn-soberano md:col-span-2"><i class="fa fa-save"></i> GUARDAR JUEGO</button>
             </form>
         </div>
-
         <div class="marco-real p-4">
             <h3 class="font-gamer titulo-dorado mb-3"><i class="fa fa-list"></i> CATÁLOGO COMPLETO</h3>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
                 <input type="text" id="roms-buscar" class="input-lujo text-sm" placeholder="🔍 Buscar...">
                 <select id="roms-filtro-consola" class="input-lujo text-sm"><option value="">Todas las consolas</option></select>
-                <select id="roms-filtro-tipo" class="input-lujo text-sm">
-                    <option value="">Todos los tipos</option>
-                    <option value="rom">ROMs</option><option value="mod">MODs</option><option value="port">PORTs</option>
-                </select>
+                <select id="roms-filtro-tipo" class="input-lujo text-sm"><option value="">Todos los tipos</option><option value="rom">ROMs</option><option value="mod">MODs</option><option value="port">PORTs</option></select>
             </div>
             <div id="roms-lista" class="space-y-2 max-h-[500px] overflow-y-auto pr-1">
                 <div class="text-center py-8 text-amber-500/50"><i class="fa fa-spinner fa-spin text-2xl mb-2"></i><p>Cargando...</p></div>
@@ -526,9 +277,7 @@
         </div>
     </div>
 
-    <!-- ============================================ -->
-    <!-- SECCIÓN: EMULADORES -->
-    <!-- ============================================ -->
+    <!-- EMULADORES -->
     <div id="seccion-emuladores" class="panel-seccion">
         <div class="flex flex-wrap gap-2 mb-4 items-center justify-between">
             <h2 class="font-gamer titulo-dorado text-xl"><i class="fa fa-microchip"></i> Gestión de Emuladores</h2>
@@ -538,9 +287,7 @@
         <div id="emuladores-lista" class="items-grid"></div>
     </div>
 
-    <!-- ============================================ -->
-    <!-- SECCIÓN: APPS -->
-    <!-- ============================================ -->
+    <!-- APPS -->
     <div id="seccion-apps" class="panel-seccion">
         <div class="flex flex-wrap gap-2 mb-4 items-center justify-between">
             <h2 class="font-gamer titulo-dorado text-xl"><i class="fa fa-android"></i> Gestión de Aplicaciones</h2>
@@ -550,9 +297,7 @@
         <div id="apps-lista" class="items-grid"></div>
     </div>
 
-    <!-- ============================================ -->
-    <!-- SECCIÓN: MODS -->
-    <!-- ============================================ -->
+    <!-- MODS -->
     <div id="seccion-mods" class="panel-seccion">
         <div class="flex flex-wrap gap-2 mb-4 items-center justify-between">
             <h2 class="font-gamer titulo-dorado text-xl"><i class="fa fa-paint-brush"></i> Gestión de Mods</h2>
@@ -563,9 +308,7 @@
         <div id="mods-lista" class="items-grid"></div>
     </div>
 
-    <!-- ============================================ -->
-    <!-- SECCIÓN: ARCHIVOS GAMER -->
-    <!-- ============================================ -->
+    <!-- ARCHIVOS -->
     <div id="seccion-archivos" class="panel-seccion">
         <div class="flex flex-wrap gap-2 mb-4 items-center justify-between">
             <h2 class="font-gamer titulo-dorado text-xl"><i class="fa fa-folder-open-o"></i> Archivos Gamer</h2>
@@ -576,9 +319,7 @@
         <div id="archivos-lista" class="items-grid"></div>
     </div>
 
-    <!-- ============================================ -->
-    <!-- SECCIÓN: NOVEDADES -->
-    <!-- ============================================ -->
+    <!-- NOVEDADES -->
     <div id="seccion-novedades" class="panel-seccion">
         <div class="flex flex-wrap gap-2 mb-4 items-center justify-between">
             <h2 class="font-gamer titulo-dorado text-xl"><i class="fa fa-bullhorn"></i> Gestión de Novedades</h2>
@@ -587,9 +328,7 @@
         <div id="novedades-lista" class="space-y-2"></div>
     </div>
 
-    <!-- ============================================ -->
-    <!-- SECCIÓN: TOP BUSCADOS -->
-    <!-- ============================================ -->
+    <!-- TOP BUSCADOS -->
     <div id="seccion-top" class="panel-seccion">
         <div class="flex flex-wrap gap-2 mb-4 items-center justify-between">
             <h2 class="font-gamer titulo-dorado text-xl"><i class="fa fa-fire"></i> Top 20 Más Buscados</h2>
@@ -599,9 +338,7 @@
         <div id="top-lista" class="space-y-2"></div>
     </div>
 
-    <!-- ============================================ -->
-    <!-- SECCIÓN: REPORTES -->
-    <!-- ============================================ -->
+    <!-- REPORTES -->
     <div id="seccion-reportes" class="panel-seccion">
         <div class="flex flex-wrap gap-2 mb-4 items-center justify-between">
             <h2 class="font-gamer titulo-dorado text-xl"><i class="fa fa-flag"></i> Reportes de Usuarios</h2>
@@ -611,19 +348,66 @@
             </div>
         </div>
         <div class="flex gap-2 mb-4 flex-wrap">
-            <button class="filter-chip active" data-estado="pendientes">⏳ Pendientes</button>
-            <button class="filter-chip" data-estado="todos">📋 Todos</button>
-            <button class="filter-chip" data-estado="resueltos">✅ Resueltos</button>
+            <button class="filter-chip active" data-estado="pendientes" onclick="Reportes.filtrar('pendientes')">⏳ Pendientes</button>
+            <button class="filter-chip" data-estado="todos" onclick="Reportes.filtrar('todos')">📋 Todos</button>
+            <button class="filter-chip" data-estado="resueltos" onclick="Reportes.filtrar('resueltos')">✅ Resueltos</button>
         </div>
         <div id="reportes-lista" class="space-y-2"></div>
     </div>
+
+    <!-- VALIDADOR URLs -->
+    <div id="seccion-validador" class="panel-seccion">
+        <div class="flex flex-wrap gap-2 mb-4 items-center justify-between">
+            <h2 class="font-gamer titulo-dorado text-xl"><i class="fa fa-check-circle"></i> Validador de URLs</h2>
+            <div class="flex gap-2 flex-wrap">
+                <button class="boton-accion bg-blue-900/30 text-blue-300 border border-blue-600/50" onclick="Validador.cargar()"><i class="fa fa-refresh"></i> Cargar URLs</button>
+                <button class="boton-accion boton-nuevo" onclick="Validador.validarTodas()"><i class="fa fa-play-circle"></i> Validar todas</button>
+                <button class="boton-accion bg-red-900/30 text-red-300 border border-red-600/50" onclick="Validador.validarRotas()"><i class="fa fa-exclamation-triangle"></i> Revalidar rotas</button>
+                <button class="boton-accion bg-red-900/30 text-red-300 border border-red-600/50" id="val-btn-cancelar" onclick="Validador.cancelar()" disabled><i class="fa fa-stop-circle"></i> Cancelar</button>
+                <button class="boton-accion bg-gray-800 text-gray-300 border border-gray-600" onclick="Validador.limpiarCache()"><i class="fa fa-eraser"></i> Limpiar cache</button>
+            </div>
+        </div>
+        <div class="progress-bar" id="val-progress-bar" style="display:none"><div id="val-progress-fill" class="progress-fill"></div></div>
+        <p id="val-progress-text" class="text-xs text-amber-400/70 text-center" style="display:none"><span id="val-progress-current">0</span> / <span id="val-progress-total">0</span> URLs analizadas <span id="val-progress-eta" class="ml-2"></span></p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+            <div class="tarjeta-estadistica text-center"><p class="font-gamer text-2xl titulo-dorado" id="val-stat-total">0</p><p class="text-amber-500/70 text-xs uppercase">Total</p></div>
+            <div class="tarjeta-estadistica text-center"><p class="font-gamer text-2xl text-green-400" id="val-stat-ok">0</p><p class="text-amber-500/70 text-xs uppercase">✅ OK</p></div>
+            <div class="tarjeta-estadistica text-center"><p class="font-gamer text-2xl text-red-400" id="val-stat-error">0</p><p class="text-amber-500/70 text-xs uppercase">❌ Rotas</p></div>
+            <div class="tarjeta-estadistica text-center"><p class="font-gamer text-2xl text-orange-400" id="val-stat-pending">0</p><p class="text-amber-500/70 text-xs uppercase">⏳ Pendientes</p></div>
+        </div>
+        <div id="val-lista" class="space-y-2 max-h-[500px] overflow-y-auto pr-1">
+            <div class="text-center py-8 text-amber-500/50"><i class="fa fa-info-circle text-3xl mb-3"></i><p>Presioná "Cargar URLs" para comenzar</p></div>
+        </div>
+    </div>
+
+    <!-- HUÉRFANAS -->
+    <div id="seccion-huerfanas" class="panel-seccion">
+        <div class="flex flex-wrap gap-2 mb-4 items-center justify-between">
+            <h2 class="font-gamer titulo-dorado text-xl"><i class="fa fa-ghost"></i> Fotos Huérfanas</h2>
+            <div class="flex gap-2 flex-wrap">
+                <button class="boton-accion bg-blue-900/30 text-blue-300 border border-blue-600/50" onclick="Huerfanas.escanear()"><i class="fa fa-search"></i> Escanear GitHub</button>
+                <button class="boton-accion bg-green-900/30 text-green-300 border border-green-600/50" onclick="Huerfanas.seleccionarTodos()"><i class="fa fa-check-square"></i> Seleccionar huérfanos</button>
+                <button class="boton-accion bg-gray-800 text-gray-300 border border-gray-600" onclick="Huerfanas.deseleccionarTodos()"><i class="fa fa-square-o"></i> Deseleccionar</button>
+                <button class="boton-accion bg-red-900/30 text-red-300 border border-red-600/50" onclick="Huerfanas.eliminarSeleccionados()"><i class="fa fa-trash"></i> Eliminar seleccionados</button>
+            </div>
+        </div>
+        <div class="progress-bar" id="huer-progress-bar" style="display:none"><div id="huer-progress-fill" class="progress-fill"></div></div>
+        <p id="huer-progress-text" class="text-xs text-amber-400/70 text-center" style="display:none"><span id="huer-progress-detalle">-</span></p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+            <div class="tarjeta-estadistica text-center"><p class="font-gamer text-2xl titulo-dorado" id="huer-stat-total">0</p><p class="text-amber-500/70 text-xs uppercase">Archivos</p></div>
+            <div class="tarjeta-estadistica text-center"><p class="font-gamer text-2xl text-green-400" id="huer-stat-vinculados">0</p><p class="text-amber-500/70 text-xs uppercase">✅ Vinculados</p></div>
+            <div class="tarjeta-estadistica text-center"><p class="font-gamer text-2xl text-red-400" id="huer-stat-huerfanos">0</p><p class="text-amber-500/70 text-xs uppercase">👻 Huérfanos</p></div>
+            <div class="tarjeta-estadistica text-center"><p class="font-gamer text-2xl text-orange-400" id="huer-stat-seleccionados">0</p><p class="text-amber-500/70 text-xs uppercase">🎯 Seleccionados</p></div>
+        </div>
+        <div id="huer-lista" class="space-y-2 max-h-[500px] overflow-y-auto pr-1">
+            <div class="text-center py-8 text-amber-500/50"><i class="fa fa-ghost text-3xl mb-3"></i><p>Presioná "Escanear GitHub" para detectar archivos huérfanos</p></div>
+        </div>
+    </div>
 </div>
 
-<!-- ============================================ -->
-<!-- MODAL GENÉRICO CRUD -->
-<!-- ============================================ -->
+<!-- MODAL CRUD GENÉRICO -->
 <div id="modal-crud" class="modal-global">
-    <div class="caja-modal" style="max-width: 550px; max-height: 90vh; overflow-y: auto;">
+    <div class="caja-modal" style="max-width:550px;max-height:90vh;overflow-y:auto;">
         <h2 id="modal-crud-titulo" class="font-gamer text-xl titulo-dorado mb-4">Nuevo Item</h2>
         <form id="form-crud" class="space-y-3 text-left">
             <div id="modal-crud-campos"></div>
@@ -635,11 +419,9 @@
     </div>
 </div>
 
-<!-- ============================================ -->
 <!-- MODAL TOP BUSCADOS -->
-<!-- ============================================ -->
 <div id="modal-top" class="modal-global">
-    <div class="caja-modal" style="max-width: 550px; max-height: 90vh; overflow-y: auto;">
+    <div class="caja-modal" style="max-width:550px;max-height:90vh;overflow-y:auto;">
         <h2 class="font-gamer text-xl titulo-dorado mb-4">Agregar al Top</h2>
         <div class="mb-3">
             <label class="text-xs text-amber-400/70 uppercase font-bold">Seleccionar del catálogo</label>
@@ -664,1156 +446,349 @@
 // ==========================================
 // CONFIGURACIÓN
 // ==========================================
-const firebaseConfig = {
-    apiKey: "AIzaSyAd6_jbAZjMQlocFOkQPzIQ11NEGFfudcw",
-    authDomain: "base-administrativa-dea20.firebaseapp.com",
-    projectId: "base-administrativa-dea20",
-    storageBucket: "base-administrativa-dea20.firebasestorage.app",
-    messagingSenderId: "592943708135",
-    appId: "1:592943708135:web:117c98bf2d947e19bf2f42"
-};
+const firebaseConfig={apiKey:"AIzaSyAd6_jbAZjMQlocFOkQPzIQ11NEGFfudcw",authDomain:"base-administrativa-dea20.firebaseapp.com",projectId:"base-administrativa-dea20",storageBucket:"base-administrativa-dea20.firebasestorage.app",messagingSenderId:"592943708135",appId:"1:592943708135:web:117c98bf2d947e19bf2f42"};
 firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+const db=firebase.firestore();
 
-const CFG = {
-    user: 'conocimientos777',
-    repo: 'Portadas',
-    rama: 'main',
-    baseURL: 'https://raw.githubusercontent.com/conocimientos777/Portadas/main/'
-};
+const CFG={user:'conocimientos777',repo:'Portadas',rama:'main',baseURL:'https://raw.githubusercontent.com/conocimientos777/Portadas/main/'};
+let github={token:''};
+let adminActual='';
+let listaJuegos=[];
+let dbRoms={};
 
-let github = { token: '' };
-let adminActual = '';
-let listaJuegos = [];
-let dbRoms = {};
+const MODS_CATEGORIES={texturas_pc:{nombre:'Texturas PC',icono:'🖼️'},texturas_iso:{nombre:'Texturas ISO',icono:'💿'},parches:{nombre:'Parches',icono:'🔧'},mods_juego:{nombre:'Mods de Juegos',icono:'🎮'},configs:{nombre:'Configuraciones',icono:'⚙️'},shaders:{nombre:'Shaders',icono:'✨'},otros:{nombre:'Otros',icono:'📦'}};
+const APPS_CATEGORIES={launchers:{nombre:'Launchers',icono:'🚀'},herramientas:{nombre:'Herramientas',icono:'🧰'},optimizacion:{nombre:'Optimización',icono:'⚡'},apk:{nombre:'APKs',icono:'📱'},otros:{nombre:'Otros',icono:'📦'}};
+const ARCHIVOS_CATEGORIES={bios:{nombre:'BIOS',icono:'💾'},firmwares:{nombre:'Firmwares',icono:'🔌'},saves:{nombre:'Saves',icono:'💽'},configs:{nombre:'Configuraciones',icono:'⚙️'},otros:{nombre:'Otros',icono:'📦'}};
 
 // ==========================================
-// CATEGORÍAS
+// UTILIDADES
 // ==========================================
-const MODS_CATEGORIES = {
-    texturas_pc: { nombre: 'Texturas PC', icono: '🖼️' },
-    texturas_iso: { nombre: 'Texturas ISO', icono: '💿' },
-    parches: { nombre: 'Parches', icono: '🔧' },
-    mods_juego: { nombre: 'Mods de Juegos', icono: '🎮' },
-    configs: { nombre: 'Configuraciones', icono: '⚙️' },
-    shaders: { nombre: 'Shaders', icono: '✨' },
-    otros: { nombre: 'Otros', icono: '📦' }
-};
+function mostrarToast(msg,tipo='success'){const c=document.getElementById('toast-container');const iconos={success:'fa-check-circle text-green-400',error:'fa-exclamation-circle text-red-400',warn:'fa-exclamation-triangle text-orange-400',info:'fa-info-circle text-blue-400'};const t=document.createElement('div');t.className=`toast ${tipo}`;t.innerHTML=`<i class="fa ${iconos[tipo]||iconos.info}"></i><span>${msg}</span>`;c.appendChild(t);setTimeout(()=>t.classList.add('show'),10);setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),400)},4000)}
+function abrirModal(t,d,p=0){document.getElementById('titulo-modal').textContent=t;document.getElementById('detalle-modal').textContent=d;document.getElementById('barra-progreso').style.width=p+'%';document.getElementById('icono-modal').className='fa fa-cog fa-spin fa-3x titulo-dorado mb-4';document.getElementById('cerrar-modal-proceso').classList.add('hidden');document.getElementById('modal-proceso').classList.add('activo')}
+function cerrarModal(){document.getElementById('modal-proceso').classList.remove('activo')}
+function modalExito(m){document.getElementById('icono-modal').className='fa fa-check-circle text-green-400 fa-3x mb-4';document.getElementById('titulo-modal').textContent='✅ ÉXITO';document.getElementById('detalle-modal').textContent=m;document.getElementById('barra-progreso').style.width='100%';document.getElementById('cerrar-modal-proceso').classList.remove('hidden')}
+function modalError(m){document.getElementById('icono-modal').className='fa fa-times-circle text-red-400 fa-3x mb-4';document.getElementById('titulo-modal').textContent='❌ ERROR';document.getElementById('detalle-modal').textContent=m;document.getElementById('cerrar-modal-proceso').classList.remove('hidden')}
+function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
 
-const APPS_CATEGORIES = {
-    launchers: { nombre: 'Launchers', icono: '🚀' },
-    herramientas: { nombre: 'Herramientas', icono: '🧰' },
-    optimizacion: { nombre: 'Optimización', icono: '⚡' },
-    apk: { nombre: 'APKs', icono: '📱' },
-    otros: { nombre: 'Otros', icono: '📦' }
-};
+function comprimirImagen(file){return new Promise((res,rej)=>{const r=new FileReader();r.readAsDataURL(file);r.onload=e=>{const img=new Image();img.src=e.target.result;img.onload=()=>{const c=document.createElement('canvas');const M=800;let w=img.width,h=img.height;if(w>h){if(w>M){h*=M/w;w=M}}else{if(h>M){w*=M/h;h=M}}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);c.toBlob(b=>res(b),'image/jpeg',0.75)};img.onerror=rej};r.onerror=rej})}
 
-const ARCHIVOS_CATEGORIES = {
-    bios: { nombre: 'BIOS', icono: '💾' },
-    firmwares: { nombre: 'Firmwares', icono: '🔌' },
-    saves: { nombre: 'Saves', icono: '💽' },
-    configs: { nombre: 'Configuraciones', icono: '⚙️' },
-    otros: { nombre: 'Otros', icono: '📦' }
-};
+async function subirArchivoGitHub(blob,ruta){try{const b64=await new Promise((r,j)=>{const rd=new FileReader();rd.onload=()=>r(rd.result.split(',')[1]);rd.onerror=j;rd.readAsDataURL(blob)});const resp=await fetch(`https://api.github.com/repos/${CFG.user}/${CFG.repo}/contents/${ruta}`,{method:'PUT',headers:{'Authorization':`token ${github.token}`,'Content-Type':'application/json'},body:JSON.stringify({message:`📤 Subida por ${adminActual}: ${ruta}`,content:b64,branch:CFG.rama})});if(!resp.ok)throw new Error((await resp.json()).message||'Error GitHub');return{url:`${CFG.baseURL}${ruta}?v=${Date.now()}`,path:ruta}}catch(e){console.error(e);throw e}}
 
-// ==========================================
-// UTILIDADES UI
-// ==========================================
-function mostrarToast(msg, tipo = 'success') {
-    const c = document.getElementById('toast-container');
-    const iconos = { success: 'fa-check-circle text-green-400', error: 'fa-exclamation-circle text-red-400', warn: 'fa-exclamation-triangle text-orange-400', info: 'fa-info-circle text-blue-400' };
-    const t = document.createElement('div');
-    t.className = `toast ${tipo}`;
-    t.innerHTML = `<i class="fa ${iconos[tipo] || iconos.info}"></i><span>${msg}</span>`;
-    c.appendChild(t);
-    setTimeout(() => t.classList.add('show'), 10);
-    setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, 4000);
-}
-
-function abrirModal(titulo, detalle, prog = 0) {
-    document.getElementById('titulo-modal').textContent = titulo;
-    document.getElementById('detalle-modal').textContent = detalle;
-    document.getElementById('barra-progreso').style.width = prog + '%';
-    document.getElementById('icono-modal').className = 'fa fa-cog fa-spin fa-3x titulo-dorado mb-4';
-    document.getElementById('cerrar-modal-proceso').classList.add('hidden');
-    document.getElementById('modal-proceso').classList.add('activo');
-}
-
-function cerrarModal() { document.getElementById('modal-proceso').classList.remove('activo'); }
-
-function modalExito(msg) {
-    document.getElementById('icono-modal').className = 'fa fa-check-circle text-green-400 fa-3x mb-4';
-    document.getElementById('titulo-modal').textContent = '✅ ÉXITO';
-    document.getElementById('detalle-modal').textContent = msg;
-    document.getElementById('barra-progreso').style.width = '100%';
-    document.getElementById('cerrar-modal-proceso').classList.remove('hidden');
-}
-
-function modalError(msg) {
-    document.getElementById('icono-modal').className = 'fa fa-times-circle text-red-400 fa-3x mb-4';
-    document.getElementById('titulo-modal').textContent = '❌ ERROR';
-    document.getElementById('detalle-modal').textContent = msg;
-    document.getElementById('cerrar-modal-proceso').classList.remove('hidden');
-}
-
-function escapeHtml(s) {
-    return String(s ?? '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
-}
-
-// ==========================================
-// COMPRESOR DE IMÁGENES
-// ==========================================
-function comprimirImagen(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (event) => {
-            const img = new Image();
-            img.src = event.target.result;
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                const MAX = 800;
-                let w = img.width, h = img.height;
-                if (w > h) { if (w > MAX) { h *= MAX / w; w = MAX; } }
-                else { if (h > MAX) { w *= MAX / h; h = MAX; } }
-                canvas.width = w; canvas.height = h;
-                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                canvas.toBlob(b => resolve(b), 'image/jpeg', 0.75);
-            };
-            img.onerror = reject;
-        };
-        reader.onerror = reject;
-    });
-}
-
-async function subirArchivoGitHub(blob, rutaDest) {
-    try {
-        const base64 = await new Promise((res, rej) => {
-            const r = new FileReader();
-            r.onload = () => res(r.result.split(',')[1]);
-            r.onerror = rej;
-            r.readAsDataURL(blob);
-        });
-        const resp = await fetch(`https://api.github.com/repos/${CFG.user}/${CFG.repo}/contents/${rutaDest}`, {
-            method: 'PUT',
-            headers: { 'Authorization': `token ${github.token}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: `📤 Subida por ${adminActual}: ${rutaDest}`, content: base64, branch: CFG.rama })
-        });
-        if (!resp.ok) throw new Error((await resp.json()).message || 'Error GitHub');
-        return { url: `${CFG.baseURL}${rutaDest}?v=${Date.now()}`, path: rutaDest };
-    } catch (e) { console.error(e); throw e; }
-}
-
-async function borrarArchivoGitHub(path) {
-    if (!path) return true;
-    try {
-        const r = await fetch(`https://api.github.com/repos/${CFG.user}/${CFG.repo}/contents/${path}?ref=${CFG.rama}`, {
-            headers: { 'Authorization': `token ${github.token}` }
-        });
-        if (r.status === 404) return true;
-        if (!r.ok) return false;
-        const { sha } = await r.json();
-        const del = await fetch(`https://api.github.com/repos/${CFG.user}/${CFG.repo}/contents/${path}`, {
-            method: 'DELETE',
-            headers: { 'Authorization': `token ${github.token}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: `🗑️ Eliminado por ${adminActual}`, sha, branch: CFG.rama })
-        });
-        return del.ok;
-    } catch (e) { console.error(e); return false; }
-}
+async function borrarArchivoGitHub(path){if(!path)return true;try{const r=await fetch(`https://api.github.com/repos/${CFG.user}/${CFG.repo}/contents/${path}?ref=${CFG.rama}`,{headers:{'Authorization':`token ${github.token}`}});if(r.status===404)return true;if(!r.ok)return false;const{sha}=await r.json();const d=await fetch(`https://api.github.com/repos/${CFG.user}/${CFG.repo}/contents/${path}`,{method:'DELETE',headers:{'Authorization':`token ${github.token}`,'Content-Type':'application/json'},body:JSON.stringify({message:`🗑️ Eliminado por ${adminActual}`,sha,branch:CFG.rama})});return d.ok}catch(e){console.error(e);return false}}
 
 // ==========================================
 // LOGIN Y NAVEGACIÓN
 // ==========================================
-async function inicializar() {
-    const docRef = db.collection('sistema').doc('catalogo_por_consola');
-    const doc = await docRef.get();
-    if (!doc.exists) {
-        await docRef.set({
-            android: [], windows: [], psvita: [], psp: [], ps1: [], ps2: [], ps3: [], ps4: [],
-            nes: [], snes: [], n64: [], gamecube: [], wii: [], wiiu: [], gameboy: [],
-            gameboycolor: [], gameboyadvance: [], nds: [], '3ds': [], xbox: [], xbox360: [],
-            segagenesis: [], segasaturn: [], sega_dreamcast: [], mame: [], arcade_y_mas: [],
-            github_token: "TU_TOKEN_AQUI"
-        });
-    } else {
-        const data = doc.data();
-        if (data.github_token) github.token = data.github_token;
-        dbRoms = data;
-    }
-}
+async function inicializar(){const d=await db.collection('sistema').doc('catalogo_por_consola').get();if(!d.exists){await d.set({android:[],windows:[],psvita:[],psp:[],ps1:[],ps2:[],ps3:[],ps4:[],nes:[],snes:[],n64:[],gamecube:[],wii:[],wiiu:[],gameboy:[],gameboycolor:[],gameboyadvance:[],nds:[],'3ds':[],xbox:[],xbox360:[],segagenesis:[],segasaturn:[],sega_dreamcast:[],mame:[],arcade_y_mas:[],github_token:"TU_TOKEN_AQUI"})}else{const data=d.data();if(data.github_token)github.token=data.github_token;dbRoms=data}}
 
-document.getElementById('form-login').onsubmit = async (e) => {
-    e.preventDefault();
-    abrirModal('CONECTANDO', 'Validando credenciales...', 30);
-    try {
-        await inicializar();
-        const snap = await db.collection('sistema').doc('config').get();
-        if (snap.exists) {
-            const dat = snap.data();
-            if (dat.github_token) github.token = dat.github_token;
-            const admin = dat.admins?.find(a => a.usuario === document.getElementById('usuario').value && a.pass === document.getElementById('clave').value);
-            if (admin) {
-                adminActual = admin.usuario;
-                document.getElementById('pantalla-login').classList.add('pantalla-oculta');
-                document.getElementById('pantalla-bienvenida').classList.remove('pantalla-oculta');
-                document.getElementById('nombre-admin-display').textContent = adminActual.toUpperCase();
-                document.getElementById('admin-name-header').textContent = adminActual;
-                cerrarModal();
-                mostrarToast(`Bienvenido, ${adminActual}`, 'success');
-                return;
-            }
-        }
-        modalError('Usuario o contraseña incorrectos.');
-    } catch (e) { modalError(e.message); }
-};
+document.getElementById('form-login').onsubmit=async e=>{e.preventDefault();abrirModal('CONECTANDO','Validando credenciales...',30);try{await inicializar();const snap=await db.collection('sistema').doc('config').get();if(snap.exists){const dat=snap.data();if(dat.github_token)github.token=dat.github_token;const admin=dat.admins?.find(a=>a.usuario===document.getElementById('usuario').value&&a.pass===document.getElementById('clave').value);if(admin){adminActual=admin.usuario;document.getElementById('pantalla-login').classList.add('pantalla-oculta');document.getElementById('pantalla-bienvenida').classList.remove('pantalla-oculta');document.getElementById('nombre-admin-display').textContent=adminActual.toUpperCase();document.getElementById('admin-name-header').textContent=adminActual;cerrarModal();mostrarToast(`Bienvenido, ${adminActual}`,'success');return}}modalError('Usuario o contraseña incorrectos.')}catch(e){modalError(e.message)}};
 
-// Navegación desde bienvenida
-function irAPanel(tab) {
-    document.getElementById('pantalla-bienvenida').classList.add('pantalla-oculta');
-    document.getElementById('panel-principal').classList.remove('pantalla-oculta');
-    cambiarTab(tab);
-}
+function irAPanel(tab){document.getElementById('pantalla-bienvenida').classList.add('pantalla-oculta');document.getElementById('panel-principal').classList.remove('pantalla-oculta');cambiarTab(tab)}
+document.getElementById('btn-volver-bienvenida').onclick=()=>{document.getElementById('panel-principal').classList.add('pantalla-oculta');document.getElementById('pantalla-bienvenida').classList.remove('pantalla-oculta')};
+document.getElementById('btn-logout').onclick=()=>location.reload();
 
-document.getElementById('btn-ir-roms').onclick = () => irAPanel('roms');
-document.getElementById('btn-ir-emuladores').onclick = () => irAPanel('emuladores');
-document.getElementById('btn-ir-apps').onclick = () => irAPanel('apps');
-document.getElementById('btn-ir-mods').onclick = () => irAPanel('mods');
-document.getElementById('btn-ir-archivos').onclick = () => irAPanel('archivos');
-document.getElementById('btn-ir-novedades').onclick = () => irAPanel('novedades');
-document.getElementById('btn-ir-top').onclick = () => irAPanel('top');
-document.getElementById('btn-ir-reportes').onclick = () => irAPanel('reportes');
-document.getElementById('btn-ir-validador').onclick = () => mostrarToast('Validador de URLs disponible próximamente', 'info');
-document.getElementById('btn-ir-huerfanas').onclick = () => mostrarToast('Fotos huérfanas disponible próximamente', 'info');
-document.getElementById('btn-volver-bienvenida').onclick = () => {
-    document.getElementById('panel-principal').classList.add('pantalla-oculta');
-    document.getElementById('pantalla-bienvenida').classList.remove('pantalla-oculta');
-};
-document.getElementById('btn-logout').onclick = () => location.reload();
+document.querySelectorAll('.admin-tab').forEach(tab=>{tab.onclick=()=>cambiarTab(tab.dataset.tab)});
 
-// Tabs del panel
-document.querySelectorAll('.admin-tab').forEach(tab => {
-    tab.onclick = () => cambiarTab(tab.dataset.tab);
-});
-
-function cambiarTab(tabName) {
-    document.querySelectorAll('.admin-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tabName));
-    document.querySelectorAll('.panel-seccion').forEach(s => s.classList.toggle('activa', s.id === `seccion-${tabName}`));
-    
-    // Cargar datos según tab
-    if (tabName === 'roms') ROMs.cargar();
-    if (tabName === 'emuladores') Emuladores.cargar();
-    if (tabName === 'apps') Apps.cargar();
-    if (tabName === 'mods') Mods.cargar();
-    if (tabName === 'archivos') Archivos.cargar();
-    if (tabName === 'novedades') Novedades.cargar();
-    if (tabName === 'top') TopBuscados.cargar();
-    if (tabName === 'reportes') Reportes.cargar();
+function cambiarTab(tabName){
+    document.querySelectorAll('.admin-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tabName));
+    document.querySelectorAll('.panel-seccion').forEach(s=>s.classList.toggle('activa',s.id===`seccion-${tabName}`));
+    if(tabName==='roms')ROMs.cargar();
+    if(tabName==='emuladores')Emuladores.cargar();
+    if(tabName==='apps')Apps.cargar();
+    if(tabName==='mods')Mods.cargar();
+    if(tabName==='archivos')Archivos.cargar();
+    if(tabName==='novedades')Novedades.cargar();
+    if(tabName==='top')TopBuscados.cargar();
+    if(tabName==='reportes')Reportes.cargar();
+    if(tabName==='validador')Validador.cargar();
+    if(tabName==='huerfanas')Huerfanas.render();
 }
 
 // ==========================================
 // GESTOR CRUD GENÉRICO
 // ==========================================
-class GestorCRUD {
-    constructor(config) {
-        this.config = config;
-        this.items = [];
-        this.editandoId = null;
-        this.filtroCategoria = 'all';
-        this.busqueda = '';
-    }
-
-    async cargar() {
-        try {
-            const doc = await db.collection('sistema').doc(this.config.docId).get();
-            if (doc.exists) {
-                const data = doc.data();
-                this.items = data.items || [];
-            } else {
-                this.items = [];
-            }
-            this.render();
-        } catch (e) {
-            console.error(e);
-            mostrarToast('Error al cargar: ' + e.message, 'error');
-        }
-    }
-
-    render() {
-        const lista = document.getElementById(this.config.listaId);
-        if (!lista) return;
-
-        let filtrados = [...this.items];
-
-        // Filtrar por búsqueda
-        if (this.busqueda) {
-            const q = this.busqueda.toLowerCase();
-            filtrados = filtrados.filter(i =>
-                (i.nombre || '').toLowerCase().includes(q) ||
-                (i.descripcion || '').toLowerCase().includes(q) ||
-                (i.juego || '').toLowerCase().includes(q)
-            );
-        }
-
-        // Filtrar por categoría si aplica
-        if (this.config.tieneCategoria && this.filtroCategoria !== 'all') {
-            filtrados = filtrados.filter(i => i.categoria === this.filtroCategoria);
-        }
-
-        if (filtrados.length === 0) {
-            lista.innerHTML = `<div class="text-center py-12 text-amber-500/50 col-span-full"><i class="fa fa-inbox text-4xl mb-3 opacity-50"></i><p>Sin items. ¡Agregá el primero!</p></div>`;
-            return;
-        }
-
-        lista.innerHTML = filtrados.map(item => this.renderItemCard(item)).join('');
-    }
-
-    renderItemCard(item) {
-        const img = item.imagen || 'https://via.placeholder.com/600x375/1a1a2e/ffd700?text=SIN+IMAGEN';
-        const badges = [];
-        if (item.version) badges.push(`<span class="item-card-badge"><i class="fa fa-code-fork"></i> v${escapeHtml(item.version)}</span>`);
-        if (item.categoria && this.config.categorias) {
-            const cat = this.config.categorias[item.categoria];
-            if (cat) badges.push(`<span class="item-card-badge">${cat.icono} ${escapeHtml(cat.nombre)}</span>`);
-        }
-        if (item.plataforma) badges.push(`<span class="item-card-badge"><i class="fa fa-desktop"></i> ${escapeHtml(item.plataforma)}</span>`);
-        if (item.juego) badges.push(`<span class="item-card-badge"><i class="fa fa-gamepad"></i> ${escapeHtml(item.juego)}</span>`);
-
-        return `
-        <div class="item-card">
-            <img class="item-card-img" src="${escapeHtml(img)}" alt="${escapeHtml(item.nombre || '')}" loading="lazy" onerror="this.src='https://via.placeholder.com/600x375/1a1a2e/ffd700?text=SIN+IMAGEN'">
-            <div class="item-card-body">
-                <h4 class="item-card-title">${escapeHtml(item.nombre || 'Sin nombre')}</h4>
-                <div class="item-card-meta">${badges.join('')}</div>
-                <p class="item-card-desc">${escapeHtml(item.descripcion || 'Sin descripción')}</p>
-                <div class="item-card-actions">
-                    <button class="boton-accion boton-editar" onclick="${this.config.nombreGlobal}.editar('${item.id}')"><i class="fa fa-pencil"></i></button>
-                    <button class="boton-accion boton-borrar" onclick="${this.config.nombreGlobal}.eliminar('${item.id}')"><i class="fa fa-trash"></i></button>
-                </div>
-            </div>
-        </div>`;
-    }
-
-    abrirModal(item = null) {
-        this.editandoId = item ? item.id : null;
-        const modal = document.getElementById('modal-crud');
-        const titulo = document.getElementById('modal-crud-titulo');
-        const campos = document.getElementById('modal-crud-campos');
-
-        titulo.textContent = item ? `Editar: ${item.nombre || ''}` : `Nuevo ${this.config.nombreSingular}`;
-
-        campos.innerHTML = this.config.campos.map(campo => {
-            const valor = item ? (item[campo.id] || '') : '';
-            return this.renderCampo(campo, valor);
-        }).join('');
-
-        // Conectar file inputs con preview
-        this.config.campos.filter(c => c.tipo === 'file').forEach(campo => {
-            const input = document.getElementById(`campo-${campo.id}`);
-            if (input) {
-                input.onchange = async (e) => {
-                    const file = e.target.files[0];
-                    if (!file) return;
-                    const preview = document.getElementById(`campo-${campo.id}-preview`);
-                    if (file.type.startsWith('image/')) {
-                        const reader = new FileReader();
-                        reader.onload = ev => { preview.innerHTML = `<img src="${ev.target.result}">`; };
-                        reader.readAsDataURL(file);
-                    }
-                };
-            }
-        });
-
-        modal.classList.add('activo');
-    }
-
-    renderCampo(campo, valor) {
-        const id = `campo-${campo.id}`;
-        let input = '';
-
-        switch (campo.tipo) {
-            case 'text':
-                input = `<input type="text" id="${id}" class="input-lujo" placeholder="${campo.placeholder || ''}" value="${escapeHtml(valor)}" ${campo.requerido ? 'required' : ''}>`;
-                break;
-            case 'url':
-                input = `<input type="url" id="${id}" class="input-lujo" placeholder="${campo.placeholder || ''}" value="${escapeHtml(valor)}" ${campo.requerido ? 'required' : ''}>`;
-                break;
-            case 'textarea':
-                input = `<textarea id="${id}" class="input-lujo" placeholder="${campo.placeholder || ''}" rows="3">${escapeHtml(valor)}</textarea>`;
-                break;
-            case 'select':
-                input = `<select id="${id}" class="input-lujo" ${campo.requerido ? 'required' : ''}>
-                    <option value="">-- Seleccionar --</option>
-                    ${Object.entries(campo.opciones).map(([k, v]) =>
-                        `<option value="${k}" ${valor === k ? 'selected' : ''}>${v.icono || ''} ${v.nombre || v}</option>`
-                    ).join('')}
-                </select>`;
-                break;
-            case 'file':
-                input = `<input type="file" id="${id}" accept="image/*" class="input-lujo text-sm">
-                    <div class="preview-box" id="${id}-preview">${valor ? `<img src="${escapeHtml(valor)}">` : '<span class="placeholder-text">Subir imagen</span>'}</div>`;
-                break;
-        }
-
-        return `<div class="mb-3"><label class="text-xs text-amber-400/70 uppercase font-bold block mb-1">${campo.icono || ''} ${campo.label}${campo.requerido ? ' *' : ''}</label>${input}</div>`;
-    }
-
-    async guardar(e) {
-        e.preventDefault();
-        const btn = document.getElementById('modal-crud-submit');
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Guardando...';
-
-        try {
-            const itemData = { id: this.editandoId || Date.now().toString(), timestamp: Date.now() };
-
-            for (const campo of this.config.campos) {
-                const input = document.getElementById(`campo-${campo.id}`);
-                if (!input) continue;
-
-                if (campo.tipo === 'file') {
-                    const file = input.files[0];
-                    if (file) {
-                        abrirModal('SUBIENDO', 'Optimizando imagen...', 30);
-                        const blob = await comprimirImagen(file);
-                        const ruta = `${this.config.carpetaGithub}/${campo.id}_${itemData.id}.jpg`;
-                        const resultado = await subirArchivoGitHub(blob, ruta);
-                        itemData[campo.id] = resultado.url;
-                        itemData[campo.id + 'Path'] = resultado.path;
-                        cerrarModal();
-                    } else if (this.editandoId) {
-                        // Mantener imagen existente
-                        const itemOriginal = this.items.find(i => i.id === this.editandoId);
-                        itemData[campo.id] = itemOriginal ? itemOriginal[campo.id] : '';
-                        itemData[campo.id + 'Path'] = itemOriginal ? itemOriginal[campo.id + 'Path'] : '';
-                    }
-                } else {
-                    itemData[campo.id] = input.value;
-                }
-            }
-
-            // Guardar en Firestore
-            if (this.editandoId) {
-                const idx = this.items.findIndex(i => i.id === this.editandoId);
-                if (idx !== -1) this.items[idx] = itemData;
-            } else {
-                this.items.unshift(itemData);
-            }
-
-            await db.collection('sistema').doc(this.config.docId).update({ items: this.items });
-
-            cerrarModalCrud();
-            mostrarToast('✅ Guardado correctamente', 'success');
-            this.render();
-        } catch (e) {
-            console.error(e);
-            mostrarToast('Error: ' + e.message, 'error');
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fa fa-save"></i> Guardar';
-        }
-    }
-
-    editar(id) {
-        const item = this.items.find(i => i.id === id);
-        if (item) this.abrirModal(item);
-    }
-
-    async eliminar(id) {
-        if (!confirm('¿Eliminar este item? Esta acción no se puede deshacer.')) return;
-        const item = this.items.find(i => i.id === id);
-        if (!item) return;
-
-        // Borrar imágenes de GitHub si aplica
-        if (item.imagenPath) {
-            abrirModal('ELIMINANDO', 'Borrando imágenes...', 50);
-            await borrarArchivoGitHub(item.imagenPath);
-            cerrarModal();
-        }
-
-        this.items = this.items.filter(i => i.id !== id);
-        await db.collection('sistema').doc(this.config.docId).update({ items: this.items });
-        mostrarToast('🗑️ Eliminado', 'success');
-        this.render();
-    }
+class GestorCRUD{
+    constructor(cfg){this.cfg=cfg;this.items=[];this.editandoId=null;this.filtroCategoria='all';this.busqueda=''}
+    async cargar(){try{const d=await db.collection('sistema').doc(this.cfg.docId).get();this.items=d.exists?(d.data().items||[]):[];this.render()}catch(e){console.error(e);mostrarToast('Error al cargar: '+e.message,'error')}}
+    render(){const lista=document.getElementById(this.cfg.listaId);if(!lista)return;let f=[...this.items];if(this.busqueda){const q=this.busqueda.toLowerCase();f=f.filter(i=>(i.nombre||'').toLowerCase().includes(q)||(i.descripcion||'').toLowerCase().includes(q)||(i.juego||'').toLowerCase().includes(q))}if(this.cfg.tieneCategoria&&this.filtroCategoria!=='all')f=f.filter(i=>i.categoria===this.filtroCategoria);if(f.length===0){lista.innerHTML='<div class="text-center py-12 text-amber-500/50 col-span-full"><i class="fa fa-inbox text-4xl mb-3 opacity-50"></i><p>Sin items. ¡Agregá el primero!</p></div>';return}lista.innerHTML=f.map(i=>this.renderItemCard(i)).join('')}
+    renderItemCard(item){const img=item.imagen||'https://via.placeholder.com/600x375/1a1a2e/ffd700?text=SIN+IMAGEN';const badges=[];if(item.version)badges.push(`<span class="item-card-badge"><i class="fa fa-code-fork"></i> v${escapeHtml(item.version)}</span>`);if(item.categoria&&this.cfg.categorias){const cat=this.cfg.categorias[item.categoria];if(cat)badges.push(`<span class="item-card-badge">${cat.icono} ${escapeHtml(cat.nombre)}</span>`)}if(item.plataforma)badges.push(`<span class="item-card-badge"><i class="fa fa-desktop"></i> ${escapeHtml(item.plataforma)}</span>`);if(item.juego)badges.push(`<span class="item-card-badge"><i class="fa fa-gamepad"></i> ${escapeHtml(item.juego)}</span>`);return `<div class="item-card"><img class="item-card-img" src="${escapeHtml(img)}" alt="${escapeHtml(item.nombre||'')}" loading="lazy" onerror="this.src='https://via.placeholder.com/600x375/1a1a2e/ffd700?text=SIN+IMAGEN'"><div class="item-card-body"><h4 class="item-card-title">${escapeHtml(item.nombre||'Sin nombre')}</h4><div class="item-card-meta">${badges.join('')}</div><p class="item-card-desc">${escapeHtml(item.descripcion||'Sin descripción')}</p><div class="item-card-actions"><button class="boton-accion boton-editar" onclick="${this.cfg.nombreGlobal}.editar('${item.id}')"><i class="fa fa-pencil"></i></button><button class="boton-accion boton-borrar" onclick="${this.cfg.nombreGlobal}.eliminar('${item.id}')"><i class="fa fa-trash"></i></button></div></div></div>`}
+    abrirModal(item=null){this.editandoId=item?item.id:null;const modal=document.getElementById('modal-crud');document.getElementById('modal-crud-titulo').textContent=item?`Editar: ${item.nombre||''}`:`Nuevo ${this.cfg.nombreSingular}`;const campos=document.getElementById('modal-crud-campos');campos.innerHTML=this.cfg.campos.map(c=>this.renderCampo(c,item?(item[c.id]||''):'')).join('');this.cfg.campos.filter(c=>c.tipo==='file').forEach(c=>{const inp=document.getElementById(`campo-${c.id}`);if(inp){inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const prev=document.getElementById(`campo-${c.id}-preview`);if(f.type.startsWith('image/')){const r=new FileReader();r.onload=ev=>{prev.innerHTML=`<img src="${ev.target.result}">`};r.readAsDataURL(f)}}}});modal.classList.add('activo')}
+    renderCampo(c,valor){const id=`campo-${c.id}`;let input='';switch(c.tipo){case 'text':input=`<input type="text" id="${id}" class="input-lujo" placeholder="${c.placeholder||''}" value="${escapeHtml(valor)}" ${c.requerido?'required':''}>`;break;case 'url':input=`<input type="url" id="${id}" class="input-lujo" placeholder="${c.placeholder||''}" value="${escapeHtml(valor)}" ${c.requerido?'required':''}>`;break;case 'textarea':input=`<textarea id="${id}" class="input-lujo" placeholder="${c.placeholder||''}" rows="3">${escapeHtml(valor)}</textarea>`;break;case 'select':input=`<select id="${id}" class="input-lujo" ${c.requerido?'required':''}><option value="">-- Seleccionar --</option>${Object.entries(c.opciones).map(([k,v])=>`<option value="${k}" ${valor===k?'selected':''}>${v.icono||''} ${v.nombre||v}</option>`).join('')}</select>`;break;case 'file':input=`<input type="file" id="${id}" accept="image/*" class="input-lujo text-sm"><div class="preview-box" id="${id}-preview">${valor?`<img src="${escapeHtml(valor)}">`:'<span class="placeholder-text">Subir imagen</span>'}</div>`;break}return `<div class="mb-3"><label class="text-xs text-amber-400/70 uppercase font-bold block mb-1">${c.icono||''} ${c.label}${c.requerido?' *':''}</label>${input}</div>`}
+    async guardar(e){e.preventDefault();const btn=document.getElementById('modal-crud-submit');btn.disabled=true;btn.innerHTML='<i class="fa fa-spinner fa-spin"></i> Guardando...';try{const itemData={id:this.editandoId||Date.now().toString(),timestamp:Date.now()};for(const c of this.cfg.campos){const inp=document.getElementById(`campo-${c.id}`);if(!inp)continue;if(c.tipo==='file'){const f=inp.files[0];if(f){abrirModal('SUBIENDO','Optimizando imagen...',30);const blob=await comprimirImagen(f);const ruta=`${this.cfg.carpetaGithub}/${c.id}_${itemData.id}.jpg`;const r=await subirArchivoGitHub(blob,ruta);itemData[c.id]=r.url;itemData[c.id+'Path']=r.path;cerrarModal()}else if(this.editandoId){const orig=this.items.find(i=>i.id===this.editandoId);itemData[c.id]=orig?orig[c.id]:'';itemData[c.id+'Path']=orig?orig[c.id+'Path']:''}}else{itemData[c.id]=inp.value}}if(this.editandoId){const idx=this.items.findIndex(i=>i.id===this.editandoId);if(idx!==-1)this.items[idx]=itemData}else{this.items.unshift(itemData)}await db.collection('sistema').doc(this.cfg.docId).update({items:this.items});cerrarModalCrud();mostrarToast('✅ Guardado correctamente','success');this.render()}catch(e){console.error(e);mostrarToast('Error: '+e.message,'error')}finally{btn.disabled=false;btn.innerHTML='<i class="fa fa-save"></i> Guardar'}}
+    editar(id){const item=this.items.find(i=>i.id===id);if(item)this.abrirModal(item)}
+    async eliminar(id){if(!confirm('¿Eliminar este item? Esta acción no se puede deshacer.'))return;const item=this.items.find(i=>i.id===id);if(!item)return;if(item.imagenPath){abrirModal('ELIMINANDO','Borrando imágenes...',50);await borrarArchivoGitHub(item.imagenPath);cerrarModal()}this.items=this.items.filter(i=>i.id!==id);await db.collection('sistema').doc(this.cfg.docId).update({items:this.items});mostrarToast('🗑️ Eliminado','success');this.render()}
 }
-
-function cerrarModalCrud() {
-    document.getElementById('modal-crud').classList.remove('activo');
-    document.getElementById('form-crud').reset();
-}
-
-document.getElementById('form-crud').addEventListener('submit', function(e) {
-    e.preventDefault();
-    // El gestor activo maneja el submit
-    if (window.gestorActivo) window.gestorActivo.guardar(e);
-});
+function cerrarModalCrud(){document.getElementById('modal-crud').classList.remove('activo');document.getElementById('form-crud').reset()}
+document.getElementById('form-crud').addEventListener('submit',function(e){e.preventDefault();if(window.gestorActivo)window.gestorActivo.guardar(e)});
 
 // ==========================================
-// ROMs (existente, simplificado)
+// ROMs - CRUD COMPLETO
 // ==========================================
-const ROMs = {
-    async cargar() {
+const ROMs={
+    editandoId:null,
+    async cargar(){
         await inicializar();
-        listaJuegos = [];
-        for (const [consola, juegos] of Object.entries(dbRoms)) {
-            if (Array.isArray(juegos)) {
-                juegos.forEach(j => listaJuegos.push({ ...j, consola }));
-            }
-        }
-        listaJuegos.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-
-        // Stats
-        document.getElementById('stat-roms-total').textContent = listaJuegos.length;
-        document.getElementById('stat-roms-roms').textContent = listaJuegos.filter(j => j.tipo === 'rom').length;
-        document.getElementById('stat-roms-mods').textContent = listaJuegos.filter(j => j.tipo === 'mod').length;
-        document.getElementById('stat-roms-ports').textContent = listaJuegos.filter(j => j.tipo === 'port').length;
-
-        // Filtro de consolas
-        const select = document.getElementById('roms-filtro-consola');
-        const consolas = [...new Set(listaJuegos.map(j => j.consola))].sort();
-        select.innerHTML = '<option value="">Todas las consolas</option>' + consolas.map(c => `<option value="${c}">${c.toUpperCase()}</option>`).join('');
-
+        listaJuegos=[];
+        for(const[consola,juegos]of Object.entries(dbRoms)){if(Array.isArray(juegos))juegos.forEach(j=>listaJuegos.push({...j,consola}))}
+        listaJuegos.sort((a,b)=>(b.timestamp||0)-(a.timestamp||0));
+        document.getElementById('stat-roms-total').textContent=listaJuegos.length;
+        document.getElementById('stat-roms-roms').textContent=listaJuegos.filter(j=>j.tipo==='rom').length;
+        document.getElementById('stat-roms-mods').textContent=listaJuegos.filter(j=>j.tipo==='mod').length;
+        document.getElementById('stat-roms-ports').textContent=listaJuegos.filter(j=>j.tipo==='port').length;
+        const select=document.getElementById('roms-filtro-consola');
+        const consolas=[...new Set(listaJuegos.map(j=>j.consola))].sort();
+        select.innerHTML='<option value="">Todas las consolas</option>'+consolas.map(c=>`<option value="${c}">${c.toUpperCase()}</option>`).join('');
         this.render();
     },
-
-    render() {
-        const lista = document.getElementById('roms-lista');
-        const q = (document.getElementById('roms-buscar').value || '').toLowerCase();
-        const fc = document.getElementById('roms-filtro-consola').value;
-        const ft = document.getElementById('roms-filtro-tipo').value;
-
-        let filtrados = listaJuegos.filter(j => {
-            const matchQ = !q || (j.title || '').toLowerCase().includes(q);
-            const matchC = !fc || j.consola === fc;
-            const matchT = !ft || j.tipo === ft;
-            return matchQ && matchC && matchT;
-        });
-
-        if (filtrados.length === 0) {
-            lista.innerHTML = '<div class="text-center py-8 text-amber-500/50"><i class="fa fa-inbox text-3xl mb-2 opacity-50"></i><p>Sin juegos</p></div>';
-            return;
-        }
-
-        lista.innerHTML = filtrados.map(j => `
+    render(){
+        const lista=document.getElementById('roms-lista');
+        const q=(document.getElementById('roms-buscar').value||'').toLowerCase();
+        const fc=document.getElementById('roms-filtro-consola').value;
+        const ft=document.getElementById('roms-filtro-tipo').value;
+        let f=listaJuegos.filter(j=>{const mQ=!q||(j.title||'').toLowerCase().includes(q);const mC=!fc||j.consola===fc;const mT=!ft||j.tipo===ft;return mQ&&mC&&mT});
+        if(f.length===0){lista.innerHTML='<div class="text-center py-8 text-amber-500/50"><i class="fa fa-inbox text-3xl mb-2 opacity-50"></i><p>Sin juegos</p></div>';return}
+        lista.innerHTML=f.map(j=>`
         <div class="elemento-lista p-3 flex items-center gap-3">
-            <img src="${escapeHtml(j.cover || '')}" class="w-12 h-16 object-cover rounded border border-amber-700/50 flex-shrink-0" onerror="this.src='https://via.placeholder.com/48x64/1a1400/ffd700?text=?'">
+            <img src="${escapeHtml(j.cover||'')}" class="w-12 h-16 object-cover rounded border border-amber-700/50 flex-shrink-0" onerror="this.src='https://via.placeholder.com/48x64/1a1400/ffd700?text=?'">
             <div class="flex-1 min-w-0">
-                <h4 class="font-bold text-white truncate">${escapeHtml(j.title || 'Sin título')}</h4>
+                <h4 class="font-bold text-white truncate">${escapeHtml(j.title||'Sin título')}</h4>
                 <div class="flex gap-2 flex-wrap mt-1">
                     <span class="bg-amber-900/30 px-2 py-0.5 rounded text-xs border border-amber-700/30 uppercase text-amber-300">${j.consola}</span>
-                    <span class="px-2 py-0.5 rounded text-xs border uppercase font-bold ${j.tipo === 'rom' ? 'bg-yellow-900/30 text-yellow-300 border-yellow-700/30' : j.tipo === 'mod' ? 'bg-pink-900/30 text-pink-300 border-pink-700/30' : 'bg-cyan-900/30 text-cyan-300 border-cyan-700/30'}">${j.tipo}</span>
+                    <span class="px-2 py-0.5 rounded text-xs border uppercase font-bold ${j.tipo==='rom'?'bg-yellow-900/30 text-yellow-300 border-yellow-700/30':j.tipo==='mod'?'bg-pink-900/30 text-pink-300 border-pink-700/30':'bg-cyan-900/30 text-cyan-300 border-cyan-700/30'}">${j.tipo}</span>
                 </div>
             </div>
+            <button class="boton-accion boton-editar" onclick="ROMs.editar('${j.id}','${j.consola}')"><i class="fa fa-pencil"></i></button>
             <button class="boton-accion boton-borrar" onclick="ROMs.eliminar('${j.id}','${j.consola}')"><i class="fa fa-trash"></i></button>
         </div>`).join('');
     },
-
-    async eliminar(id, consola) {
-        if (!confirm('¿Eliminar este juego? Se borrarán sus imágenes de GitHub.')) return;
-        abrirModal('ELIMINANDO', 'Actualizando...', 30);
-        try {
-            const juego = listaJuegos.find(j => j.id === id);
-            if (juego) {
-                if (juego.coverPath) await borrarArchivoGitHub(juego.coverPath);
-                if (juego.screenshotsPaths) for (const p of juego.screenshotsPaths) await borrarArchivoGitHub(p);
-            }
-            dbRoms[consola] = (dbRoms[consola] || []).filter(j => j.id !== id);
-            await db.collection('sistema').doc('catalogo_por_consola').update({ [consola]: dbRoms[consola] });
-            cerrarModal();
-            mostrarToast('🗑️ Juego eliminado', 'success');
-            this.cargar();
-        } catch (e) { modalError(e.message); }
+    editar(id,consola){
+        const juego=listaJuegos.find(j=>j.id===id);
+        if(!juego)return;
+        this.editandoId={id,consola};
+        document.getElementById('juego-consola').value=juego.consola;
+        document.querySelector(`input[name="juego-tipo"][value="${juego.tipo}"]`).checked=true;
+        document.getElementById('juego-titulo').value=juego.title||'';
+        document.getElementById('juego-idinterno').value=juego.idJuego||'';
+        document.getElementById('juego-link').value=juego.link||'';
+        document.getElementById('juego-desc').value=juego.descripcion||'';
+        if(juego.cover){document.getElementById('juego-portada-preview').innerHTML=`<img src="${escapeHtml(juego.cover)}">`}
+        mostrarToast('Editando juego. Completá los campos y presioná Guardar.','info');
+        window.scrollTo({top:0,behavior:'smooth'});
+    },
+    async eliminar(id,consola){
+        if(!confirm('¿Eliminar este juego? Se borrarán sus imágenes de GitHub.'))return;
+        abrirModal('ELIMINANDO','Actualizando...',30);
+        try{
+            const juego=listaJuegos.find(j=>j.id===id);
+            if(juego){if(juego.coverPath)await borrarArchivoGitHub(juego.coverPath);if(juego.screenshotsPaths)for(const p of juego.screenshotsPaths)await borrarArchivoGitHub(p)}
+            dbRoms[consola]=(dbRoms[consola]||[]).filter(j=>j.id!==id);
+            await db.collection('sistema').doc('catalogo_por_consola').update({[consola]:dbRoms[consola]});
+            cerrarModal();mostrarToast('🗑️ Juego eliminado','success');this.cargar();
+        }catch(e){modalError(e.message)}
     }
 };
 
-// Guardar nuevo juego
-document.getElementById('form-juego').addEventListener('submit', async function(e) {
+document.getElementById('form-juego').addEventListener('submit',async function(e){
     e.preventDefault();
-    const btn = this.querySelector('button[type="submit"]');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Guardando...';
-
-    try {
-        const consola = document.getElementById('juego-consola').value;
-        const tipo = document.querySelector('input[name="juego-tipo"]:checked').value;
-        const titulo = document.getElementById('juego-titulo').value;
-        const idInterno = document.getElementById('juego-idinterno').value;
-        const link = document.getElementById('juego-link').value;
-        const desc = document.getElementById('juego-desc').value;
-        const portadaFile = document.getElementById('juego-portada').files[0];
-        const capturasFiles = [...document.getElementById('juego-capturas').files];
-
-        if (!consola || !titulo || !link) {
-            mostrarToast('Completá los campos obligatorios', 'error');
-            return;
+    const btn=this.querySelector('button[type="submit"]');
+    btn.disabled=true;btn.innerHTML='<i class="fa fa-spinner fa-spin"></i> Guardando...';
+    try{
+        const consola=document.getElementById('juego-consola').value;
+        const tipo=document.querySelector('input[name="juego-tipo"]:checked').value;
+        const titulo=document.getElementById('juego-titulo').value;
+        const idInterno=document.getElementById('juego-idinterno').value;
+        const link=document.getElementById('juego-link').value;
+        const desc=document.getElementById('juego-desc').value;
+        const portadaFile=document.getElementById('juego-portada').files[0];
+        const capturasFiles=[...document.getElementById('juego-capturas').files];
+        if(!consola||!titulo||!link){mostrarToast('Completá los campos obligatorios','error');return}
+        abrirModal('GUARDANDO','Subiendo archivos...',20);
+        let coverUrl='',coverPath='';
+        if(portadaFile){const blob=await comprimirImagen(portadaFile);const ruta=`portadas/portada_${Date.now()}.jpg`;const r=await subirArchivoGitHub(blob,ruta);coverUrl=r.url;coverPath=r.path}
+        else if(ROMs.editandoId){const juego=listaJuegos.find(j=>j.id===ROMs.editandoId.id);if(juego){coverUrl=juego.cover||'';coverPath=juego.coverPath||''}}
+        const screenshots=[],screenshotsPaths=[];
+        for(let i=0;i<capturasFiles.length;i++){document.getElementById('detalle-modal').textContent=`Subiendo captura ${i+1}/${capturasFiles.length}...`;const blob=await comprimirImagen(capturasFiles[i]);const ruta=`capturas/capt_${Date.now()}_${i}.jpg`;const r=await subirArchivoGitHub(blob,ruta);screenshots.push(r.url);screenshotsPaths.push(r.path)}
+        let screenshotsFinales=screenshots;let screenshotsPathsFinales=screenshotsPaths;
+        if(ROMs.editandoId&&screenshots.length===0){const juego=listaJuegos.find(j=>j.id===ROMs.editandoId.id);if(juego){screenshotsFinales=juego.screenshots||[];screenshotsPathsFinales=juego.screenshotsPaths||[]}}
+        const nuevoJuego={id:ROMs.editandoId?ROMs.editandoId.id:Date.now().toString(),consola,tipo,title:titulo,idJuego:idInterno,cover:coverUrl,coverPath,screenshots:screenshotsFinales,screenshotsPaths:screenshotsPathsFinales,link,descripcion:desc,uploadedBy:adminActual,timestamp:Date.now()};
+        if(ROMs.editandoId){
+            const{id:editId,consola:editConsola}=ROMs.editandoId;
+            dbRoms[editConsola]=(dbRoms[editConsola]||[]).filter(j=>j.id!==editId);
+            if(!dbRoms[consola])dbRoms[consola]=[];
+            dbRoms[consola].push(nuevoJuego);
+            const updates={};
+            updates[editConsola]=dbRoms[editConsola];
+            if(editConsola!==consola)updates[consola]=dbRoms[consola];
+            await db.collection('sistema').doc('catalogo_por_consola').update(updates);
+            ROMs.editandoId=null;
+        }else{
+            await db.collection('sistema').doc('catalogo_por_consola').update({[consola]:firebase.firestore.FieldValue.arrayUnion(nuevoJuego)});
         }
-
-        abrirModal('GUARDANDO', 'Subiendo archivos...', 20);
-
-        // Subir portada
-        let coverUrl = '', coverPath = '';
-        if (portadaFile) {
-            const blob = await comprimirImagen(portadaFile);
-            const ruta = `portadas/portada_${Date.now()}.jpg`;
-            const r = await subirArchivoGitHub(blob, ruta);
-            coverUrl = r.url; coverPath = r.path;
-        }
-
-        // Subir capturas
-        const screenshots = [], screenshotsPaths = [];
-        for (let i = 0; i < capturasFiles.length; i++) {
-            document.getElementById('detalle-modal').textContent = `Subiendo captura ${i + 1}/${capturasFiles.length}...`;
-            const blob = await comprimirImagen(capturasFiles[i]);
-            const ruta = `capturas/capt_${Date.now()}_${i}.jpg`;
-            const r = await subirArchivoGitHub(blob, ruta);
-            screenshots.push(r.url);
-            screenshotsPaths.push(r.path);
-        }
-
-        const nuevoJuego = {
-            id: Date.now().toString(),
-            consola, tipo,
-            title: titulo,
-            idJuego: idInterno,
-            cover: coverUrl,
-            coverPath,
-            screenshots,
-            screenshotsPaths,
-            link,
-            descripcion: desc,
-            uploadedBy: adminActual,
-            timestamp: Date.now()
-        };
-
-        await db.collection('sistema').doc('catalogo_por_consola').update({
-            [consola]: firebase.firestore.FieldValue.arrayUnion(nuevoJuego)
-        });
-
-        cerrarModal();
-        mostrarToast('✅ Juego guardado', 'success');
+        cerrarModal();mostrarToast('✅ Juego guardado','success');
         this.reset();
-        document.getElementById('juego-portada-preview').innerHTML = '<span class="placeholder-text">Sin imagen</span>';
-        document.getElementById('juego-capturas-preview').innerHTML = '';
+        document.getElementById('juego-portada-preview').innerHTML='<span class="placeholder-text">Sin imagen</span>';
+        document.getElementById('juego-capturas-preview').innerHTML='';
         ROMs.cargar();
-    } catch (e) {
-        cerrarModal();
-        modalError(e.message);
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa fa-save"></i> GUARDAR JUEGO';
-    }
+    }catch(e){cerrarModal();modalError(e.message)}
+    finally{btn.disabled=false;btn.innerHTML='<i class="fa fa-save"></i> GUARDAR JUEGO'}
 });
 
-// Preview de portada
-document.getElementById('juego-portada').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    const preview = document.getElementById('juego-portada-preview');
-    if (file && file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = ev => { preview.innerHTML = `<img src="${ev.target.result}">`; };
-        reader.readAsDataURL(file);
-    }
-});
-
-document.getElementById('juego-capturas').addEventListener('change', function(e) {
-    const files = [...e.target.files];
-    const preview = document.getElementById('juego-capturas-preview');
-    preview.innerHTML = '';
-    files.forEach(file => {
-        if (file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = ev => {
-                const img = document.createElement('img');
-                img.src = ev.target.result;
-                img.className = 'w-16 h-20 object-cover rounded border border-amber-700/50';
-                preview.appendChild(img);
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-});
-
-// Filtros ROMs
-document.getElementById('roms-buscar').addEventListener('input', () => ROMs.render());
-document.getElementById('roms-filtro-consola').addEventListener('change', () => ROMs.render());
-document.getElementById('roms-filtro-tipo').addEventListener('change', () => ROMs.render());
+document.getElementById('juego-portada').addEventListener('change',function(e){const f=e.target.files[0];const prev=document.getElementById('juego-portada-preview');if(f&&f.type.startsWith('image/')){const r=new FileReader();r.onload=ev=>{prev.innerHTML=`<img src="${ev.target.result}">`};r.readAsDataURL(f)}});
+document.getElementById('juego-capturas').addEventListener('change',function(e){const files=[...e.target.files];const prev=document.getElementById('juego-capturas-preview');prev.innerHTML='';files.forEach(f=>{if(f.type.startsWith('image/')){const r=new FileReader();r.onload=ev=>{const img=document.createElement('img');img.src=ev.target.result;img.className='w-16 h-20 object-cover rounded border border-amber-700/50';prev.appendChild(img)};r.readAsDataURL(f)}})});
+document.getElementById('roms-buscar').addEventListener('input',()=>ROMs.render());
+document.getElementById('roms-filtro-consola').addEventListener('change',()=>ROMs.render());
+document.getElementById('roms-filtro-tipo').addEventListener('change',()=>ROMs.render());
 
 // ==========================================
-// EMULADORES
+// GESTORES DE SECCIONES
 // ==========================================
-const Emuladores = new GestorCRUD({
-    docId: 'emuladores',
-    listaId: 'emuladores-lista',
-    nombreGlobal: 'Emuladores',
-    nombreSingular: 'Emulador',
-    carpetaGithub: 'emuladores',
-    tieneCategoria: false,
-    campos: [
-        { id: 'nombre', label: 'Nombre', tipo: 'text', requerido: true, icono: '📝', placeholder: 'PPSSPP' },
-        { id: 'version', label: 'Versión', tipo: 'text', icono: '🏷️', placeholder: '1.17.1' },
-        { id: 'plataforma', label: 'Plataforma', tipo: 'text', icono: '💻', placeholder: 'Windows / Android' },
-        { id: 'imagen', label: 'Imagen', tipo: 'file', icono: '🖼️' },
-        { id: 'link', label: 'Link de descarga', tipo: 'url', requerido: true, icono: '🔗', placeholder: 'https://...' },
-        { id: 'descripcion', label: 'Descripción', tipo: 'textarea', icono: '📄', placeholder: 'Descripción del emulador...' }
-    ]
-});
+const Emuladores=new GestorCRUD({docId:'emuladores',listaId:'emuladores-lista',nombreGlobal:'Emuladores',nombreSingular:'Emulador',carpetaGithub:'emuladores',tieneCategoria:false,campos:[{id:'nombre',label:'Nombre',tipo:'text',requerido:true,icono:'📝',placeholder:'PPSSPP'},{id:'version',label:'Versión',tipo:'text',icono:'🏷️',placeholder:'1.17.1'},{id:'plataforma',label:'Plataforma',tipo:'text',icono:'💻',placeholder:'Windows / Android'},{id:'imagen',label:'Imagen',tipo:'file',icono:'🖼️'},{id:'link',label:'Link de descarga',tipo:'url',requerido:true,icono:'🔗',placeholder:'https://...'},{id:'descripcion',label:'Descripción',tipo:'textarea',icono:'📄',placeholder:'Descripción del emulador...'}]});
+document.getElementById('emuladores-buscar').addEventListener('input',function(){Emuladores.busqueda=this.value;Emuladores.render()});
 
-document.getElementById('emuladores-buscar').addEventListener('input', function() {
-    Emuladores.busqueda = this.value;
-    Emuladores.render();
-});
+const Apps=new GestorCRUD({docId:'apps',listaId:'apps-lista',nombreGlobal:'Apps',nombreSingular:'Aplicación',carpetaGithub:'apps',tieneCategoria:true,categorias:APPS_CATEGORIES,campos:[{id:'nombre',label:'Nombre',tipo:'text',requerido:true,icono:'📝',placeholder:'Game Booster'},{id:'version',label:'Versión',tipo:'text',icono:'🏷️',placeholder:'2.5'},{id:'categoria',label:'Categoría',tipo:'select',requerido:true,icono:'📁',opciones:APPS_CATEGORIES},{id:'imagen',label:'Imagen',tipo:'file',icono:'🖼️'},{id:'link',label:'Link de descarga',tipo:'url',requerido:true,icono:'🔗',placeholder:'https://...'},{id:'descripcion',label:'Descripción',tipo:'textarea',icono:'📄',placeholder:'Descripción de la app...'}]});
+document.getElementById('apps-buscar').addEventListener('input',function(){Apps.busqueda=this.value;Apps.render()});
 
-// ==========================================
-// APPS
-// ==========================================
-const Apps = new GestorCRUD({
-    docId: 'apps',
-    listaId: 'apps-lista',
-    nombreGlobal: 'Apps',
-    nombreSingular: 'Aplicación',
-    carpetaGithub: 'apps',
-    tieneCategoria: true,
-    categorias: APPS_CATEGORIES,
-    campos: [
-        { id: 'nombre', label: 'Nombre', tipo: 'text', requerido: true, icono: '📝', placeholder: 'Game Booster' },
-        { id: 'version', label: 'Versión', tipo: 'text', icono: '🏷️', placeholder: '2.5' },
-        { id: 'categoria', label: 'Categoría', tipo: 'select', requerido: true, icono: '📁', opciones: APPS_CATEGORIES },
-        { id: 'imagen', label: 'Imagen', tipo: 'file', icono: '🖼️' },
-        { id: 'link', label: 'Link de descarga', tipo: 'url', requerido: true, icono: '🔗', placeholder: 'https://...' },
-        { id: 'descripcion', label: 'Descripción', tipo: 'textarea', icono: '📄', placeholder: 'Descripción de la app...' }
-    ]
-});
+const Mods=new GestorCRUD({docId:'mods',listaId:'mods-lista',nombreGlobal:'Mods',nombreSingular:'Mod',carpetaGithub:'mods',tieneCategoria:true,categorias:MODS_CATEGORIES,campos:[{id:'nombre',label:'Nombre del Mod',tipo:'text',requerido:true,icono:'📝',placeholder:'HD Texture Pack'},{id:'juego',label:'Juego relacionado',tipo:'text',icono:'🎮',placeholder:'GTA San Andreas'},{id:'version',label:'Versión',tipo:'text',icono:'🏷️',placeholder:'3.0'},{id:'categoria',label:'Categoría',tipo:'select',requerido:true,icono:'📁',opciones:MODS_CATEGORIES},{id:'imagen',label:'Imagen',tipo:'file',icono:'🖼️'},{id:'link',label:'Link de descarga',tipo:'url',requerido:true,icono:'🔗',placeholder:'https://...'},{id:'descripcion',label:'Descripción',tipo:'textarea',icono:'📄',placeholder:'Descripción del mod...'}]});
+document.getElementById('mods-categorias').innerHTML=`<div class="category-option selected" onclick="Mods.filtrarCategoria('all')"><div class="icono">📋</div><div class="nombre">Todas</div></div>`+Object.entries(MODS_CATEGORIES).map(([k,v])=>`<div class="category-option" onclick="Mods.filtrarCategoria('${k}')"><div class="icono">${v.icono}</div><div class="nombre">${v.nombre}</div></div>`).join('');
+Mods.filtrarCategoria=function(cat){this.filtroCategoria=cat;document.querySelectorAll('#mods-categorias .category-option').forEach((el,i)=>{const esAll=i===0;const esEste=!esAll&&Object.keys(MODS_CATEGORIES)[i-1]===cat;el.classList.toggle('selected',cat==='all'?esAll:esEste)});this.render()};
+document.getElementById('mods-buscar').addEventListener('input',function(){Mods.busqueda=this.value;Mods.render()});
 
-document.getElementById('apps-buscar').addEventListener('input', function() {
-    Apps.busqueda = this.value;
-    Apps.render();
-});
-
-// ==========================================
-// MODS
-// ==========================================
-const Mods = new GestorCRUD({
-    docId: 'mods',
-    listaId: 'mods-lista',
-    nombreGlobal: 'Mods',
-    nombreSingular: 'Mod',
-    carpetaGithub: 'mods',
-    tieneCategoria: true,
-    categorias: MODS_CATEGORIES,
-    campos: [
-        { id: 'nombre', label: 'Nombre del Mod', tipo: 'text', requerido: true, icono: '📝', placeholder: 'HD Texture Pack' },
-        { id: 'juego', label: 'Juego relacionado', tipo: 'text', icono: '🎮', placeholder: 'GTA San Andreas' },
-        { id: 'version', label: 'Versión', tipo: 'text', icono: '🏷️', placeholder: '3.0' },
-        { id: 'categoria', label: 'Categoría', tipo: 'select', requerido: true, icono: '📁', opciones: MODS_CATEGORIES },
-        { id: 'imagen', label: 'Imagen', tipo: 'file', icono: '🖼️' },
-        { id: 'link', label: 'Link de descarga', tipo: 'url', requerido: true, icono: '🔗', placeholder: 'https://...' },
-        { id: 'descripcion', label: 'Descripción', tipo: 'textarea', icono: '📄', placeholder: 'Descripción del mod...' }
-    ]
-});
-
-// Renderizar selector de categorías de MODS
-document.getElementById('mods-categorias').innerHTML =
-    `<div class="category-option selected" onclick="Mods.filtrarCategoria('all')"><div class="icono">📋</div><div class="nombre">Todas</div></div>` +
-    Object.entries(MODS_CATEGORIES).map(([k, v]) =>
-        `<div class="category-option" onclick="Mods.filtrarCategoria('${k}')"><div class="icono">${v.icono}</div><div class="nombre">${v.nombre}</div></div>`
-    ).join('');
-
-Mods.filtrarCategoria = function(cat) {
-    this.filtroCategoria = cat;
-    document.querySelectorAll('#mods-categorias .category-option').forEach((el, i) => {
-        const esAll = i === 0;
-        const esEste = !esAll && Object.keys(MODS_CATEGORIES)[i - 1] === cat;
-        el.classList.toggle('selected', cat === 'all' ? esAll : esEste);
-    });
-    this.render();
-};
-
-document.getElementById('mods-buscar').addEventListener('input', function() {
-    Mods.busqueda = this.value;
-    Mods.render();
-});
-
-// ==========================================
-// ARCHIVOS GAMER
-// ==========================================
-const Archivos = new GestorCRUD({
-    docId: 'archivos_gamer',
-    listaId: 'archivos-lista',
-    nombreGlobal: 'Archivos',
-    nombreSingular: 'Archivo',
-    carpetaGithub: 'archivos',
-    tieneCategoria: true,
-    categorias: ARCHIVOS_CATEGORIES,
-    campos: [
-        { id: 'nombre', label: 'Nombre', tipo: 'text', requerido: true, icono: '📝', placeholder: 'PS2 BIOS v2.0' },
-        { id: 'sistema', label: 'Sistema/Consola', tipo: 'text', icono: '🎮', placeholder: 'PS2' },
-        { id: 'categoria', label: 'Categoría', tipo: 'select', requerido: true, icono: '📁', opciones: ARCHIVOS_CATEGORIES },
-        { id: 'imagen', label: 'Imagen', tipo: 'file', icono: '🖼️' },
-        { id: 'link', label: 'Link de descarga', tipo: 'url', requerido: true, icono: '🔗', placeholder: 'https://...' },
-        { id: 'descripcion', label: 'Descripción', tipo: 'textarea', icono: '📄', placeholder: 'Descripción del archivo...' }
-    ]
-});
-
-// Renderizar selector de categorías de ARCHIVOS
-document.getElementById('archivos-categorias').innerHTML =
-    `<div class="category-option selected" onclick="Archivos.filtrarCategoria('all')"><div class="icono">📋</div><div class="nombre">Todas</div></div>` +
-    Object.entries(ARCHIVOS_CATEGORIES).map(([k, v]) =>
-        `<div class="category-option" onclick="Archivos.filtrarCategoria('${k}')"><div class="icono">${v.icono}</div><div class="nombre">${v.nombre}</div></div>`
-    ).join('');
-
-Archivos.filtrarCategoria = function(cat) {
-    this.filtroCategoria = cat;
-    document.querySelectorAll('#archivos-categorias .category-option').forEach((el, i) => {
-        const esAll = i === 0;
-        const esEste = !esAll && Object.keys(ARCHIVOS_CATEGORIES)[i - 1] === cat;
-        el.classList.toggle('selected', cat === 'all' ? esAll : esEste);
-    });
-    this.render();
-};
-
-document.getElementById('archivos-buscar').addEventListener('input', function() {
-    Archivos.busqueda = this.value;
-    Archivos.render();
-});
+const Archivos=new GestorCRUD({docId:'archivos_gamer',listaId:'archivos-lista',nombreGlobal:'Archivos',nombreSingular:'Archivo',carpetaGithub:'archivos',tieneCategoria:true,categorias:ARCHIVOS_CATEGORIES,campos:[{id:'nombre',label:'Nombre',tipo:'text',requerido:true,icono:'📝',placeholder:'PS2 BIOS v2.0'},{id:'sistema',label:'Sistema/Consola',tipo:'text',icono:'🎮',placeholder:'PS2'},{id:'categoria',label:'Categoría',tipo:'select',requerido:true,icono:'📁',opciones:ARCHIVOS_CATEGORIES},{id:'imagen',label:'Imagen',tipo:'file',icono:'🖼️'},{id:'link',label:'Link de descarga',tipo:'url',requerido:true,icono:'🔗',placeholder:'https://...'},{id:'descripcion',label:'Descripción',tipo:'textarea',icono:'📄',placeholder:'Descripción del archivo...'}]});
+document.getElementById('archivos-categorias').innerHTML=`<div class="category-option selected" onclick="Archivos.filtrarCategoria('all')"><div class="icono">📋</div><div class="nombre">Todas</div></div>`+Object.entries(ARCHIVOS_CATEGORIES).map(([k,v])=>`<div class="category-option" onclick="Archivos.filtrarCategoria('${k}')"><div class="icono">${v.icono}</div><div class="nombre">${v.nombre}</div></div>`).join('');
+Archivos.filtrarCategoria=function(cat){this.filtroCategoria=cat;document.querySelectorAll('#archivos-categorias .category-option').forEach((el,i)=>{const esAll=i===0;const esEste=!esAll&&Object.keys(ARCHIVOS_CATEGORIES)[i-1]===cat;el.classList.toggle('selected',cat==='all'?esAll:esEste)});this.render()};
+document.getElementById('archivos-buscar').addEventListener('input',function(){Archivos.busqueda=this.value;Archivos.render()});
 
 // ==========================================
 // NOVEDADES
 // ==========================================
-const Novedades = {
-    items: [],
-    colorSeleccionado: 'green-400',
-
-    async cargar() {
-        try {
-            const doc = await db.collection('sistema').doc('novedades').get();
-            this.items = doc.exists ? (doc.data().items || []) : [];
-            this.items.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-            this.render();
-        } catch (e) { console.error(e); }
-    },
-
-    render() {
-        const lista = document.getElementById('novedades-lista');
-        if (this.items.length === 0) {
-            lista.innerHTML = '<div class="text-center py-12 text-amber-500/50"><i class="fa fa-bullhorn text-4xl mb-3 opacity-50"></i><p>Sin novedades. ¡Agregá la primera!</p></div>';
-            return;
-        }
-
-        lista.innerHTML = this.items.map((n, i) => `
-        <div class="elemento-lista p-3 flex items-start gap-3">
-            <div class="flex-1">
-                <div class="flex items-center gap-2 mb-1 flex-wrap">
-                    <span class="font-bold text-${n.color || 'green-400'} uppercase text-sm">${escapeHtml(n.titulo || 'NUEVO')}</span>
-                    <span class="text-xs text-amber-500/50">${n.fecha ? new Date(n.fecha).toLocaleDateString('es-ES') : ''}</span>
-                </div>
-                <p class="text-amber-200/80 text-sm">${escapeHtml(n.texto || '')}</p>
-            </div>
-            <button class="boton-accion boton-editar" onclick="Novedades.editar('${n.id}')"><i class="fa fa-pencil"></i></button>
-            <button class="boton-accion boton-borrar" onclick="Novedades.eliminar('${n.id}')"><i class="fa fa-trash"></i></button>
-        </div>`).join('');
-    },
-
-    abrirModal(item = null) {
-        this.editandoId = item ? item.id : null;
-        this.colorSeleccionado = item ? item.color : 'green-400';
-        const modal = document.getElementById('modal-crud');
-        document.getElementById('modal-crud-titulo').textContent = item ? 'Editar Novedad' : 'Nueva Novedad';
-        document.getElementById('modal-crud-campos').innerHTML = `
-            <div class="mb-3">
-                <label class="text-xs text-amber-400/70 uppercase font-bold block mb-1">📌 Título</label>
-                <input type="text" id="campo-titulo" class="input-lujo" placeholder="ACTUALIZACIÓN" value="${escapeHtml(item?.titulo || '')}" required>
-            </div>
-            <div class="mb-3">
-                <label class="text-xs text-amber-400/70 uppercase font-bold block mb-1">📄 Texto</label>
-                <textarea id="campo-texto" class="input-lujo" placeholder="Contenido de la novedad..." rows="3" required>${escapeHtml(item?.texto || '')}</textarea>
-            </div>
-            <div class="mb-3">
-                <label class="text-xs text-amber-400/70 uppercase font-bold block mb-1">🎨 Color del título</label>
-                <div class="color-picker">
-                    ${['cyan-400', 'green-400', 'purple-400', 'pink-400', 'orange-400', 'red-400'].map(c =>
-                        `<div class="color-option ${c} ${this.colorSeleccionado === c ? 'selected' : ''}" onclick="Novedades.seleccionarColor('${c}')"></div>`
-                    ).join('')}
-                </div>
-            </div>`;
-        modal.classList.add('activo');
-    },
-
-    seleccionarColor(color) {
-        this.colorSeleccionado = color;
-        document.querySelectorAll('.color-option').forEach(el => {
-            el.classList.toggle('selected', el.classList.contains(color));
-        });
-    },
-
-    async guardar(e) {
-        e.preventDefault();
-        const btn = document.getElementById('modal-crud-submit');
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Guardando...';
-        try {
-            const hoy = new Date();
-            const fecha = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
-            const item = {
-                id: this.editandoId || Date.now().toString(),
-                titulo: document.getElementById('campo-titulo').value,
-                texto: document.getElementById('campo-texto').value,
-                color: this.colorSeleccionado,
-                fecha,
-                timestamp: Date.now()
-            };
-            if (this.editandoId) {
-                const idx = this.items.findIndex(i => i.id === this.editandoId);
-                if (idx !== -1) this.items[idx] = item;
-            } else {
-                this.items.unshift(item);
-            }
-            await db.collection('sistema').doc('novedades').update({ items: this.items });
-            cerrarModalCrud();
-            mostrarToast('✅ Novedad guardada', 'success');
-            this.render();
-        } catch (e) { mostrarToast('Error: ' + e.message, 'error'); }
-        finally { btn.disabled = false; btn.innerHTML = '<i class="fa fa-save"></i> Guardar'; }
-    },
-
-    editar(id) {
-        const item = this.items.find(i => i.id === id);
-        if (item) this.abrirModal(item);
-    },
-
-    async eliminar(id) {
-        if (!confirm('¿Eliminar esta novedad?')) return;
-        this.items = this.items.filter(i => i.id !== id);
-        await db.collection('sistema').doc('novedades').update({ items: this.items });
-        mostrarToast('🗑️ Eliminada', 'success');
-        this.render();
-    }
+const Novedades={
+    items:[],colorSeleccionado:'green-400',
+    async cargar(){try{const d=await db.collection('sistema').doc('novedades').get();this.items=d.exists?(d.data().items||[]):[];this.items.sort((a,b)=>(b.timestamp||0)-(a.timestamp||0));this.render()}catch(e){console.error(e)}},
+    render(){const lista=document.getElementById('novedades-lista');if(this.items.length===0){lista.innerHTML='<div class="text-center py-12 text-amber-500/50"><i class="fa fa-bullhorn text-4xl mb-3 opacity-50"></i><p>Sin novedades. ¡Agregá la primera!</p></div>';return}lista.innerHTML=this.items.map(n=>`<div class="elemento-lista p-3 flex items-start gap-3"><div class="flex-1"><div class="flex items-center gap-2 mb-1 flex-wrap"><span class="font-bold text-${n.color||'green-400'} uppercase text-sm">${escapeHtml(n.titulo||'NUEVO')}</span><span class="text-xs text-amber-500/50">${n.fecha?new Date(n.fecha).toLocaleDateString('es-ES'):''}</span></div><p class="text-amber-200/80 text-sm">${escapeHtml(n.texto||'')}</p></div><button class="boton-accion boton-editar" onclick="Novedades.editar('${n.id}')"><i class="fa fa-pencil"></i></button><button class="boton-accion boton-borrar" onclick="Novedades.eliminar('${n.id}')"><i class="fa fa-trash"></i></button></div>`).join('')},
+    abrirModal(item=null){this.editandoId=item?item.id:null;this.colorSeleccionado=item?item.color:'green-400';document.getElementById('modal-crud-titulo').textContent=item?'Editar Novedad':'Nueva Novedad';document.getElementById('modal-crud-campos').innerHTML=`<div class="mb-3"><label class="text-xs text-amber-400/70 uppercase font-bold block mb-1">📌 Título</label><input type="text" id="campo-titulo" class="input-lujo" placeholder="ACTUALIZACIÓN" value="${escapeHtml(item?.titulo||'')}" required></div><div class="mb-3"><label class="text-xs text-amber-400/70 uppercase font-bold block mb-1">📄 Texto</label><textarea id="campo-texto" class="input-lujo" placeholder="Contenido de la novedad..." rows="3" required>${escapeHtml(item?.texto||'')}</textarea></div><div class="mb-3"><label class="text-xs text-amber-400/70 uppercase font-bold block mb-1">🎨 Color del título</label><div class="color-picker">${['cyan-400','green-400','purple-400','pink-400','orange-400','red-400'].map(c=>`<div class="color-option ${c} ${this.colorSeleccionado===c?'selected':''}" onclick="Novedades.seleccionarColor('${c}')"></div>`).join('')}</div></div>`;document.getElementById('modal-crud').classList.add('activo')},
+    seleccionarColor(color){this.colorSeleccionado=color;document.querySelectorAll('.color-option').forEach(el=>{el.classList.toggle('selected',el.classList.contains(color))})},
+    async guardar(e){e.preventDefault();const btn=document.getElementById('modal-crud-submit');btn.disabled=true;btn.innerHTML='<i class="fa fa-spinner fa-spin"></i> Guardando...';try{const hoy=new Date();const fecha=`${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,'0')}-${String(hoy.getDate()).padStart(2,'0')}`;const item={id:this.editandoId||Date.now().toString(),titulo:document.getElementById('campo-titulo').value,texto:document.getElementById('campo-texto').value,color:this.colorSeleccionado,fecha,timestamp:Date.now()};if(this.editandoId){const idx=this.items.findIndex(i=>i.id===this.editandoId);if(idx!==-1)this.items[idx]=item}else{this.items.unshift(item)}await db.collection('sistema').doc('novedades').update({items:this.items});cerrarModalCrud();mostrarToast('✅ Novedad guardada','success');this.render()}catch(e){mostrarToast('Error: '+e.message,'error')}finally{btn.disabled=false;btn.innerHTML='<i class="fa fa-save"></i> Guardar'}},
+    editar(id){const item=this.items.find(i=>i.id===id);if(item)this.abrirModal(item)},
+    async eliminar(id){if(!confirm('¿Eliminar esta novedad?'))return;this.items=this.items.filter(i=>i.id!==id);await db.collection('sistema').doc('novedades').update({items:this.items});mostrarToast('🗑️ Eliminada','success');this.render()}
 };
 
 // ==========================================
 // TOP BUSCADOS
 // ==========================================
-const TopBuscados = {
-    games: [],
-
-    async cargar() {
-        try {
-            const doc = await db.collection('sistema').doc('top_buscados').get();
-            this.games = doc.exists ? (doc.data().games || []) : [];
-            this.render();
-        } catch (e) { console.error(e); }
-    },
-
-    render() {
-        const lista = document.getElementById('top-lista');
-        if (this.games.length === 0) {
-            lista.innerHTML = '<div class="text-center py-12 text-amber-500/50"><i class="fa fa-fire text-4xl mb-3 opacity-50"></i><p>Sin juegos en el top. ¡Agregá el primero!</p></div>';
-            return;
-        }
-        lista.innerHTML = this.games.map((g, i) => `
-        <div class="top-item">
-            <div class="top-item-pos">${i + 1}</div>
-            <div class="top-item-info">
-                <div class="top-item-title">${escapeHtml(g.title || 'Sin título')}</div>
-                <div class="top-item-console">${escapeHtml(g.consola || 'N/A')}</div>
-            </div>
-            <button class="boton-accion boton-borrar" onclick="TopBuscados.eliminar(${i})"><i class="fa fa-trash"></i></button>
-        </div>`).join('');
-    },
-
-    abrirModal() {
-        document.getElementById('modal-top').classList.add('activo');
-        document.getElementById('top-buscar-juego').value = '';
-        document.getElementById('top-resultados').innerHTML = '';
-        this.renderResultados('');
-    },
-
-    renderResultados(q) {
-        const resultados = document.getElementById('top-resultados');
-        let filtrados = listaJuegos;
-        if (q) filtrados = listaJuegos.filter(j => (j.title || '').toLowerCase().includes(q.toLowerCase()));
-        filtrados = filtrados.slice(0, 20);
-
-        if (filtrados.length === 0) {
-            resultados.innerHTML = '<div class="text-center py-4 text-amber-500/50 text-sm">Sin resultados</div>';
-            return;
-        }
-
-        resultados.innerHTML = filtrados.map(j => `
-        <div class="elemento-lista p-2 flex items-center gap-2 cursor-pointer hover:bg-amber-900/20" onclick='TopBuscados.agregarDesdeCatalogo(${JSON.stringify(j).replace(/'/g, "&#39;")})'>
-            <img src="${escapeHtml(j.cover || '')}" class="w-8 h-10 object-cover rounded" onerror="this.src='https://via.placeholder.com/32x40/1a1400/ffd700?text=?'">
-            <div class="flex-1 min-w-0">
-                <div class="font-bold text-white truncate text-sm">${escapeHtml(j.title || 'Sin título')}</div>
-                <div class="text-xs text-amber-500/70">${j.consola}</div>
-            </div>
-            <i class="fa fa-plus text-green-400"></i>
-        </div>`).join('');
-    },
-
-    agregarDesdeCatalogo(juego) {
-        this.games.push({
-            title: juego.title,
-            consola: juego.consola,
-            cover: juego.cover,
-            link: juego.link,
-            tipo: juego.tipo
-        });
-        this.guardar();
-        document.getElementById('modal-top').classList.remove('activo');
-    },
-
-    async guardar() {
-        await db.collection('sistema').doc('top_buscados').update({ games: this.games });
-        mostrarToast('✅ Top actualizado', 'success');
-        this.render();
-    },
-
-    async eliminar(index) {
-        if (!confirm('¿Quitar este juego del top?')) return;
-        this.games.splice(index, 1);
-        await this.guardar();
-    }
+const TopBuscados={
+    games:[],
+    async cargar(){try{const d=await db.collection('sistema').doc('top_buscados').get();this.games=d.exists?(d.data().games||[]):[];this.render()}catch(e){console.error(e)}},
+    render(){const lista=document.getElementById('top-lista');if(this.games.length===0){lista.innerHTML='<div class="text-center py-12 text-amber-500/50"><i class="fa fa-fire text-4xl mb-3 opacity-50"></i><p>Sin juegos en el top. ¡Agregá el primero!</p></div>';return}lista.innerHTML=this.games.map((g,i)=>`<div class="top-item"><div class="top-item-pos">${i+1}</div><div class="top-item-info"><div class="top-item-title">${escapeHtml(g.title||'Sin título')}</div><div class="top-item-console">${escapeHtml(g.consola||'N/A')}</div></div><button class="boton-accion boton-borrar" onclick="TopBuscados.eliminar(${i})"><i class="fa fa-trash"></i></button></div>`).join('')},
+    abrirModal(){document.getElementById('modal-top').classList.add('activo');document.getElementById('top-buscar-juego').value='';this.renderResultados('')},
+    renderResultados(q){const resultados=document.getElementById('top-resultados');let f=listaJuegos;if(q)f=listaJuegos.filter(j=>(j.title||'').toLowerCase().includes(q.toLowerCase()));f=f.slice(0,20);if(f.length===0){resultados.innerHTML='<div class="text-center py-4 text-amber-500/50 text-sm">Sin resultados</div>';return}resultados.innerHTML=f.map(j=>`<div class="elemento-lista p-2 flex items-center gap-2 cursor-pointer hover:bg-amber-900/20" onclick='TopBuscados.agregarDesdeCatalogo(${JSON.stringify(j).replace(/'/g,"&#39;")})'><img src="${escapeHtml(j.cover||'')}" class="w-8 h-10 object-cover rounded" onerror="this.src='https://via.placeholder.com/32x40/1a1400/ffd700?text=?'"><div class="flex-1 min-w-0"><div class="font-bold text-white truncate text-sm">${escapeHtml(j.title||'Sin título')}</div><div class="text-xs text-amber-500/70">${j.consola}</div></div><i class="fa fa-plus text-green-400"></i></div>`).join('')},
+    agregarDesdeCatalogo(juego){this.games.push({title:juego.title,consola:juego.consola,cover:juego.cover,link:juego.link,tipo:juego.tipo});this.guardar();document.getElementById('modal-top').classList.remove('activo')},
+    async guardar(){await db.collection('sistema').doc('top_buscados').update({games:this.games});mostrarToast('✅ Top actualizado','success');this.render()},
+    async eliminar(index){if(!confirm('¿Quitar este juego del top?'))return;this.games.splice(index,1);await this.guardar()}
 };
-
-document.getElementById('top-buscar-juego').addEventListener('input', function() {
-    TopBuscados.renderResultados(this.value);
-});
-
-document.getElementById('form-top-manual').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const titulo = document.getElementById('top-manual-titulo').value;
-    const consola = document.getElementById('top-manual-consola').value;
-    const cover = document.getElementById('top-manual-cover').value;
-    const link = document.getElementById('top-manual-link').value;
-
-    if (!titulo) { mostrarToast('Ingresá al menos el título', 'error'); return; }
-
-    TopBuscados.games.push({ title: titulo, consola, cover, link });
-    await TopBuscados.guardar();
-    document.getElementById('modal-top').classList.remove('activo');
-    this.reset();
-});
+document.getElementById('top-buscar-juego').addEventListener('input',function(){TopBuscados.renderResultados(this.value)});
+document.getElementById('form-top-manual').addEventListener('submit',async function(e){e.preventDefault();const titulo=document.getElementById('top-manual-titulo').value;const consola=document.getElementById('top-manual-consola').value;const cover=document.getElementById('top-manual-cover').value;const link=document.getElementById('top-manual-link').value;if(!titulo){mostrarToast('Ingresá al menos el título','error');return}TopBuscados.games.push({title:titulo,consola,cover,link});await TopBuscados.guardar();document.getElementById('modal-top').classList.remove('activo');this.reset()});
 
 // ==========================================
 // REPORTES
 // ==========================================
-const Reportes = {
-    reportes: [],
-    filtroEstado: 'pendientes',
-
-    async cargar() {
-        try {
-            const snap = await db.collection('reportes').get();
-            this.reportes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            this.reportes.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-            this.render();
-        } catch (e) { console.error(e); }
-    },
-
-    render() {
-        const lista = document.getElementById('reportes-lista');
-        let filtrados = this.reportes;
-
-        if (this.filtroEstado === 'pendientes') filtrados = filtrados.filter(r => !r.resuelto);
-        else if (this.filtroEstado === 'resueltos') filtrados = filtrados.filter(r => r.resuelto);
-
-        if (filtrados.length === 0) {
-            lista.innerHTML = '<div class="text-center py-12 text-amber-500/50"><i class="fa fa-flag text-4xl mb-3 opacity-50"></i><p>Sin reportes</p></div>';
-            return;
-        }
-
-        lista.innerHTML = filtrados.map(r => {
-            const tipoLabel = r.tipo === 'link_caido' ? '🔗 Link caído' : r.tipo === 'juego_incorrecto' ? '⚠️ Juego incorrecto' : '📝 Otro';
-            return `
-            <div class="reporte-card ${r.resuelto ? 'resuelto' : 'pendiente'}">
-                <div class="flex items-start gap-3 flex-wrap">
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center gap-2 flex-wrap mb-1">
-                            <span class="font-bold text-white">${escapeHtml(r.titulo || 'Juego desconocido')}</span>
-                            <span class="bg-red-900/30 text-red-300 px-2 py-0.5 rounded text-xs border border-red-600/30">${tipoLabel}</span>
-                            ${r.resuelto ? '<span class="bg-green-900/30 text-green-300 px-2 py-0.5 rounded text-xs border border-green-600/30">✅ Resuelto</span>' : ''}
-                        </div>
-                        <div class="text-xs text-amber-500/70 mb-1">${escapeHtml(r.consola || 'N/A')} · ${r.timestamp ? new Date(r.timestamp).toLocaleString('es-ES') : ''}</div>
-                        ${r.mensaje ? `<p class="text-amber-200/80 text-sm mb-1">"${escapeHtml(r.mensaje)}"</p>` : ''}
-                        <p class="text-xs text-amber-500/50">Usuario: ${escapeHtml(r.usuario || 'Anónimo')}</p>
-                    </div>
-                    <div class="flex gap-2">
-                        ${!r.resuelto ? `<button class="boton-accion boton-nuevo" onclick="Reportes.marcarResuelto('${r.id}')"><i class="fa fa-check"></i></button>` : ''}
-                        <button class="boton-accion boton-borrar" onclick="Reportes.eliminar('${r.id}')"><i class="fa fa-trash"></i></button>
-                    </div>
-                </div>
-            </div>`;
-        }).join('');
-    },
-
-    async marcarResuelto(id) {
-        await db.collection('reportes').doc(id).update({ resuelto: true, resueltoPor: adminActual, resueltoTimestamp: Date.now() });
-        mostrarToast('✅ Reporte resuelto', 'success');
-        this.cargar();
-    },
-
-    async marcarTodosResueltos() {
-        if (!confirm('¿Marcar todos como resueltos?')) return;
-        const pendientes = this.reportes.filter(r => !r.resuelto);
-        for (const r of pendientes) {
-            await db.collection('reportes').doc(r.id).update({ resuelto: true, resueltoPor: adminActual });
-        }
-        mostrarToast('✅ Todos resueltos', 'success');
-        this.cargar();
-    },
-
-    async eliminar(id) {
-        if (!confirm('¿Eliminar este reporte?')) return;
-        await db.collection('reportes').doc(id).delete();
-        mostrarToast('🗑️ Eliminado', 'success');
-        this.cargar();
-    }
+const Reportes={
+    reportes:[],filtroEstado:'pendientes',
+    async cargar(){try{const snap=await db.collection('reportes').get();this.reportes=snap.docs.map(d=>({id:d.id,...d.data()}));this.reportes.sort((a,b)=>(b.timestamp||0)-(a.timestamp||0));this.render()}catch(e){console.error(e)}},
+    filtrar(estado){this.filtroEstado=estado;document.querySelectorAll('.filter-chip').forEach(c=>c.classList.toggle('active',c.dataset.estado===estado));this.render()},
+    render(){const lista=document.getElementById('reportes-lista');let f=this.reportes;if(this.filtroEstado==='pendientes')f=f.filter(r=>!r.resuelto);else if(this.filtroEstado==='resueltos')f=f.filter(r=>r.resuelto);if(f.length===0){lista.innerHTML='<div class="text-center py-12 text-amber-500/50"><i class="fa fa-flag text-4xl mb-3 opacity-50"></i><p>Sin reportes</p></div>';return}lista.innerHTML=f.map(r=>{const tipoLabel=r.tipo==='link_caido'?'🔗 Link caído':r.tipo==='juego_incorrecto'?'⚠️ Juego incorrecto':'📝 Otro';return `<div class="reporte-card ${r.resuelto?'resuelto':'pendiente'}"><div class="flex items-start gap-3 flex-wrap"><div class="flex-1 min-w-0"><div class="flex items-center gap-2 flex-wrap mb-1"><span class="font-bold text-white">${escapeHtml(r.titulo||'Juego desconocido')}</span><span class="bg-red-900/30 text-red-300 px-2 py-0.5 rounded text-xs border border-red-600/30">${tipoLabel}</span>${r.resuelto?'<span class="bg-green-900/30 text-green-300 px-2 py-0.5 rounded text-xs border border-green-600/30">✅ Resuelto</span>':''}</div><div class="text-xs text-amber-500/70 mb-1">${escapeHtml(r.consola||'N/A')} · ${r.timestamp?new Date(r.timestamp).toLocaleString('es-ES'):''}</div>${r.mensaje?`<p class="text-amber-200/80 text-sm mb-1">"${escapeHtml(r.mensaje)}"</p>`:''}<p class="text-xs text-amber-500/50">Usuario: ${escapeHtml(r.usuario||'Anónimo')}</p></div><div class="flex gap-2">${!r.resuelto?`<button class="boton-accion boton-nuevo" onclick="Reportes.marcarResuelto('${r.id}')"><i class="fa fa-check"></i></button>`:''}<button class="boton-accion boton-borrar" onclick="Reportes.eliminar('${r.id}')"><i class="fa fa-trash"></i></button></div></div></div>`}).join('')},
+    async marcarResuelto(id){await db.collection('reportes').doc(id).update({resuelto:true,resueltoPor:adminActual,resueltoTimestamp:Date.now()});mostrarToast('✅ Reporte resuelto','success');this.cargar()},
+    async marcarTodosResueltos(){if(!confirm('¿Marcar todos como resueltos?'))return;const pendientes=this.reportes.filter(r=>!r.resuelto);for(const r of pendientes){await db.collection('reportes').doc(r.id).update({resuelto:true,resueltoPor:adminActual})}mostrarToast('✅ Todos resueltos','success');this.cargar()},
+    async eliminar(id){if(!confirm('¿Eliminar este reporte?'))return;await db.collection('reportes').doc(id).delete();mostrarToast('🗑️ Eliminado','success');this.cargar()}
 };
 
-// Filtros de reportes
-document.querySelectorAll('.filter-chip').forEach(chip => {
-    chip.onclick = () => {
-        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-        chip.classList.add('active');
-        Reportes.filtroEstado = chip.dataset.estado;
-        Reportes.render();
-    };
-});
+// ==========================================
+// VALIDADOR DE URLs
+// ==========================================
+const Validador={
+    urls:[],cancelado:false,procesando:false,concurrencia:5,cacheKey:'gmh_url_validation_cache_v2',tiempos:[],
+    async cargar(){
+        abrirModal('CARGANDO','Obteniendo URLs...',30);
+        try{
+            await inicializar();
+            this.urls=[];let idCounter=0;
+            for(const[consola,juegos]of Object.entries(dbRoms)){
+                if(!Array.isArray(juegos))continue;
+                for(const j of juegos){
+                    if(j.cover&&j.cover.trim()!==''){this.urls.push({id:idCounter++,juegoId:j.id,titulo:j.title||'Sin título',consola,tipoUrl:'cover',url:j.cover.split('?')[0],path:j.coverPath||'',status:'pending',codigoHttp:null,tiempoMs:null})}
+                    if(Array.isArray(j.screenshots)){j.screenshots.forEach((url,idx)=>{if(url&&url.trim()!==''){this.urls.push({id:idCounter++,juegoId:j.id,titulo:j.title||'Sin título',consola,tipoUrl:'screenshot',subIndice:idx,url:url.split('?')[0],path:(j.screenshotsPaths&&j.screenshotsPaths[idx])||'',status:'pending',codigoHttp:null,tiempoMs:null})}})}
+                    if(j.link&&j.link.trim()!==''){this.urls.push({id:idCounter++,juegoId:j.id,titulo:j.title||'Sin título',consola,tipoUrl:'download',url:j.link,path:'',status:'pending',codigoHttp:null,tiempoMs:null})}
+                }
+            }
+            this.aplicarCache();
+            this.render();this.actualizarStats();
+            cerrarModal();mostrarToast(`${this.urls.length} URLs cargadas`,'info');
+        }catch(e){cerrarModal();modalError(e.message)}
+    },
+    aplicarCache(){try{const cached=localStorage.getItem(this.cacheKey);if(!cached)return;const obj=JSON.parse(cached);if(Date.now()-obj.timestamp>24*60*60*1000){localStorage.removeItem(this.cacheKey);return}const data=obj.data||{};let aplicadas=0;this.urls.forEach(u=>{if(data[u.url]){u.status=data[u.url].status;u.codigoHttp=data[u.url].codigoHttp;u.tiempoMs=data[u.url].tiempoMs;aplicadas++}});if(aplicadas>0)mostrarToast(`${aplicadas} URLs desde cache`,'info')}catch(e){}},
+    guardarCache(){const data={};this.urls.forEach(u=>{if(u.status==='ok'||u.status==='error'){data[u.url]={status:u.status,codigoHttp:u.codigoHttp,tiempoMs:u.tiempoMs,timestamp:Date.now()}}});try{localStorage.setItem(this.cacheKey,JSON.stringify({timestamp:Date.now(),data}))}catch(e){}},
+    limpiarCache(){localStorage.removeItem(this.cacheKey);mostrarToast('Cache limpiada','info');this.urls.forEach(u=>{if(u.status==='ok'||u.status==='error'){u.status='pending';u.codigoHttp=null;u.tiempoMs=null}});this.render();this.actualizarStats()},
+    render(){const lista=document.getElementById('val-lista');if(this.urls.length===0){lista.innerHTML='<div class="text-center py-8 text-amber-500/50"><i class="fa fa-info-circle text-3xl mb-3"></i><p>Presioná "Cargar URLs" para comenzar</p></div>';return}lista.innerHTML=this.urls.slice(0,200).map(u=>{const estadoTexto={ok:'✅ OK',error:`❌ ${u.codigoHttp||'ERR'}`,pending:'⏳ Pendiente',checking:'🔄 Analizando...'}[u.status]||'—';const thumbSrc=u.tipoUrl!=='download'?u.url:'https://via.placeholder.com/45x60/1a1400/ffd700?text=DL';return `<div class="val-url-item status-${u.status}" data-url-id="${u.id}"><img class="val-url-thumb" src="${escapeHtml(thumbSrc)}" onerror="this.src='https://via.placeholder.com/45x60/1a1400/ff4444?text=X'" loading="lazy"><div class="val-url-info"><div class="val-url-title">${escapeHtml(u.titulo)}</div><div class="val-url-meta"><span>${u.tipoUrl==='cover'?'📷 Portada':u.tipoUrl==='screenshot'?'🖼️ Captura':'⬇️ Descarga'}</span><span>${escapeHtml(u.consola)}</span>${u.tiempoMs?`<span>${u.tiempoMs}ms</span>`:''}</div></div><span class="val-url-status ${u.status}">${estadoTexto}</span><button class="boton-accion bg-blue-900/30 text-blue-300 border border-blue-600/50 text-xs" onclick="Validador.validarUna(${u.id})"><i class="fa fa-refresh"></i></button></div>`}).join('')},
+    actualizarStats(){const activas=this.urls;const total=activas.length;const ok=activas.filter(u=>u.status==='ok').length;const error=activas.filter(u=>u.status==='error').length;const pending=activas.filter(u=>u.status==='pending'||u.status==='checking').length;document.getElementById('val-stat-total').textContent=total;document.getElementById('val-stat-ok').textContent=ok;document.getElementById('val-stat-error').textContent=error;document.getElementById('val-stat-pending').textContent=pending},
+    async validarUna(id){const u=this.urls.find(x=>x.id===id);if(!u)return;await this._validarUrlObj(u);this.render();this.actualizarStats()},
+    async validarTodas(){if(this.procesando)return;this.procesando=true;this.cancelado=false;this.tiempos=[];const total=this.urls.length;if(total===0){mostrarToast('No hay URLs para validar','info');return}document.getElementById('val-btn-cancelar').disabled=false;document.getElementById('val-progress-bar').style.display='block';document.getElementById('val-progress-text').style.display='block';document.getElementById('val-progress-total').textContent=total;let completadas=0;const inicioTotal=Date.now();const cola=[...this.urls];const workers=[];const worker=async()=>{while(cola.length>0&&!this.cancelado){const u=cola.shift();if(!u)break;await this._validarUrlObj(u);completadas++;this.tiempos.push(u.tiempoMs||0);const pct=(completadas/total)*100;document.getElementById('val-progress-fill').style.width=pct+'%';document.getElementById('val-progress-current').textContent=completadas;if(completadas>5){const avg=this.tiempos.reduce((a,b)=>a+b,0)/this.tiempos.length;const restantes=total-completadas;const etaSeg=Math.round((restantes*avg)/1000/this.concurrencia);document.getElementById('val-progress-eta').textContent=`· ETA: ${etaSeg<60?etaSeg+'s':Math.round(etaSeg/60)+'m'}`}}};for(let i=0;i<Math.min(this.concurrencia,total);i++)workers.push(worker());await Promise.all(workers);this.procesando=false;document.getElementById('val-btn-cancelar').disabled=true;const duracion=Math.round((Date.now()-inicioTotal)/1000);const ok=this.urls.filter(u=>u.status==='ok').length;const err=this.urls.filter(u=>u.status==='error').length;this.guardarCache();this.render();this.actualizarStats();if(this.cancelado){mostrarToast(`Validación cancelada. ${completadas}/${total} analizadas.`,'info')}else{mostrarToast(`✅ Análisis completo en ${duracion}s · ${ok} OK · ${err} errores`,err>0?'error':'success')}},
+    async validarRotas(){const rotas=this.urls.filter(u=>u.status==='error');if(rotas.length===0){mostrarToast('No hay URLs rotas','info');return}rotas.forEach(u=>{u.status='pending';u.codigoHttp=null;u.tiempoMs=null});this.render();await this.validarMultiples(rotas)},
+    async validarMultiples(urlsAValidar){if(this.procesando)return;this.procesando=true;this.cancelado=false;this.tiempos=[];const total=urlsAValidar.length;if(total===0){mostrarToast('No hay URLs','info');return}document.getElementById('val-btn-cancelar').disabled=false;document.getElementById('val-progress-bar').style.display='block';document.getElementById('val-progress-text').style.display='block';document.getElementById('val-progress-total').textContent=total;let completadas=0;const inicioTotal=Date.now();const cola=[...urlsAValidar];const workers=[];const worker=async()=>{while(cola.length>0&&!this.cancelado){const u=cola.shift();if(!u)break;await this._validarUrlObj(u);completadas++;this.tiempos.push(u.tiempoMs||0);const pct=(completadas/total)*100;document.getElementById('val-progress-fill').style.width=pct+'%';document.getElementById('val-progress-current').textContent=completadas}};for(let i=0;i<Math.min(this.concurrencia,total);i++)workers.push(worker());await Promise.all(workers);this.procesando=false;document.getElementById('val-btn-cancelar').disabled=true;const duracion=Math.round((Date.now()-inicioTotal)/1000);const ok=urlsAValidar.filter(u=>u.status==='ok').length;const err=urlsAValidar.filter(u=>u.status==='error').length;this.guardarCache();this.render();this.actualizarStats();if(this.cancelado){mostrarToast(`Validación cancelada. ${completadas}/${total} analizadas.`,'info')}else{mostrarToast(`✅ Análisis completo en ${duracion}s · ${ok} OK · ${err} errores`,err>0?'error':'success')}},
+    cancelar(){this.cancelado=true;mostrarToast('Cancelando validación...','info')},
+    async _validarUrlObj(u){const inicio=performance.now();u.status='checking';this.render();const intentos=2;for(let intento=1;intento<=intentos;intento++){if(this.cancelado){u.status='pending';return}try{const controller=new AbortController();const timeoutId=setTimeout(()=>controller.abort(),15000);let response;if(u.tipoUrl==='download'){response=await fetch(u.url,{method:'GET',mode:'cors',credentials:'omit',redirect:'follow',signal:controller.signal,headers:{'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'},cache:'no-cache'})}else{try{response=await fetch(u.url,{method:'HEAD',mode:'cors',signal:controller.signal,cache:'no-cache'})}catch(headErr){clearTimeout(timeoutId);const controller2=new AbortController();const timeoutId2=setTimeout(()=>controller2.abort(),15000);response=await fetch(u.url,{method:'GET',mode:'cors',signal:controller2.signal,headers:{'Range':'bytes=0-0'},cache:'no-cache'});clearTimeout(timeoutId2)}}clearTimeout(timeoutId);u.tiempoMs=Math.round(performance.now()-inicio);if(response.ok||response.status===206){u.status='ok';u.codigoHttp=response.status;return}if(response.status===404||response.status===410||response.status===403){u.status='error';u.codigoHttp=response.status;return}throw new Error('HTTP '+response.status)}catch(err){if(intento===intentos){u.tiempoMs=Math.round(performance.now()-inicio);u.status='error';u.codigoHttp=err.name==='AbortError'?'TIMEOUT':'ERR';return}await new Promise(r=>setTimeout(r,500*intento))}}}
+};
+
+// ==========================================
+// HUÉRFANAS
+// ==========================================
+const Huerfanas={
+    archivos:[],seleccionados:new Set(),procesando:false,
+    async escanear(){
+        if(this.procesando)return;this.procesando=true;
+        document.getElementById('huer-progress-bar').style.display='block';
+        document.getElementById('huer-progress-text').style.display='block';
+        document.getElementById('huer-progress-detalle').textContent='Consultando API de GitHub...';
+        document.getElementById('huer-progress-fill').style.width='30%';
+        try{
+            await inicializar();
+            listaJuegos=[];
+            for(const[consola,juegos]of Object.entries(dbRoms)){if(Array.isArray(juegos))juegos.forEach(j=>listaJuegos.push({...j,consola}))}
+            const resp=await fetch(`https://api.github.com/repos/${CFG.user}/${CFG.repo}/git/trees/${CFG.rama}?recursive=1`,{headers:{'Authorization':`token ${github.token}`}});
+            if(!resp.ok)throw new Error('Error al listar archivos de GitHub');
+            const data=await resp.json();
+            const archivosGitHub=(data.tree||[]).filter(item=>item.type==='blob'&&(item.path.startsWith('portadas/')||item.path.startsWith('capturas/'))).map(item=>({path:item.path,carpeta:item.path.split('/')[0],nombre:item.path.split('/').pop(),size:item.size||0,url:`${CFG.baseURL}${item.path}`,vinculado:false,juegoAsociado:null}));
+            document.getElementById('huer-progress-detalle').textContent='Comparando con la base de datos...';
+            document.getElementById('huer-progress-fill').style.width='70%';
+            archivosGitHub.forEach(archivo=>{archivo.vinculado=false;archivo.juegoAsociado=null;for(const juego of listaJuegos){if(juego.coverPath===archivo.path){archivo.vinculado=true;archivo.juegoAsociado=juego;return}if(Array.isArray(juego.screenshotsPaths)&&juego.screenshotsPaths.includes(archivo.path)){archivo.vinculado=true;archivo.juegoAsociado=juego;return}}});
+            this.archivos=archivosGitHub;this.seleccionados.clear();
+            this.render();this.actualizarStats();
+            document.getElementById('huer-progress-fill').style.width='100%';
+            const huerfanos=this.archivos.filter(a=>!a.vinculado).length;
+            document.getElementById('huer-progress-detalle').textContent=`✅ Análisis completo · ${huerfanos} archivos huérfanos detectados`;
+            setTimeout(()=>{document.getElementById('huer-progress-bar').style.display='none';document.getElementById('huer-progress-text').style.display='none'},3000);
+            if(huerfanos>0){mostrarToast(`👻 Se encontraron ${huerfanos} archivos huérfanos`,'info')}else{mostrarToast('✅ No hay archivos huérfanos. Todo limpio.','success')}
+        }catch(e){document.getElementById('huer-progress-bar').style.display='none';document.getElementById('huer-progress-text').style.display='none';modalError('Error al escanear: '+e.message)}
+        finally{this.procesando=false}
+    },
+    render(){const lista=document.getElementById('huer-lista');if(this.archivos.length===0){lista.innerHTML='<div class="text-center py-8 text-amber-500/50"><i class="fa fa-ghost text-3xl mb-3"></i><p>Presioná "Escanear GitHub" para detectar archivos huérfanos</p></div>';return}lista.innerHTML=this.archivos.map(a=>{const isHuerfano=!a.vinculado;const isSelected=this.seleccionados.has(a.path);const infoVinculo=a.vinculado&&a.juegoAsociado?`<span style="color:#00c851"><i class="fa fa-check-circle"></i> ${escapeHtml(a.juegoAsociado.title||'Sin título')} <span style="opacity:0.6">(${a.juegoAsociado.consola||'?'})</span></span>`:`<span style="color:#ff9966"><i class="fa fa-ghost"></i> <strong>HUÉRFANO</strong> - No vinculado</span>`;return `<div class="huerfana-item ${isSelected?'selected':''}" data-path="${escapeHtml(a.path)}"><input type="checkbox" class="huerfana-checkbox" ${isSelected?'checked':''} ${!isHuerfano?'disabled title="Solo se pueden eliminar huérfanos"':''} onchange="Huerfanas.toggleSeleccion('${escapeHtml(a.path)}',this.checked)"><img class="huerfana-thumb" src="${escapeHtml(a.url)}" onerror="this.src='https://via.placeholder.com/50x65/1a1400/ffa500?text=?'" loading="lazy"><div class="huerfana-info"><div class="huerfana-path" title="${escapeHtml(a.path)}">${a.carpeta==='portadas'?'📷':'🖼️'} ${escapeHtml(a.path)}</div><div class="huerfana-meta">${infoVinculo}<span style="opacity:0.5"> · ${(a.size/1024).toFixed(1)} KB</span></div></div></div>`}).join('')},
+    toggleSeleccion(path,checked){if(checked)this.seleccionados.add(path);else this.seleccionados.delete(path);this.actualizarStats();const el=document.querySelector(`[data-path="${CSS.escape(path)}"]`);if(el)el.classList.toggle('selected',checked)},
+    seleccionarTodos(){this.archivos.filter(a=>!a.vinculado).forEach(a=>this.seleccionados.add(a.path));this.render();this.actualizarStats()},
+    deseleccionarTodos(){this.seleccionados.clear();this.render();this.actualizarStats()},
+    async eliminarSeleccionados(){if(this.seleccionados.size===0){mostrarToast('No hay archivos seleccionados','info');return}const cantidad=this.seleccionados.size;if(!confirm(`⚠️ ¿Eliminar ${cantidad} archivo(s) huérfano(s) de GitHub?\n\nEsta acción NO se puede deshacer.`))return;document.getElementById('huer-progress-bar').style.display='block';document.getElementById('huer-progress-text').style.display='block';const paths=[...this.seleccionados];let eliminados=0;let fallidos=0;for(let i=0;i<paths.length;i++){const path=paths[i];document.getElementById('huer-progress-detalle').textContent=`Eliminando ${i+1} de ${cantidad}: ${path.split('/').pop()}`;document.getElementById('huer-progress-fill').style.width=`${((i+1)/cantidad)*100}%`;const ok=await borrarArchivoGitHub(path);if(ok)eliminados++;else fallidos++}this.archivos=this.archivos.filter(a=>!this.seleccionados.has(a.path));this.seleccionados.clear();this.render();this.actualizarStats();setTimeout(()=>{document.getElementById('huer-progress-bar').style.display='none';document.getElementById('huer-progress-text').style.display='none'},2000);if(fallidos===0){mostrarToast(`✅ ${eliminados} archivo(s) eliminados correctamente`,'success')}else{mostrarToast(`⚠️ ${eliminados} eliminados, ${fallidos} fallaron`,'error')}},
+    actualizarStats(){const total=this.archivos.length;const vinculados=this.archivos.filter(a=>a.vinculado).length;const huerfanos=this.archivos.filter(a=>!a.vinculado).length;const seleccionados=this.seleccionados.size;document.getElementById('huer-stat-total').textContent=total;document.getElementById('huer-stat-vinculados').textContent=vinculados;document.getElementById('huer-stat-huerfanos').textContent=huerfanos;document.getElementById('huer-stat-seleccionados').textContent=seleccionados}
+};
 
 // ==========================================
 // CONECTAR GESTORES CON MODAL
 // ==========================================
-document.getElementById('modal-crud').addEventListener('click', function(e) {
-    if (e.target === this) cerrarModalCrud();
-});
+document.getElementById('modal-crud').addEventListener('click',function(e){if(e.target===this)cerrarModalCrud()});
 
-// Asignar gestor activo según sección visible
-function setGestorActivo(nombre) {
-    window.gestorActivo = { Emuladores, Apps, Mods, Archivos, Novedades }[nombre];
-}
+function setGestorActivo(nombre){window.gestorActivo={Emuladores,Apps,Mods,Archivos,Novedades}[nombre]}
+const observer=new MutationObserver(()=>{const activa=document.querySelector('.panel-seccion.activa');if(activa){const id=activa.id.replace('seccion-','');const mapa={emuladores:'Emuladores',apps:'Apps',mods:'Mods',archivos:'Archivos',novedades:'Novedades'};if(mapa[id])setGestorActivo(mapa[id])}});
+observer.observe(document.getElementById('panel-principal'),{subtree:true,attributes:true,attributeFilter:['class']});
 
-// Observar cambios de tab para asignar gestor
-const observer = new MutationObserver(() => {
-    const activa = document.querySelector('.panel-seccion.activa');
-    if (activa) {
-        const id = activa.id.replace('seccion-', '');
-        const mapa = { emuladores: 'Emuladores', apps: 'Apps', mods: 'Mods', archivos: 'Archivos', novedades: 'Novedades' };
-        if (mapa[id]) setGestorActivo(mapa[id]);
-    }
-});
-observer.observe(document.getElementById('panel-principal'), { subtree: true, attributes: true, attributeFilter: ['class'] });
+document.getElementById('cerrar-modal-proceso').onclick=cerrarModal;
 
-// Cerrar modal de proceso
-document.getElementById('cerrar-modal-proceso').onclick = cerrarModal;
-
-// Inicialización
-inicializar().then(() => {
-    // Cargar juegos para el selector de top buscados
-    listaJuegos = [];
-    for (const [consola, juegos] of Object.entries(dbRoms)) {
-        if (Array.isArray(juegos)) juegos.forEach(j => listaJuegos.push({ ...j, consola }));
-    }
-});
+inicializar().then(()=>{listaJuegos=[];for(const[consola,juegos]of Object.entries(dbRoms)){if(Array.isArray(juegos))juegos.forEach(j=>listaJuegos.push({...j,consola}))}});
 </script>
 </body>
 </html>
