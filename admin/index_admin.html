@@ -2364,6 +2364,264 @@ const observer = new MutationObserver(() => {
     }
 });
 observer.observe(document.getElementById('panel-extras'), { subtree: true, attributes: true, attributeFilter: ['class'] });
+
+
+
+// ==========================================
+// VALIDADOR DE URLs
+// ==========================================
+let urlsParaValidar = [];
+let validando = false;
+let abortController = null;
+
+async function inicializarValidador() {
+    await cargarLista(); // para tener listaJuegos
+    document.getElementById('val-btn-cargar').onclick = cargarUrlsParaValidar;
+    document.getElementById('val-btn-validar-todas').onclick = () => validarUrls('todas');
+    document.getElementById('val-btn-validar-pendientes').onclick = () => validarUrls('pendientes');
+    document.getElementById('val-btn-validar-rotas').onclick = () => validarUrls('error');
+    document.getElementById('val-btn-cancelar').onclick = cancelarValidacion;
+    document.getElementById('val-buscar').oninput = filtrarListaUrls;
+    document.getElementById('form-reparar-url').onsubmit = guardarReparacionUrl;
+    document.getElementById('roto-img-input').onchange = previsualizarImagenRota;
+}
+
+function cargarUrlsParaValidar() {
+    urlsParaValidar = [];
+    listaJuegos.forEach(juego => {
+        if (juego.coverUrl) urlsParaValidar.push({...juego, tipoUrl: 'cover', url: juego.coverUrl });
+        if (juego.capturas && Array.isArray(juego.capturas)) {
+            juego.capturas.forEach((cap, i) => {
+                urlsParaValidar.push({...juego, tipoUrl: 'screenshot', url: cap.url || cap, index: i });
+            });
+        }
+        if (juego.link) urlsParaValidar.push({...juego, tipoUrl: 'download', url: juego.link });
+    });
+
+    document.getElementById('val-stat-total').textContent = urlsParaValidar.length;
+    renderizarListaUrls(urlsParaValidar);
+    mostrarToast(`${urlsParaValidar.length} URLs cargadas`, 'info');
+}
+
+function renderizarListaUrls(lista) {
+    const cont = document.getElementById('val-lista-urls');
+    cont.innerHTML = '';
+    document.getElementById('val-list-count').textContent = lista.length;
+
+    lista.forEach((item, i) => {
+        const div = document.createElement('div');
+        div.className = 'val-url-item status-pending';
+        div.id = `val-item-${i}`;
+        div.innerHTML = `
+            <img src="${item.coverUrl? limpiarUrl(item.coverUrl) : 'https://placehold.co/45x60/050400/ffd700?text=?'}" class="val-url-thumb" onerror="this.src='https://placehold.co/45x60/050400/ff4444?text=X'">
+            <div class="val-url-info">
+                <div class="val-url-title">${escapeHtml(item.titulo)}</div>
+                <div class="val-url-meta">
+                    <span class="val-url-badge ${item.consola}">${item.consola}</span>
+                    <span class="val-url-badge ${item.tipo}">${item.tipo}</span>
+                    <span class="val-url-badge ${item.tipoUrl}">${item.tipoUrl}</span>
+                </div>
+            </div>
+            <div class="val-url-status pending">PENDIENTE</div>
+        `;
+        cont.appendChild(div);
+    });
+}
+
+async function validarUrls(filtro) {
+    if (validando) return;
+    validando = true;
+    abortController = new AbortController();
+
+    const concurrencia = parseInt(document.getElementById('val-concurrencia').value);
+    const listaAFiltrar = urlsParaValidar.filter(u => {
+        if (filtro === 'pendientes') return!u.estado || u.estado === 'pending';
+        if (filtro === 'error') return u.estado === 'error';
+        return true;
+    });
+
+    document.getElementById('val-progress-bar').style.display = 'block';
+    document.getElementById('val-progress-text').style.display = 'block';
+    document.getElementById('val-btn-cancelar').disabled = false;
+    document.getElementById('val-progress-total').textContent = listaAFiltrar.length;
+
+    let ok = 0, error = 0, actuales = 0;
+    const cola = [...listaAFiltrar];
+
+    const workers = Array(concurrencia).fill(0).map(async () => {
+        while (cola.length > 0 &&!abortController.signal.aborted) {
+            const item = cola.shift();
+            const index = urlsParaValidar.indexOf(item);
+            actuales++;
+            document.getElementById('val-progress-current').textContent = actuales;
+            document.getElementById('val-progress-fill').style.width = `${(actuales / listaAFiltrar.length) * 100}%`;
+
+            const el = document.getElementById(`val-item-${index}`);
+            if (el) el.className = 'val-url-item status-checking';
+            if (el) el.querySelector('.val-url-status').className = 'val-url-status checking';
+            if (el) el.querySelector('.val-url-status').textContent = 'VERIFICANDO';
+
+            try {
+                // Usamos no-cors para que no falle por CORS. Solo vemos si responde
+                await fetch(limpiarUrl(item.url), { mode: 'no-cors', signal: abortController.signal });
+                item.estado = 'ok';
+                ok++;
+                if (el) el.className = 'val-url-item status-ok';
+                if (el) el.querySelector('.val-url-status').className = 'val-url-status ok';
+                if (el) el.querySelector('.val-url-status').textContent = 'OK';
+            } catch (e) {
+                item.estado = 'error';
+                error++;
+                if (el) el.className = 'val-url-item status-error';
+                if (el) el.querySelector('.val-url-status').className = 'val-url-status error';
+                if (el) el.querySelector('.val-url-status').textContent = 'ROTA';
+            }
+        }
+    });
+
+    await Promise.all(workers);
+
+    document.getElementById('val-stat-ok').textContent = ok;
+    document.getElementById('val-stat-error').textContent = error;
+    document.getElementById('val-stat-pending').textContent = urlsParaValidar.length - ok - error;
+    document.getElementById('val-btn-cancelar').disabled = true;
+    validando = false;
+
+    renderizarRotas();
+    mostrarToast(`Validación terminada: ${ok} OK, ${error} Rotas`, error > 0? 'error' : 'success');
+}
+
+function cancelarValidacion() {
+    if (abortController) abortController.abort();
+    validando = false;
+    document.getElementById('val-btn-cancelar').disabled = true;
+}
+
+function renderizarRotas() {
+    const rotas = urlsParaValidar.filter(u => u.estado === 'error');
+    const cont = document.getElementById('val-rotas-lista');
+    document.getElementById('val-rotas-count').textContent = rotas.length;
+    document.getElementById('val-rotas-container').style.display = rotas.length > 0? 'block' : 'none';
+
+    cont.innerHTML = '';
+    rotas.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'val-rota-card';
+        div.innerHTML = `
+            <img src="${item.coverUrl? limpiarUrl(item.coverUrl) : 'https://placehold.co/70x90/050400/ffd700?text=?'}" class="val-rota-thumb">
+            <div class="val-rota-info">
+                <div class="val-rota-title">${escapeHtml(item.titulo)}</div>
+                <div class="val-rota-badges">
+                    <span class="val-rota-badge consola">${item.consola}</span>
+                    <span class="val-rota-badge tipo-${item.tipo}">${item.tipo}</span>
+                    <span class="val-rota-badge tipo-url">${item.tipoUrl}</span>
+                </div>
+                <div class="val-rota-url">${item.url}</div>
+                <div class="val-rota-subido">Subido por: ${item.uploadedBy || 'Desconocido'}</div>
+            </div>
+            <div class="val-rota-actions">
+                <button class="val-rota-btn reemplazar" onclick="abrirModalRepararUrl(${urlsParaValidar.indexOf(item)})">
+                    <i class="fa fa-wrench"></i> Reparar
+                </button>
+            </div>
+        `;
+        cont.appendChild(div);
+    });
+}
+
+let urlRotaActual = null;
+
+function abrirModalRepararUrl(index) {
+    urlRotaActual = urlsParaValidar[index];
+    document.getElementById('roto-juego-titulo').textContent = urlRotaActual.titulo;
+    document.getElementById('roto-juego-consola').textContent = urlRotaActual.consola;
+    document.getElementById('roto-juego-tipo').textContent = urlRotaActual.tipo;
+    document.getElementById('roto-tipo-url').textContent = urlRotaActual.tipoUrl;
+    document.getElementById('roto-juego-uploader').textContent = urlRotaActual.uploadedBy || '-';
+    document.getElementById('roto-url-actual').textContent = urlRotaActual.url;
+    document.getElementById('roto-url-id').value = index;
+
+    const esImagen = urlRotaActual.tipoUrl === 'cover' || urlRotaActual.tipoUrl === 'screenshot';
+    document.getElementById('roto-imagen-container').style.display = esImagen? 'block' : 'none';
+    document.getElementById('roto-nueva-label').textContent = esImagen? '🔧 NUEVA IMAGEN' : '🔧 NUEVO ENLACE';
+
+    document.getElementById('modal-editar-url-rota').style.display = 'flex';
+}
+
+async function previsualizarImagenRota(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const blob = await comprimirImagen(file);
+    const reader = new FileReader();
+    reader.onload = () => {
+        document.getElementById('roto-img-preview').src = reader.result;
+        document.getElementById('roto-img-preview').style.display = 'block';
+    };
+    reader.readAsDataURL(blob);
+    urlRotaActual.nuevoBlob = blob;
+}
+
+async function guardarReparacionUrl(e) {
+    e.preventDefault();
+    abrirModal('GUARDANDO', 'Actualizando Firebase...', 50);
+
+    const nuevaUrlInput = document.getElementById('roto-nueva-url').value.trim();
+    let urlFinal = nuevaUrlInput;
+    let pathFinal = '';
+
+    try {
+        if (urlRotaActual.nuevoBlob) { // Subió imagen nueva
+            const idUnico = Date.now().toString(36);
+            const ruta = `reparados/${urlRotaActual.tipoUrl}_${idUnico}.jpg`;
+            const res = await subirArchivoGitHub(urlRotaActual.nuevoBlob, ruta);
+            urlFinal = res.url;
+            pathFinal = res.path;
+        }
+
+        if (!urlFinal) throw new Error('Debes pegar una URL o subir una imagen');
+
+        // Actualizar en Firebase
+        const consola = urlRotaActual.consola;
+        const docRef = db.collection('sistema').doc('catalogo_por_consola');
+        const doc = await docRef.get();
+        const data = doc.data();
+        const juegoIndex = data[consola].findIndex(j => j.titulo === urlRotaActual.titulo && j.timestamp === urlRotaActual.timestamp);
+
+        if (juegoIndex === -1) throw new Error('No se encontró el juego en Firebase');
+
+        if (urlRotaActual.tipoUrl === 'cover') {
+            data[consola][juegoIndex].coverUrl = urlFinal;
+            data[consola][juegoIndex].coverPath = pathFinal;
+        } else if (urlRotaActual.tipoUrl === 'screenshot') {
+            data[consola][juegoIndex].capturas[urlRotaActual.index] = { url: urlFinal };
+        } else if (urlRotaActual.tipoUrl === 'download') {
+            data[consola][juegoIndex].link = urlFinal;
+        }
+
+        await docRef.update(data);
+
+        cerrarModal();
+        modalExito('URL reparada correctamente');
+        document.getElementById('modal-editar-url-rota').style.display = 'none';
+        cargarUrlsParaValidar(); // Recargar
+        await cargarLista(); // Recargar catálogo principal
+
+    } catch (err) {
+        cerrarModal();
+        modalError('Error al guardar: ' + err.message);
+    }
+}
+
+function filtrarListaUrls() {
+    const busqueda = document.getElementById('val-buscar').value.toLowerCase();
+    const filtradas = urlsParaValidar.filter(u => u.titulo.toLowerCase().includes(busqueda));
+    renderizarListaUrls(filtradas);
+}
+
+
+
+
+
 </script>
 </body>
 </html>
