@@ -2375,11 +2375,9 @@ let validando = false;
 let abortController = null;
 
 async function inicializarValidador() {
-    if (listaJuegos.length === 0) { // <- AGREGA ESTO
-        abrirModal('CARGANDO', 'Obteniendo catálogo para validar...', 50);
-        await cargarLista(); 
-        cerrarModal();
-    }
+    abrirModal('CARGANDO', 'Obteniendo catálogo para validar...', 50);
+    await cargarLista(); // <- FORZAR CARGA SIEMPRE
+    cerrarModal();
     
     document.getElementById('val-btn-cargar').onclick = cargarUrlsParaValidar;
     document.getElementById('val-btn-validar-todas').onclick = () => validarUrls('todas');
@@ -2393,17 +2391,28 @@ async function inicializarValidador() {
 
 function cargarUrlsParaValidar() {
     urlsParaValidar = [];
+    
     listaJuegos.forEach(juego => {
-        if (juego.coverUrl) urlsParaValidar.push({...juego, tipoUrl: 'cover', url: juego.coverUrl });
+        // Portada
+        if (juego.coverUrl && juego.coverUrl.trim() !== '') 
+            urlsParaValidar.push({...juego, tipoUrl: 'cover', url: juego.coverUrl });
+        
+        // Capturas
         if (juego.capturas && Array.isArray(juego.capturas)) {
             juego.capturas.forEach((cap, i) => {
-                urlsParaValidar.push({...juego, tipoUrl: 'screenshot', url: cap.url || cap, index: i });
+                const urlCap = typeof cap === 'string' ? cap : cap.url;
+                if(urlCap && urlCap.trim() !== '')
+                    urlsParaValidar.push({...juego, tipoUrl: 'screenshot', url: urlCap, index: i });
             });
         }
-        if (juego.link) urlsParaValidar.push({...juego, tipoUrl: 'download', url: juego.link });
+        
+        // Link de descarga
+        if (juego.link && juego.link.trim() !== '') 
+            urlsParaValidar.push({...juego, tipoUrl: 'download', url: juego.link });
     });
 
     document.getElementById('val-stat-total').textContent = urlsParaValidar.length;
+    document.getElementById('val-stat-pending').textContent = urlsParaValidar.length;
     renderizarListaUrls(urlsParaValidar);
     mostrarToast(`${urlsParaValidar.length} URLs cargadas`, 'info');
 }
