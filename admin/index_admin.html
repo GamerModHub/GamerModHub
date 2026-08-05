@@ -2375,7 +2375,12 @@ let validando = false;
 let abortController = null;
 
 async function inicializarValidador() {
-    await cargarLista(); // para tener listaJuegos
+    if (listaJuegos.length === 0) { // <- AGREGA ESTO
+        abrirModal('CARGANDO', 'Obteniendo catálogo para validar...', 50);
+        await cargarLista(); 
+        cerrarModal();
+    }
+    
     document.getElementById('val-btn-cargar').onclick = cargarUrlsParaValidar;
     document.getElementById('val-btn-validar-todas').onclick = () => validarUrls('todas');
     document.getElementById('val-btn-validar-pendientes').onclick = () => validarUrls('pendientes');
