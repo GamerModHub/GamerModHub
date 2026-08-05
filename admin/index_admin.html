@@ -2575,6 +2575,7 @@ async function previsualizarImagenRota(e) {
     urlRotaActual.nuevoBlob = blob;
 }
 
+// CÓDIGO NUEVO A PEGAR:
 async function guardarReparacionUrl(e) {
     e.preventDefault();
     abrirModal('GUARDANDO', 'Actualizando Firebase...', 50);
@@ -2584,9 +2585,10 @@ async function guardarReparacionUrl(e) {
     let pathFinal = '';
 
     try {
-        if (urlRotaActual.nuevoBlob) { // Subió imagen nueva
+        if (urlRotaActual.nuevoBlob) {
             const idUnico = Date.now().toString(36);
-            const ruta = `reparados/${urlRotaActual.tipoUrl}_${idUnico}.jpg`;
+            const carpeta = urlRotaActual.tipoUrl === 'cover' ? 'portadas' : 'capturas';
+            const ruta = `${carpeta}/reparado_${idUnico}.jpg`;
             const res = await subirArchivoGitHub(urlRotaActual.nuevoBlob, ruta);
             urlFinal = res.url;
             pathFinal = res.path;
@@ -2594,44 +2596,54 @@ async function guardarReparacionUrl(e) {
 
         if (!urlFinal) throw new Error('Debes pegar una URL o subir una imagen');
 
-        // Actualizar en Firebase
+        urlFinal = limpiarUrl(urlFinal);
+        if (!pathFinal) pathFinal = extraerPathDeUrl(urlFinal);
+
         const consola = urlRotaActual.consola;
         const docRef = db.collection('sistema').doc('catalogo_por_consola');
         const doc = await docRef.get();
         const data = doc.data();
-        const juegoIndex = data[consola].findIndex(j => j.titulo === urlRotaActual.titulo && j.timestamp === urlRotaActual.timestamp);
+        
+        if (!data || !data[consola]) throw new Error('No existe la consola en la base de datos');
+
+        const juegoIndex = data[consola].findIndex(j => (j.id && urlRotaActual.id && j.id === urlRotaActual.id) || j.title === urlRotaActual.title);
 
         if (juegoIndex === -1) throw new Error('No se encontró el juego en Firebase');
 
         if (urlRotaActual.tipoUrl === 'cover') {
-            data[consola][juegoIndex].coverUrl = urlFinal;
+            data[consola][juegoIndex].cover = urlFinal;
             data[consola][juegoIndex].coverPath = pathFinal;
         } else if (urlRotaActual.tipoUrl === 'screenshot') {
-            data[consola][juegoIndex].capturas[urlRotaActual.index] = { url: urlFinal };
+            if (!Array.isArray(data[consola][juegoIndex].screenshots)) {
+                data[consola][juegoIndex].screenshots = [];
+            }
+            if (!Array.isArray(data[consola][juegoIndex].screenshotsPaths)) {
+                data[consola][juegoIndex].screenshotsPaths = [];
+            }
+            const idx = urlRotaActual.index ?? 0;
+            data[consola][juegoIndex].screenshots[idx] = urlFinal;
+            data[consola][juegoIndex].screenshotsPaths[idx] = pathFinal;
         } else if (urlRotaActual.tipoUrl === 'download') {
             data[consola][juegoIndex].link = urlFinal;
         }
 
-        await docRef.update(data);
+        await docRef.update({ [consola]: data[consola] });
 
         cerrarModal();
         modalExito('URL reparada correctamente');
         document.getElementById('modal-editar-url-rota').style.display = 'none';
-        cargarUrlsParaValidar(); // Recargar
-        await cargarLista(); // Recargar catálogo principal
+        
+        urlRotaActual.nuevoBlob = null;
+        delete urlRotaActual.nuevoBlob;
+
+        await cargarLista();
+        cargarUrlsParaValidar();
 
     } catch (err) {
         cerrarModal();
         modalError('Error al guardar: ' + err.message);
     }
 }
-
-function filtrarListaUrls() {
-    const busqueda = document.getElementById('val-buscar').value.toLowerCase();
-    const filtradas = urlsParaValidar.filter(u => u.titulo.toLowerCase().includes(busqueda));
-    renderizarListaUrls(filtradas);
-}
-
 
 
 
