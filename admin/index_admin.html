@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Centro administrativo | Admin Pro 3.6</title>
+    <title>Centro administrativo | Admin Pro 4.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -110,7 +110,6 @@
         .toast.success { border-left-color: #00c851; }
         .toast.info { border-left-color: #00bcd4; }
 
-        /* DIAGNÓSTICO EN PANTALLA */
         #diagnostico-login {
             background: rgba(255, 50, 50, 0.1);
             border: 1px solid rgba(255, 50, 50, 0.4);
@@ -718,7 +717,6 @@
             <button type="submit" class="btn-soberano w-full mt-4">INGRESAR AL SISTEMA</button>
         </form>
 
-        <!-- DIAGNÓSTICO VISIBLE -->
         <div id="diagnostico-login">
             <h4><i class="fa fa-exclamation-circle"></i> Problema detectado</h4>
             <ul id="diagnostico-detalles"></ul>
@@ -732,7 +730,7 @@
         <i class="fa fa-user-circle-o titulo-dorado text-7xl mb-6"></i>
         <h1 class="font-gamer text-2xl sm:text-3xl titulo-dorado mb-2">BIENVENIDO</h1>
         <h2 class="text-xl sm:text-2xl text-white mb-1" id="nombre-admin-display">ADMIN</h2>
-        <p class="text-amber-400/70 mb-10 text-base sm:text-lg">Sistema de Gestión de Catálogo v3.6</p>
+        <p class="text-amber-400/70 mb-10 text-base sm:text-lg">Sistema de Gestión de Catálogo v4.0</p>
         
         <button id="btn-ir-al-panel" class="btn-soberano w-full text-base sm:text-xl py-4 sm:py-5 mb-3 shadow-lg shadow-yellow-500/20">
             <i class="fa fa-upload mr-2"></i> SUBIR ROMS / GESTIONAR
@@ -1551,7 +1549,6 @@ function formatearFecha(timestamp) {
 
 // ==========================================
 // 🔥 SISTEMA DE LOGIN ROBUSTO
-// Tolerante a variaciones en nombres de campos y tipos de datos
 // ==========================================
 function normalizarAdmins(data) {
     const admins = [];
@@ -1560,7 +1557,6 @@ function normalizarAdmins(data) {
     
     let listaAdmins = data.admins;
     
-    // Si es un objeto/mapa en lugar de array, convertirlo
     if (!Array.isArray(listaAdmins)) {
         listaAdmins = Object.values(listaAdmins);
     }
@@ -1568,10 +1564,7 @@ function normalizarAdmins(data) {
     listaAdmins.forEach(item => {
         if (!item || typeof item !== 'object') return;
         
-        // Buscar usuario con múltiples nombres posibles
         const usuario = item.usuario || item.user || item.username || item.email || item.nombre || '';
-        
-        // Buscar contraseña con múltiples nombres posibles
         const pass = item.pass || item.password || item.clave || item.contrasena || item.contrasenia || item.pin || '';
         
         if (usuario && pass) {
@@ -1630,7 +1623,6 @@ document.getElementById('form-login').onsubmit = async (e) => {
             return;
         }
         
-        // Buscar coincidencia (case-insensitive para usuario)
         const adminEncontrado = adminsNormalizados.find(a => 
             a.usuario.toLowerCase() === userInput.toLowerCase() && 
             a.pass === passInput
@@ -1649,7 +1641,6 @@ document.getElementById('form-login').onsubmit = async (e) => {
             return;
         }
         
-        // No se encontró el admin
         mostrarErrorLogin('Usuario o contraseña incorrectos.', [
             `Se intentó con usuario: "${userInput}"`,
             `Administradores registrados: ${adminsNormalizados.length}`,
@@ -2115,7 +2106,7 @@ document.getElementById('formEditar').onsubmit = async (e) => {
 };
 
 // ==========================================
-// VALIDADOR DE URLs (igual que antes)
+// VALIDADOR DE URLs (completo)
 // ==========================================
 const DOMINIOS_PROBLEMATICOS = [
     'mediafire.com', 'mega.nz', 'mega.co.nz', 'minecrfapkmod.com', 'apkadmin.com',
@@ -2163,7 +2154,7 @@ const ValidadorURLs = {
         juegos.forEach(j => {
             if (j.cover && j.cover.trim() !== '') {
                 if (filtroTipoUrl === 'todas' || filtroTipoUrl === 'cover') {
-                    this.urls.push({ id: idCounter++, juegoId: j.id, titulo: j.title || 'Sin título', consola: j.consola || 'N/A', tipo: j.tipo || 'rom', uploadedBy: j.uploadedBy || 'Desconocido', timestamp: j.timestamp || 0, tipoUrl: 'cover', url: limpiarUrl(j.cover), path: j.coverPath || '', status: 'pending', codigoHttp: null, tiempoMs: null });
+                    this.urls.push({ id: idCounter++, juegoId: j.id, titulo: j.title || 'Sin título', consola: j.consola || 'N/A', tipo: j.tipo || 'rom', uploadedBy: j.uploadedBy || 'Desconocido', timestamp: j.timestamp: j.timestamp || 0, tipoUrl: 'cover', url: limpiarUrl(j.cover), path: j.coverPath || '', status: 'pending', codigoHttp: null, tiempoMs: null });
                 }
             }
             if (Array.isArray(j.screenshots)) {
