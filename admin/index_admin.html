@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Centro administrativo | Admin Pro 3.5</title>
+    <title>Centro administrativo | Admin Pro 3.6</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -109,6 +109,30 @@
         .toast.error { border-left-color: #ff4444; }
         .toast.success { border-left-color: #00c851; }
         .toast.info { border-left-color: #00bcd4; }
+
+        /* DIAGNÓSTICO EN PANTALLA */
+        #diagnostico-login {
+            background: rgba(255, 50, 50, 0.1);
+            border: 1px solid rgba(255, 50, 50, 0.4);
+            border-radius: 0.8rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            text-align: left;
+            font-size: 0.85rem;
+            display: none;
+        }
+        #diagnostico-login h4 {
+            color: #ff6666;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        #diagnostico-login ul {
+            margin: 0;
+            padding-left: 1.2rem;
+            color: #ffaaaa;
+            line-height: 1.6;
+        }
 
         .val-filtro-grupo {
             display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;
@@ -412,7 +436,7 @@
         .reporte-card.resuelto { opacity: 0.5; border-left: 4px solid #00c851; }
         .reporte-card.pendiente { border-left: 4px solid #ff9500; }
 
-        /* EXTRAS: items grid */
+        /* EXTRAS */
         .items-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -683,7 +707,7 @@
                 <i class="fa fa-exclamation-triangle text-orange-400 mt-1"></i>
                 <div class="text-sm">
                     <div class="font-bold text-orange-400 uppercase tracking-wider text-xs">Acceso Restringido</div>
-                    <div class="text-amber-200/70 text-xs mt-1">Esta sesión está reservada exclusivamente para administradores autorizados. El usuario común no puede acceder a este panel.</div>
+                    <div class="text-amber-200/70 text-xs mt-1">Esta sesión está reservada exclusivamente para administradores autorizados.</div>
                 </div>
             </div>
         </div>
@@ -693,6 +717,12 @@
             <input type="password" id="clave" class="input-lujo" placeholder="Contraseña" required autocomplete="current-password">
             <button type="submit" class="btn-soberano w-full mt-4">INGRESAR AL SISTEMA</button>
         </form>
+
+        <!-- DIAGNÓSTICO VISIBLE -->
+        <div id="diagnostico-login">
+            <h4><i class="fa fa-exclamation-circle"></i> Problema detectado</h4>
+            <ul id="diagnostico-detalles"></ul>
+        </div>
     </div>
 </div>
 
@@ -702,7 +732,7 @@
         <i class="fa fa-user-circle-o titulo-dorado text-7xl mb-6"></i>
         <h1 class="font-gamer text-2xl sm:text-3xl titulo-dorado mb-2">BIENVENIDO</h1>
         <h2 class="text-xl sm:text-2xl text-white mb-1" id="nombre-admin-display">ADMIN</h2>
-        <p class="text-amber-400/70 mb-10 text-base sm:text-lg">Sistema de Gestión de Catálogo v3.5</p>
+        <p class="text-amber-400/70 mb-10 text-base sm:text-lg">Sistema de Gestión de Catálogo v3.6</p>
         
         <button id="btn-ir-al-panel" class="btn-soberano w-full text-base sm:text-xl py-4 sm:py-5 mb-3 shadow-lg shadow-yellow-500/20">
             <i class="fa fa-upload mr-2"></i> SUBIR ROMS / GESTIONAR
@@ -1232,7 +1262,7 @@
     </div>
 </div>
 
-<!-- 7. PANEL EXTRAS (Emuladores, Apps, Mods, Archivos, Novedades, Top) -->
+<!-- 7. PANEL EXTRAS -->
 <div id="panel-extras" class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-10">
     <header class="mb-6 sm:mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
@@ -1253,7 +1283,6 @@
         <button class="panel-extras-tab" data-tab="top"><i class="fa fa-fire"></i> Top Buscados</button>
     </div>
 
-    <!-- EMULADORES -->
     <div id="extras-emuladores" class="panel-extras-seccion activa">
         <div class="flex flex-wrap gap-2 mb-4 items-center justify-between">
             <h2 class="font-gamer titulo-dorado text-xl"><i class="fa fa-microchip"></i> Gestión de Emuladores</h2>
@@ -1263,7 +1292,6 @@
         <div id="emuladores-lista" class="items-grid"></div>
     </div>
 
-    <!-- APPS -->
     <div id="extras-apps" class="panel-extras-seccion">
         <div class="flex flex-wrap gap-2 mb-4 items-center justify-between">
             <h2 class="font-gamer titulo-dorado text-xl"><i class="fa fa-android"></i> Gestión de Aplicaciones</h2>
@@ -1273,7 +1301,6 @@
         <div id="apps-lista" class="items-grid"></div>
     </div>
 
-    <!-- MODS -->
     <div id="extras-mods" class="panel-extras-seccion">
         <div class="flex flex-wrap gap-2 mb-4 items-center justify-between">
             <h2 class="font-gamer titulo-dorado text-xl"><i class="fa fa-paint-brush"></i> Gestión de Mods</h2>
@@ -1284,7 +1311,6 @@
         <div id="mods-lista" class="items-grid"></div>
     </div>
 
-    <!-- ARCHIVOS -->
     <div id="extras-archivos" class="panel-extras-seccion">
         <div class="flex flex-wrap gap-2 mb-4 items-center justify-between">
             <h2 class="font-gamer titulo-dorado text-xl"><i class="fa fa-folder-open-o"></i> Archivos Gamer</h2>
@@ -1295,7 +1321,6 @@
         <div id="archivos-lista" class="items-grid"></div>
     </div>
 
-    <!-- NOVEDADES -->
     <div id="extras-novedades" class="panel-extras-seccion">
         <div class="flex flex-wrap gap-2 mb-4 items-center justify-between">
             <h2 class="font-gamer titulo-dorado text-xl"><i class="fa fa-bullhorn"></i> Gestión de Novedades</h2>
@@ -1304,7 +1329,6 @@
         <div id="novedades-lista" class="space-y-2"></div>
     </div>
 
-    <!-- TOP BUSCADOS -->
     <div id="extras-top" class="panel-extras-seccion">
         <div class="flex flex-wrap gap-2 mb-4 items-center justify-between">
             <h2 class="font-gamer titulo-dorado text-xl"><i class="fa fa-fire"></i> Top 20 Más Buscados</h2>
@@ -1407,7 +1431,7 @@ const ARCHIVOS_CATEGORIES = {
 };
 
 // ==========================================
-// UTILIDADES (originales)
+// UTILIDADES
 // ==========================================
 function comprimirImagen(file) {
     return new Promise((resolve, reject) => {
@@ -1467,6 +1491,13 @@ function modalError(msg) {
     document.getElementById('cerrar-modal-proceso').classList.remove('hidden');
 }
 
+function mostrarDiagnosticoLogin(mensajes) {
+    const div = document.getElementById('diagnostico-login');
+    const ul = document.getElementById('diagnostico-detalles');
+    ul.innerHTML = mensajes.map(m => `<li>${m}</li>`).join('');
+    div.style.display = 'block';
+}
+
 async function subirArchivoGitHub(blob, rutaDest) {
     try {
         const base64 = await new Promise((resolve, reject) => {
@@ -1519,6 +1550,125 @@ function formatearFecha(timestamp) {
 }
 
 // ==========================================
+// 🔥 SISTEMA DE LOGIN ROBUSTO
+// Tolerante a variaciones en nombres de campos y tipos de datos
+// ==========================================
+function normalizarAdmins(data) {
+    const admins = [];
+    
+    if (!data || !data.admins) return admins;
+    
+    let listaAdmins = data.admins;
+    
+    // Si es un objeto/mapa en lugar de array, convertirlo
+    if (!Array.isArray(listaAdmins)) {
+        listaAdmins = Object.values(listaAdmins);
+    }
+    
+    listaAdmins.forEach(item => {
+        if (!item || typeof item !== 'object') return;
+        
+        // Buscar usuario con múltiples nombres posibles
+        const usuario = item.usuario || item.user || item.username || item.email || item.nombre || '';
+        
+        // Buscar contraseña con múltiples nombres posibles
+        const pass = item.pass || item.password || item.clave || item.contrasena || item.contrasenia || item.pin || '';
+        
+        if (usuario && pass) {
+            admins.push({
+                usuario: String(usuario).trim(),
+                pass: String(pass).trim()
+            });
+        }
+    });
+    
+    return admins;
+}
+
+function mostrarErrorLogin(mensaje, detalles = []) {
+    cerrarModal();
+    modalError(mensaje);
+    mostrarDiagnosticoLogin(detalles.length > 0 ? detalles : [mensaje]);
+}
+
+document.getElementById('form-login').onsubmit = async (e) => {
+    e.preventDefault();
+    abrirModal('CONECTANDO', 'Validando credenciales...', 30);
+    
+    const userInput = document.getElementById('usuario').value.trim();
+    const passInput = document.getElementById('clave').value.trim();
+    
+    try {
+        await inicializarBaseDeDatos();
+        
+        const snap = await db.collection('sistema').doc('config').get();
+        
+        if (!snap.exists) {
+            mostrarErrorLogin('El documento de configuración no existe.', [
+                'El documento "sistema/config" no existe en Firestore.',
+                'Creá el documento con el campo "admins" como array.',
+                'Ejemplo: admins: [{ usuario: "admin", pass: "1234" }]'
+            ]);
+            return;
+        }
+        
+        const data = snap.data();
+        
+        if (data.github_token) {
+            github.token = data.github_token;
+        }
+        
+        const adminsNormalizados = normalizarAdmins(data);
+        
+        if (adminsNormalizados.length === 0) {
+            mostrarErrorLogin('No hay administradores configurados.', [
+                'El campo "admins" está vacío o mal configurado.',
+                'Verificá que el campo "admins" sea un array.',
+                'Cada elemento debe tener "usuario" y "pass".',
+                'Ejemplo correcto: [{ "usuario": "admin", "pass": "1234" }]'
+            ]);
+            return;
+        }
+        
+        // Buscar coincidencia (case-insensitive para usuario)
+        const adminEncontrado = adminsNormalizados.find(a => 
+            a.usuario.toLowerCase() === userInput.toLowerCase() && 
+            a.pass === passInput
+        );
+        
+        if (adminEncontrado) {
+            adminActual = adminEncontrado.usuario;
+            document.getElementById('pantalla-login').style.display = 'none';
+            document.getElementById('pantalla-bienvenida').style.display = 'flex';
+            document.getElementById('nombre-admin-display').textContent = adminActual.toUpperCase();
+            document.getElementById('admin-header-name').textContent = adminActual;
+            document.getElementById('admin-validator-name').textContent = adminActual;
+            document.querySelector('#filtroAdmin option[value="mio"]').textContent = `👤 Solo mis subidas (${adminActual})`;
+            cerrarModal();
+            mostrarToast(`Bienvenido, ${adminActual}`, 'success');
+            return;
+        }
+        
+        // No se encontró el admin
+        mostrarErrorLogin('Usuario o contraseña incorrectos.', [
+            `Se intentó con usuario: "${userInput}"`,
+            `Administradores registrados: ${adminsNormalizados.length}`,
+            'Verificá mayúsculas/minúsculas en la contraseña.',
+            'La contraseña es sensible a mayúsculas.'
+        ]);
+        
+    } catch (error) {
+        console.error('Error en login:', error);
+        mostrarErrorLogin('Error de conexión con Firebase.', [
+            `Error: ${error.message}`,
+            'Verificá las reglas de seguridad de Firestore.',
+            'Las reglas deben permitir leer "sistema/config".',
+            'Ejemplo: match /sistema/{document=**} { allow read: if true; }'
+        ]);
+    }
+};
+
+// ==========================================
 // INICIALIZACIÓN DE BASE DE DATOS
 // ==========================================
 async function inicializarBaseDeDatos() {
@@ -1537,33 +1687,6 @@ async function inicializarBaseDeDatos() {
         if (data.github_token) github.token = data.github_token;
     }
 }
-
-document.getElementById('form-login').onsubmit = async (e) => {
-    e.preventDefault();
-    abrirModal('CONECTANDO', 'Validando credenciales...', 30);
-    try {
-        await inicializarBaseDeDatos();
-        const snap = await db.collection('sistema').doc('config').get();
-        if (snap.exists) {
-            const dat = snap.data();
-            if (dat.github_token) github.token = dat.github_token;
-            const adminEncontrado = dat.admins?.find(a => a.usuario === document.getElementById('usuario').value && a.pass === document.getElementById('clave').value);
-            if (adminEncontrado) {
-                adminActual = adminEncontrado.usuario;
-                document.getElementById('pantalla-login').style.display = 'none';
-                document.getElementById('pantalla-bienvenida').style.display = 'flex';
-                document.getElementById('nombre-admin-display').textContent = adminActual.toUpperCase();
-                document.getElementById('admin-header-name').textContent = adminActual;
-                document.getElementById('admin-validator-name').textContent = adminActual;
-                document.querySelector('#filtroAdmin option[value="mio"]').textContent = `👤 Solo mis subidas (${adminActual})`;
-                cerrarModal();
-                mostrarToast(`Bienvenido, ${adminActual}`, 'success');
-                return;
-            }
-        }
-        modalError('Usuario o contraseña incorrectos.');
-    } catch (er) { modalError(er.message); }
-};
 
 // NAVEGACIÓN
 document.getElementById('btn-ir-al-panel').onclick = async () => {
@@ -1626,7 +1749,6 @@ document.querySelectorAll('.panel-extras-tab').forEach(tab => {
         const tabName = tab.dataset.tab;
         document.querySelectorAll('.panel-extras-seccion').forEach(s => s.classList.remove('activa'));
         document.getElementById(`extras-${tabName}`).classList.add('activa');
-        // Cargar datos
         if (tabName === 'emuladores') Emuladores.cargar();
         if (tabName === 'apps') Apps.cargar();
         if (tabName === 'mods') Mods.cargar();
@@ -1636,9 +1758,7 @@ document.querySelectorAll('.panel-extras-tab').forEach(tab => {
     };
 });
 
-// ==========================================
 // SUBIDA DE IMÁGENES ROMs
-// ==========================================
 document.getElementById('imgPortada').onchange = async (e) => {
     const arch = e.target.files[0];
     if (!arch) return;
@@ -1684,9 +1804,7 @@ document.getElementById('imgCapturas').onchange = async (e) => {
     if (capturasTemp.length > 0) mostrarToast(`${capturasTemp.length} capturas subidas`, 'success');
 };
 
-// ==========================================
-// CARGAR Y RENDERIZAR LISTA DE ROMs
-// ==========================================
+// CARGAR LISTA
 async function cargarLista() {
     try {
         const doc = await db.collection('sistema').doc('catalogo_por_consola').get();
@@ -1997,7 +2115,7 @@ document.getElementById('formEditar').onsubmit = async (e) => {
 };
 
 // ==========================================
-// 🔥 VALIDADOR DE URLs - VERSIÓN 3.3 COMPLETO
+// VALIDADOR DE URLs (igual que antes)
 // ==========================================
 const DOMINIOS_PROBLEMATICOS = [
     'mediafire.com', 'mega.nz', 'mega.co.nz', 'minecrfapkmod.com', 'apkadmin.com',
@@ -2530,7 +2648,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-// 🔥 HUÉRFANAS
+// HUÉRFANAS
 // ==========================================
 const Huerfanas = {
     archivos: [], seleccionados: new Set(), procesando: false,
@@ -2609,7 +2727,7 @@ const Huerfanas = {
 };
 
 // ==========================================
-// 🔥 REPORTES
+// REPORTES
 // ==========================================
 const Reportes = {
     reportes: [], filtroEstado: 'pendientes',
@@ -2672,7 +2790,7 @@ const Reportes = {
 };
 
 // ==========================================
-// 🔥 GESTOR CRUD GENÉRICO
+// GESTOR CRUD GENÉRICO
 // ==========================================
 class GestorCRUD {
     constructor(cfg) { this.cfg = cfg; this.items = []; this.editandoId = null; this.filtroCategoria = 'all'; this.busqueda = ''; }
@@ -2755,7 +2873,7 @@ function cerrarModalCrud() { document.getElementById('modal-crud').style.display
 document.getElementById('form-crud').addEventListener('submit', function (e) { e.preventDefault(); if (window.gestorActivo) window.gestorActivo.guardar(e); });
 
 // ==========================================
-// 🎯 INSTANCIAS DE GESTORES
+// INSTANCIAS DE GESTORES
 // ==========================================
 const Emuladores = new GestorCRUD({ docId: 'emuladores', listaId: 'emuladores-lista', nombreGlobal: 'Emuladores', nombreSingular: 'Emulador', carpetaGithub: 'emuladores', tieneCategoria: false, campos: [
     { id: 'nombre', label: 'Nombre', tipo: 'text', requerido: true, icono: '📝', placeholder: 'PPSSPP' },
@@ -2803,7 +2921,7 @@ Archivos.filtrarCategoria = function (cat) { this.filtroCategoria = cat; documen
 document.getElementById('archivos-buscar').addEventListener('input', function () { Archivos.busqueda = this.value; Archivos.render(); });
 
 // ==========================================
-// 🔥 NOVEDADES
+// NOVEDADES
 // ==========================================
 const Novedades = {
     items: [], colorSeleccionado: 'green-400', editandoId: null,
@@ -2823,7 +2941,7 @@ const Novedades = {
         document.getElementById('modal-crud-campos').innerHTML = `<div class="mb-3"><label class="text-xs text-amber-400/70 uppercase font-bold block mb-1">📌 Título</label><input type="text" id="campo-titulo" class="input-lujo" placeholder="ACTUALIZACIÓN" value="${escapeHtml(item?.titulo || '')}" required></div><div class="mb-3"><label class="text-xs text-amber-400/70 uppercase font-bold block mb-1">📄 Texto</label><textarea id="campo-texto" class="input-lujo" placeholder="Contenido de la novedad..." rows="3" required>${escapeHtml(item?.texto || '')}</textarea></div><div class="mb-3"><label class="text-xs text-amber-400/70 uppercase font-bold block mb-1">🎨 Color del título</label><div class="color-picker">${['cyan-400', 'green-400', 'purple-400', 'pink-400', 'orange-400', 'red-400'].map(c => `<div class="color-option ${c} ${this.colorSeleccionado === c ? 'selected' : ''}" onclick="Novedades.seleccionarColor('${c}')"></div>`).join('')}</div></div>`;
         document.getElementById('modal-crud').style.display = 'flex';
     },
-    seleccionarColor(color) { this.colorSeleccionado = color; document.querySelectorAll('.color-option').forEach(el => el.classList.toggle('selected', el.classList.contains(color)); },
+    seleccionarColor(color) { this.colorSeleccionado = color; document.querySelectorAll('.color-option').forEach(el => el.classList.toggle('selected', el.classList.contains(color))); },
     async guardar(e) {
         e.preventDefault();
         const btn = document.getElementById('modal-crud-submit');
@@ -2849,7 +2967,7 @@ const Novedades = {
 };
 
 // ==========================================
-// 🔥 TOP BUSCADOS
+// TOP BUSCADOS
 // ==========================================
 const TopBuscados = {
     games: [],
