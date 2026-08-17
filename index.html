@@ -416,6 +416,39 @@ const MODS_CATEGORIES={texturas_pc:{nombre:'Texturas PC',icono:'🖼️',color:'
 const APPS_CATEGORIES={launchers:{nombre:'Launchers',icono:'🚀'},herramientas:{nombre:'Herramientas',icono:'🧰'},optimizacion:{nombre:'Optimización',icono:'⚡'},apk:{nombre:'APKs',icono:'📱'},otros:{nombre:'Otros',icono:'📦'}};
 const ARCHIVOS_CATEGORIES={bios:{nombre:'BIOS',icono:'💾'},firmwares:{nombre:'Firmwares',icono:'🔌'},saves:{nombre:'Saves',icono:'💽'},configs:{nombre:'Configuraciones',icono:'⚙️'},otros:{nombre:'Otros',icono:'📦'}};
 
+// ============================================
+// FUNCIÓN CRÍTICA: CONVERTIR URLs DE GITHUB A jsDelivr CDN
+// Esto evita que las imágenes se descarguen como .bin
+// ============================================
+function convertToJsDelivr(url) {
+    if (!url) return url;
+    const u = String(url).trim();
+    if (!u) return u;
+    
+    // Convertir raw.githubusercontent.com -> cdn.jsdelivr.net/gh/
+    if (u.includes('raw.githubusercontent.com')) {
+        // Formato: https://raw.githubusercontent.com/USER/REPO/main/path/file.jpg
+        // Resultado: https://cdn.jsdelivr.net/gh/USER/REPO@main/path/file.jpg
+        return u
+            .replace('https://raw.githubusercontent.com/', 'https://cdn.jsdelivr.net/gh/')
+            .replace('http://raw.githubusercontent.com/', 'https://cdn.jsdelivr.net/gh/')
+            .replace('/main/', '@main/')
+            .replace('/master/', '@master/')
+            .replace(/\?v=\d+$/, '')
+            .replace(/\?raw=true$/, '');
+    }
+    
+    // Convertir github.com/USER/REPO/blob/main/ -> cdn.jsdelivr.net
+    if (u.includes('github.com') && u.includes('/blob/')) {
+        return u
+            .replace('https://github.com/', 'https://cdn.jsdelivr.net/gh/')
+            .replace('/blob/', '@')
+            .replace(/\?raw=true$/, '');
+    }
+    
+    return u;
+}
+
 function getCoverRatio(c){return CONSOLE_ASPECT_RATIOS[c]||'3/4'}
 function getPlaceholder(r){return PLACEHOLDER_COVERS[r]||PLACEHOLDER_COVER}
 function getTypeTagClass(t){return t==='rom'?'tag-rom':t==='mod'?'tag-mod':t==='port'?'tag-port':'tag-generic'}
@@ -455,18 +488,62 @@ function bindNeon(){document.querySelectorAll('.game-card,.folder-card,.generic-
 
 function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
 function escapeRegExp(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
-function safeUrl(u,f){const v=String(u||'').trim();return v||f}
+// MODIFICADO: Ahora safeUrl también convierte URLs de GitHub a jsDelivr
+function safeUrl(u,f){const v=String(u||'').trim();const converted = convertToJsDelivr(v);return converted||f}
 function getGameTitle(g){return g.title||g.nombre||g.name||'Sin título'}
 function getGameDescription(g){return g.descripcion||g.description||''}
 function formatTimestamp(t){if(!t)return '—';const d=new Date(t);if(isNaN(d))return '—';return d.toLocaleDateString('es-ES',{year:'numeric',month:'short',day:'numeric'})}
-function normalizeScreenshots(g){let l=[];if(Array.isArray(g.screenshots))l=g.screenshots;else if(Array.isArray(g.capturas))l=g.capturas;else if(g.captura)l=[g.captura];else if(g.screenshot)l=[g.screenshot];return l.filter(u=>typeof u==='string'&&u.trim()!=='')}
+function normalizeScreenshots(g){
+    let l=[];
+    if(Array.isArray(g.screenshots))l=g.screenshots;
+    else if(Array.isArray(g.capturas))l=g.capturas;
+    else if(g.captura)l=[g.captura];
+    else if(g.screenshot)l=[g.screenshot];
+    // Convertir todas las URLs a jsDelivr
+    return l.map(u => convertToJsDelivr(u)).filter(u=>typeof u==='string'&&u.trim()!=='');
+}
 function highlightText(t,q){const st=escapeHtml(t||'');const sq=escapeHtml(q||'');if(!sq)return st;return st.replace(new RegExp(`(${escapeRegExp(sq)})`,'gi'),'<span style="color:var(--neon-blue);font-weight:bold;">$1</span>')}
 function getAllCategoryKeys(){const f=Object.keys(db).filter(k=>Array.isArray(db[k]));const k=Object.keys(CONSOLE_NAMES);return[...new Set([...k,...f])]}
 function getCategoryCount(c){return Array.isArray(db[c])?db[c].length:0}
 function countLabel(c){return `${c} ${c===1?'título':'títulos'}`}
 function gamesLabel(c){return `${c} ${c===1?'juego disponible':'juegos disponibles'}`}
 
-function createGameCard(g,c,opts={}){const r=getCoverRatio(c);const rc='cover-ratio-'+r.replace('/','-');const ph=getPlaceholder(r);const src=safeUrl(g.cover,ph);const t=getGameTitle(g);const isCompact=opts.compact;const card=document.createElement('div');const bc=isCompact?'game-card game-card-compact':'game-card';card.className=`${bc} fade-in-item text-center cursor-pointer ${opts.extraClass||''}`;card.tabIndex=0;card.setAttribute('role','button');if(opts.delay)card.style.animationDelay=`${opts.delay}s`;card.onclick=()=>openGameModal(g,c);card.onkeydown=e=>{if(e.key==='Enter')openGameModal(g,c)};const tags=isCompact?buildCoverTagCompact(g):buildCoverTags(g);card.innerHTML=`<div class="cover-wrap ${rc}"><img class="cover-img" src="${escapeHtml(src)}" alt="${escapeHtml(t)}" loading="lazy" onerror="this.src='${ph}'"></div>${tags}<h4 class="card-title">${escapeHtml(t)}</h4>`;return card}
+// MODIFICADO: createGameCard ahora convierte URL y detecta imágenes corruptas
+function createGameCard(g,c,opts={}){
+    const r=getCoverRatio(c);
+    const rc='cover-ratio-'+r.replace('/','-');
+    const ph=getPlaceholder(r);
+    
+    // Convertir URL automáticamente de raw a jsDelivr
+    let rawSrc = String(g.cover || '').trim();
+    let src = safeUrl(rawSrc, ph);
+    
+    const t=getGameTitle(g);
+    const isCompact=opts.compact;
+    const card=document.createElement('div');
+    const bc=isCompact?'game-card game-card-compact':'game-card';
+    card.className=`${bc} fade-in-item text-center cursor-pointer ${opts.extraClass||''}`;
+    card.tabIndex=0;
+    card.setAttribute('role','button');
+    if(opts.delay)card.style.animationDelay=`${opts.delay}s`;
+    card.onclick=()=>openGameModal(g,c);
+    card.onkeydown=e=>{if(e.key==='Enter')openGameModal(g,c)};
+    const tags=isCompact?buildCoverTagCompact(g):buildCoverTags(g);
+    card.innerHTML=`<div class="cover-wrap ${rc}"><img class="cover-img" src="${escapeHtml(src)}" alt="${escapeHtml(t)}" loading="lazy" onerror="this.onerror=null; this.src='${ph}'; this.classList.add('img-fallback');"></div>${tags}<h4 class="card-title">${escapeHtml(t)}</h4>`;
+    
+    // Detector adicional: si la imagen carga pero está corrupta (0x0 o pesa <1KB), forzar fallback
+    const imgEl = card.querySelector('.cover-img');
+    if (imgEl) {
+        imgEl.addEventListener('load', function() {
+            if (this.naturalWidth === 0 || this.naturalHeight === 0) {
+                this.onerror = null;
+                this.src = ph;
+            }
+        });
+    }
+    
+    return card;
+}
 
 function getAllGamesWithCategory(){const a=[];Object.entries(db).forEach(([c,gs])=>{if(Array.isArray(gs))gs.forEach(g=>a.push({...g,category:c}))});return a}
 
@@ -480,7 +557,18 @@ function setModalScreenshotFromUrl(u,l,f){const bg=document.getElementById('moda
 function setModalScreenshot(i){if(!modalScreenshots.length)return;currentModalScreenshot=i;const u=safeUrl(modalScreenshots[i],currentModalCover);const l=modalScreenshots.length>1?`Captura ${i+1}/${modalScreenshots.length}`:'Captura';setModalScreenshotFromUrl(u,l,false);document.querySelectorAll('.screenshot-thumb').forEach((t,j)=>t.classList.toggle('active',j===i))}
 function renderModalScreenshots(s,c){modalScreenshots=s;currentModalScreenshot=0;const t=document.getElementById('modal-screenshot-thumbs');t.innerHTML='';if(s.length>0){if(s.length>1)s.forEach((u,j)=>{const i=document.createElement('img');i.src=safeUrl(u,c);i.alt=`Captura ${j+1}`;i.className='screenshot-thumb'+(j===0?' active':'');i.onclick=()=>setModalScreenshot(j);i.onerror=()=>{i.src=c};t.appendChild(i)});setModalScreenshot(0)}else setModalScreenshotFromUrl(c,'Portada',true)}
 
-window.openGameModal=function(g,c){if(!g)return;currentGameModal={game:g,category:c};const m=document.getElementById('game-modal');const cw=document.getElementById('modal-cover-wrap');const mc=document.getElementById('modal-cover');const mt=document.getElementById('modal-tag-type');const tt=document.getElementById('modal-title');const mb=document.getElementById('modal-badges');const md=document.getElementById('modal-desc');const ml=document.getElementById('modal-download');const ck=g.consola||c||'';const r=getCoverRatio(ck);const ph=getPlaceholder(r);const pc=getConsoleName(ck);const ti=getTypeInfo(g.tipo);const sc=normalizeScreenshots(g);currentModalCover=safeUrl(g.cover,ph);cw.className=`modal-cover-wrap cover-ratio-${r.replace('/','-')}`;mc.src=currentModalCover;mc.onerror=function(){this.onerror=null;this.src=ph};mt.textContent=ti.label;mt.className=`cover-tag cover-tag-type ${getTypeTagClass(g.tipo)}`;tt.textContent=getGameTitle(g);mb.innerHTML=`<span class="modal-badge badge-console">${escapeHtml(pc)}</span><span class="modal-badge ${ti.badgeClass}">${escapeHtml(ti.label)}</span>`;md.textContent=getGameDescription(g)||'Sin descripción.';if(g.link){ml.href=g.link;ml.classList.remove('disabled')}else{ml.removeAttribute('href');ml.classList.add('disabled')}document.getElementById('modal-meta-console').textContent=pc;document.getElementById('modal-meta-type').textContent=ti.label;document.getElementById('modal-meta-idinterno').textContent=g.idJuego||'—';document.getElementById('modal-meta-id').textContent=g.id||'—';document.getElementById('modal-meta-fecha').textContent=formatTimestamp(g.timestamp);document.getElementById('modal-meta-capturas').textContent=sc.length?sc.length:'0';renderModalScreenshots(sc,currentModalCover);m.classList.add('active');document.body.style.overflow='hidden';const mcEl=document.querySelector('#game-modal .modal-content');if(mcEl)mcEl.scrollTop=0};
+window.openGameModal=function(g,c){if(!g)return;currentGameModal={game:g,category:c};const m=document.getElementById('game-modal');const cw=document.getElementById('modal-cover-wrap');const mc=document.getElementById('modal-cover');const mt=document.getElementById('modal-tag-type');const tt=document.getElementById('modal-title');const mb=document.getElementById('modal-badges');const md=document.getElementById('modal-desc');const ml=document.getElementById('modal-download');const ck=g.consola||c||'';const r=getCoverRatio(ck);const ph=getPlaceholder(r);const pc=getConsoleName(ck);const ti=getTypeInfo(g.tipo);const sc=normalizeScreenshots(g);
+currentModalCover=safeUrl(g.cover,ph);
+cw.className=`modal-cover-wrap cover-ratio-${r.replace('/','-')}`;
+mc.src=currentModalCover;
+mc.onerror=function(){this.onerror=null;this.src=ph};
+// Detección adicional para imágenes corruptas
+mc.addEventListener('load', function() {
+    if (this.naturalWidth === 0 || this.naturalHeight === 0) {
+        this.src = ph;
+    }
+});
+mt.textContent=ti.label;mt.className=`cover-tag cover-tag-type ${getTypeTagClass(g.tipo)}`;tt.textContent=getGameTitle(g);mb.innerHTML=`<span class="modal-badge badge-console">${escapeHtml(pc)}</span><span class="modal-badge ${ti.badgeClass}">${escapeHtml(ti.label)}</span>`;md.textContent=getGameDescription(g)||'Sin descripción.';if(g.link){ml.href=g.link;ml.classList.remove('disabled')}else{ml.removeAttribute('href');ml.classList.add('disabled')}document.getElementById('modal-meta-console').textContent=pc;document.getElementById('modal-meta-type').textContent=ti.label;document.getElementById('modal-meta-idinterno').textContent=g.idJuego||'—';document.getElementById('modal-meta-id').textContent=g.id||'—';document.getElementById('modal-meta-fecha').textContent=formatTimestamp(g.timestamp);document.getElementById('modal-meta-capturas').textContent=sc.length?sc.length:'0';renderModalScreenshots(sc,currentModalCover);m.classList.add('active');document.body.style.overflow='hidden';const mcEl=document.querySelector('#game-modal .modal-content');if(mcEl)mcEl.scrollTop=0};
 window.closeGameModal=function(){document.getElementById('game-modal').classList.remove('active');document.body.style.overflow=''};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeGameModal();closeReportModal()}});
 
@@ -529,7 +617,9 @@ const inicioContents=document.querySelectorAll('.inicio-content');
 
 searchInput.addEventListener('input',e=>{const q=e.target.value.trim().toLowerCase();searchClear.classList.toggle('visible',q.length>0);if(q.length<2){searchResults.classList.remove('active');inicioContents.forEach(el=>el.classList.remove('hidden-search'));return}inicioContents.forEach(el=>el.classList.add('hidden-search'));const r=[];CATEGORIES.forEach(c=>{(db[c]||[]).forEach(g=>{const t=getGameTitle(g).toLowerCase();const d=getGameDescription(g).toLowerCase();if(t.includes(q)||d.includes(q))r.push({...g,category:c})})});displaySearchResults(r,q)});
 
-function displaySearchResults(r,q){searchGrid.innerHTML='';searchCount.textContent=`${r.length} resultado${r.length!==1?'s':''}`;if(r.length===0)searchGrid.innerHTML='<div class="no-results col-span-full"><i class="fa fa-search"></i><p>Sin resultados para "'+escapeHtml(q)+'"</p></div>';else r.forEach((g,i)=>{const ratio=getCoverRatio(g.category);const rc='cover-ratio-'+ratio.replace('/','-');const ph=getPlaceholder(ratio);const src=safeUrl(g.cover,ph);const t=getGameTitle(g);const tags=buildCoverTagCompact(g);const it=document.createElement('div');it.className='search-result-item cursor-pointer';it.style.animationDelay=`${i*0.05}s`;it.onclick=()=>{searchResults.classList.remove('active');openGameModal(g,g.category)};it.innerHTML=`<div class="search-result-cover-wrap ${rc}"><img class="search-result-cover" src="${escapeHtml(src)}" alt="${escapeHtml(t)}" onerror="this.src='${ph}'">${tags}</div><div class="search-result-info"><div class="search-result-title">${highlightText(t,q)}</div></div>`;searchGrid.appendChild(it)});searchResults.classList.add('active')}
+function displaySearchResults(r,q){searchGrid.innerHTML='';searchCount.textContent=`${r.length} resultado${r.length!==1?'s':''}`;if(r.length===0)searchGrid.innerHTML='<div class="no-results col-span-full"><i class="fa fa-search"></i><p>Sin resultados para "'+escapeHtml(q)+'"</p></div>';else r.forEach((g,i)=>{const ratio=getCoverRatio(g.category);const rc='cover-ratio-'+ratio.replace('/','-');const ph=getPlaceholder(ratio);
+const src=safeUrl(g.cover,ph);
+const t=getGameTitle(g);const tags=buildCoverTagCompact(g);const it=document.createElement('div');it.className='search-result-item cursor-pointer';it.style.animationDelay=`${i*0.05}s`;it.onclick=()=>{searchResults.classList.remove('active');openGameModal(g,g.category)};it.innerHTML=`<div class="search-result-cover-wrap ${rc}"><img class="search-result-cover" src="${escapeHtml(src)}" alt="${escapeHtml(t)}" onerror="this.onerror=null; this.src='${ph}';">${tags}</div><div class="search-result-info"><div class="search-result-title">${highlightText(t,q)}</div></div>`;searchGrid.appendChild(it)});searchResults.classList.add('active')}
 
 searchClear.addEventListener('click',()=>{searchInput.value='';searchClear.classList.remove('visible');searchResults.classList.remove('active');inicioContents.forEach(el=>el.classList.remove('hidden-search'));searchInput.focus()});
 document.addEventListener('click',e=>{if(!searchInput.contains(e.target)&&!searchResults.contains(e.target))searchResults.classList.remove('active')});
@@ -549,7 +639,9 @@ function startNewsRotation(){if(newsRotationInterval)clearInterval(newsRotationI
 // EMULADORES
 // ============================================
 let emuladoresSearch='',emuladoresFilter='all';
-function renderEmuladores(){const g=document.getElementById('emuladores-grid');if(!g)return;const q=emuladoresSearch.toLowerCase();const f=emuladoresFilter;const filtrados=emuladoresData.filter(e=>{const matchQ=!q||(e.nombre||'').toLowerCase().includes(q)||(e.plataforma||'').toLowerCase().includes(q)||(e.descripcion||'').toLowerCase().includes(q);const matchF=f==='all'||(e.plataforma||'').toLowerCase().includes(f.toLowerCase());return matchQ&&matchF});if(filtrados.length===0){g.innerHTML='<div class="col-span-full text-center py-10 text-gray-400"><i class="fa fa-microchip text-4xl mb-3 opacity-50"></i><p>Sin emuladores.</p></div>';return}g.innerHTML=filtrados.map((e,i)=>{const img=safeUrl(e.imagen,GENERIC_PLACEHOLDER);const version=e.version||'1.0';const plataforma=e.plataforma||'Multi';return `<div class="generic-card fade-in-item" style="animation-delay:${i*0.04}s"><div class="generic-card-img-wrap"><img class="generic-card-img" src="${escapeHtml(img)}" alt="${escapeHtml(e.nombre||'')}" loading="lazy" onerror="this.src='${GENERIC_PLACEHOLDER}'"></div><h4 class="generic-card-title">${escapeHtml(e.nombre||'Sin nombre')}</h4><div class="generic-card-meta"><span class="generic-version"><i class="fa fa-code-fork"></i> v${escapeHtml(version)}</span><span class="generic-platform"><i class="fa fa-desktop"></i> ${escapeHtml(plataforma)}</span></div><p class="generic-card-desc">${escapeHtml(e.descripcion||'Sin descripción.')}</p><a href="${escapeHtml(e.link||'#')}" target="_blank" rel="noopener noreferrer" class="generic-card-btn green"><i class="fa fa-download"></i> Descargar</a></div>`}).join('');bindNeon()}
+function renderEmuladores(){const g=document.getElementById('emuladores-grid');if(!g)return;const q=emuladoresSearch.toLowerCase();const f=emuladoresFilter;const filtrados=emuladoresData.filter(e=>{const matchQ=!q||(e.nombre||'').toLowerCase().includes(q)||(e.plataforma||'').toLowerCase().includes(q)||(e.descripcion||'').toLowerCase().includes(q);const matchF=f==='all'||(e.plataforma||'').toLowerCase().includes(f.toLowerCase());return matchQ&&matchF});if(filtrados.length===0){g.innerHTML='<div class="col-span-full text-center py-10 text-gray-400"><i class="fa fa-microchip text-4xl mb-3 opacity-50"></i><p>Sin emuladores.</p></div>';return}g.innerHTML=filtrados.map((e,i)=>{
+const img=safeUrl(e.imagen,GENERIC_PLACEHOLDER);
+const version=e.version||'1.0';const plataforma=e.plataforma||'Multi';return `<div class="generic-card fade-in-item" style="animation-delay:${i*0.04}s"><div class="generic-card-img-wrap"><img class="generic-card-img" src="${escapeHtml(img)}" alt="${escapeHtml(e.nombre||'')}" loading="lazy" onerror="this.onerror=null; this.src='${GENERIC_PLACEHOLDER}';"></div><h4 class="generic-card-title">${escapeHtml(e.nombre||'Sin nombre')}</h4><div class="generic-card-meta"><span class="generic-version"><i class="fa fa-code-fork"></i> v${escapeHtml(version)}</span><span class="generic-platform"><i class="fa fa-desktop"></i> ${escapeHtml(plataforma)}</span></div><p class="generic-card-desc">${escapeHtml(e.descripcion||'Sin descripción.')}</p><a href="${escapeHtml(e.link||'#')}" target="_blank" rel="noopener noreferrer" class="generic-card-btn green"><i class="fa fa-download"></i> Descargar</a></div>`}).join('');bindNeon()}
 document.getElementById('emuladores-search').addEventListener('input',e=>{emuladoresSearch=e.target.value;document.getElementById('emuladores-search-clear').classList.toggle('visible',emuladoresSearch.length>0);renderEmuladores()});
 document.getElementById('emuladores-search-clear').addEventListener('click',()=>{document.getElementById('emuladores-search').value='';emuladoresSearch='';document.getElementById('emuladores-search-clear').classList.remove('visible');renderEmuladores()});
 document.getElementById('emuladores-filter-chips').addEventListener('click',e=>{const b=e.target.closest('.filter-chip');if(!b)return;document.querySelectorAll('#emuladores-filter-chips .filter-chip').forEach(c=>c.classList.remove('active'));b.classList.add('active');emuladoresFilter=b.dataset.plat;renderEmuladores()});
@@ -559,7 +651,9 @@ document.getElementById('emuladores-filter-chips').addEventListener('click',e=>{
 // ============================================
 let appsSearch='',appsFilter='all';
 
-function renderApps(){const g=document.getElementById('apps-grid');if(!g)return;const q=appsSearch.toLowerCase();const f=appsFilter;const filtrados=appsData.filter(a=>{const matchQ=!q||(a.nombre||'').toLowerCase().includes(q)||(a.descripcion||'').toLowerCase().includes(q);const matchF=f==='all'||a.categoria===f;return matchQ&&matchF});if(filtrados.length===0){g.innerHTML='<div class="col-span-full text-center py-10 text-gray-400"><i class="fa fa-android text-4xl mb-3 opacity-50"></i><p>Sin aplicaciones.</p></div>';return}g.innerHTML=filtrados.map((a,i)=>{const img=safeUrl(a.imagen,GENERIC_PLACEHOLDER);const version=a.version||'1.0';const cat=APPS_CATEGORIES[a.categoria]||APPS_CATEGORIES.otros;return `<div class="generic-card fade-in-item" style="animation-delay:${i*0.04}s"><div class="generic-card-img-wrap"><img class="generic-card-img" src="${escapeHtml(img)}" alt="${escapeHtml(a.nombre||'')}" loading="lazy" onerror="this.src='${GENERIC_PLACEHOLDER}'"></div><h4 class="generic-card-title">${escapeHtml(a.nombre||'Sin nombre')}</h4><div class="generic-card-meta"><span class="generic-version"><i class="fa fa-code-fork"></i> v${escapeHtml(version)}</span><span class="generic-category">${cat.icono} ${escapeHtml(cat.nombre)}</span></div><p class="generic-card-desc">${escapeHtml(a.descripcion||'Sin descripción.')}</p><a href="${escapeHtml(a.link||'#')}" target="_blank" rel="noopener noreferrer" class="generic-card-btn"><i class="fa fa-download"></i> Descargar</a></div>`}).join('');bindNeon()}
+function renderApps(){const g=document.getElementById('apps-grid');if(!g)return;const q=appsSearch.toLowerCase();const f=appsFilter;const filtrados=appsData.filter(a=>{const matchQ=!q||(a.nombre||'').toLowerCase().includes(q)||(a.descripcion||'').toLowerCase().includes(q);const matchF=f==='all'||a.categoria===f;return matchQ&&matchF});if(filtrados.length===0){g.innerHTML='<div class="col-span-full text-center py-10 text-gray-400"><i class="fa fa-android text-4xl mb-3 opacity-50"></i><p>Sin aplicaciones.</p></div>';return}g.innerHTML=filtrados.map((a,i)=>{
+const img=safeUrl(a.imagen,GENERIC_PLACEHOLDER);
+const version=a.version||'1.0';const cat=APPS_CATEGORIES[a.categoria]||APPS_CATEGORIES.otros;return `<div class="generic-card fade-in-item" style="animation-delay:${i*0.04}s"><div class="generic-card-img-wrap"><img class="generic-card-img" src="${escapeHtml(img)}" alt="${escapeHtml(a.nombre||'')}" loading="lazy" onerror="this.onerror=null; this.src='${GENERIC_PLACEHOLDER}';"></div><h4 class="generic-card-title">${escapeHtml(a.nombre||'Sin nombre')}</h4><div class="generic-card-meta"><span class="generic-version"><i class="fa fa-code-fork"></i> v${escapeHtml(version)}</span><span class="generic-category">${cat.icono} ${escapeHtml(cat.nombre)}</span></div><p class="generic-card-desc">${escapeHtml(a.descripcion||'Sin descripción.')}</p><a href="${escapeHtml(a.link||'#')}" target="_blank" rel="noopener noreferrer" class="generic-card-btn"><i class="fa fa-download"></i> Descargar</a></div>`}).join('');bindNeon()}
 document.getElementById('apps-search').addEventListener('input',e=>{appsSearch=e.target.value;document.getElementById('apps-search-clear').classList.toggle('visible',appsSearch.length>0);renderApps()});
 document.getElementById('apps-search-clear').addEventListener('click',()=>{document.getElementById('apps-search').value='';appsSearch='';document.getElementById('apps-search-clear').classList.remove('visible');renderApps()});
 document.getElementById('apps-filter-chips').addEventListener('click',e=>{const b=e.target.closest('.filter-chip');if(!b)return;document.querySelectorAll('#apps-filter-chips .filter-chip').forEach(c=>c.classList.remove('active'));b.classList.add('active');appsFilter=b.dataset.cat;renderApps()});
@@ -568,7 +662,9 @@ document.getElementById('apps-filter-chips').addEventListener('click',e=>{const 
 // MODS
 // ============================================
 let modsSearch='',modsFilter='all';
-function renderMods(){const c=document.getElementById('mods-container');if(!c)return;const q=modsSearch.toLowerCase();const f=modsFilter;const catsToShow=f==='all'?Object.keys(MODS_CATEGORIES):[f];let html='';catsToShow.forEach(catKey=>{const cat=MODS_CATEGORIES[catKey];const items=(modsData).filter(m=>m.categoria===catKey).filter(m=>{if(!q)return true;return(m.nombre||'').toLowerCase().includes(q)||(m.descripcion||'').toLowerCase().includes(q)||(m.juego||'').toLowerCase().includes(q)});if(items.length===0&&f!=='all')return;html+=`<div class="mods-category-section fade-in-item" style="--accent-from:${cat.color};--accent-to:${cat.color}"><div class="mods-category-header"><div class="mods-category-icon" style="background:linear-gradient(135deg,${cat.color}55,${cat.color}22);border:1px solid ${cat.color}66;box-shadow:0 0 14px ${cat.color}55">${cat.icono}</div><div><h3 class="mods-category-title">${cat.nombre}</h3><p class="mods-category-count">${items.length} ${items.length===1?'item':'items'} · ${cat.desc}</p></div></div><div class="grid-3-col">${items.length===0?'<div class="col-span-full text-center py-8 text-gray-400"><i class="fa fa-inbox text-3xl mb-2 opacity-50"></i><p>Sin mods en esta categoría</p></div>':items.map((m,i)=>{const img=safeUrl(m.imagen,GENERIC_PLACEHOLDER);const version=m.version||'';const juego=m.juego||'';return `<div class="generic-card fade-in-item" style="animation-delay:${i*0.04}s"><div class="generic-card-img-wrap"><img class="generic-card-img" src="${escapeHtml(img)}" alt="${escapeHtml(m.nombre||'')}" loading="lazy" onerror="this.src='${GENERIC_PLACEHOLDER}'"></div><h4 class="generic-card-title">${escapeHtml(m.nombre||'Sin nombre')}</h4><div class="generic-card-meta">${version?`<span class="generic-version"><i class="fa fa-code-fork"></i> v${escapeHtml(version)}</span>`:''}${juego?`<span class="generic-category"><i class="fa fa-gamepad"></i> ${escapeHtml(juego)}</span>`:''}</div><p class="generic-card-desc">${escapeHtml(m.descripcion||'Sin descripción.')}</p><a href="${escapeHtml(m.link||'#')}" target="_blank" rel="noopener noreferrer" class="generic-card-btn pink"><i class="fa fa-download"></i> Descargar</a></div>`}).join('')}</div></div>`});if(!html)html='<div class="text-center py-10 text-gray-400"><i class="fa fa-paint-brush text-4xl mb-3 opacity-50"></i><p>Sin mods con estos filtros.</p></div>';c.innerHTML=html;bindNeon()}
+function renderMods(){const c=document.getElementById('mods-container');if(!c)return;const q=modsSearch.toLowerCase();const f=modsFilter;const catsToShow=f==='all'?Object.keys(MODS_CATEGORIES):[f];let html='';catsToShow.forEach(catKey=>{const cat=MODS_CATEGORIES[catKey];const items=(modsData).filter(m=>m.categoria===catKey).filter(m=>{if(!q)return true;return(m.nombre||'').toLowerCase().includes(q)||(m.descripcion||'').toLowerCase().includes(q)||(m.juego||'').toLowerCase().includes(q)});if(items.length===0&&f!=='all')return;html+=`<div class="mods-category-section fade-in-item" style="--accent-from:${cat.color};--accent-to:${cat.color}"><div class="mods-category-header"><div class="mods-category-icon" style="background:linear-gradient(135deg,${cat.color}55,${cat.color}22);border:1px solid ${cat.color}66;box-shadow:0 0 14px ${cat.color}55">${cat.icono}</div><div><h3 class="mods-category-title">${cat.nombre}</h3><p class="mods-category-count">${items.length} ${items.length===1?'item':'items'} · ${cat.desc}</p></div></div><div class="grid-3-col">${items.length===0?'<div class="col-span-full text-center py-8 text-gray-400"><i class="fa fa-inbox text-3xl mb-2 opacity-50"></i><p>Sin mods en esta categoría</p></div>':items.map((m,i)=>{
+const img=safeUrl(m.imagen,GENERIC_PLACEHOLDER);
+const version=m.version||'';const juego=m.juego||'';return `<div class="generic-card fade-in-item" style="animation-delay:${i*0.04}s"><div class="generic-card-img-wrap"><img class="generic-card-img" src="${escapeHtml(img)}" alt="${escapeHtml(m.nombre||'')}" loading="lazy" onerror="this.onerror=null; this.src='${GENERIC_PLACEHOLDER}';"></div><h4 class="generic-card-title">${escapeHtml(m.nombre||'Sin nombre')}</h4><div class="generic-card-meta">${version?`<span class="generic-version"><i class="fa fa-code-fork"></i> v${escapeHtml(version)}</span>`:''}${juego?`<span class="generic-category"><i class="fa fa-gamepad"></i> ${escapeHtml(juego)}</span>`:''}</div><p class="generic-card-desc">${escapeHtml(m.descripcion||'Sin descripción.')}</p><a href="${escapeHtml(m.link||'#')}" target="_blank" rel="noopener noreferrer" class="generic-card-btn pink"><i class="fa fa-download"></i> Descargar</a></div>`}).join('')}</div></div>`});if(!html)html='<div class="text-center py-10 text-gray-400"><i class="fa fa-paint-brush text-4xl mb-3 opacity-50"></i><p>Sin mods con estos filtros.</p></div>';c.innerHTML=html;bindNeon()}
 document.getElementById('mods-search').addEventListener('input',e=>{modsSearch=e.target.value;document.getElementById('mods-search-clear').classList.toggle('visible',modsSearch.length>0);renderMods()});
 document.getElementById('mods-search-clear').addEventListener('click',()=>{document.getElementById('mods-search').value='';modsSearch='';document.getElementById('mods-search-clear').classList.remove('visible');renderMods()});
 document.getElementById('mods-filter-chips').addEventListener('click',e=>{const b=e.target.closest('.filter-chip');if(!b)return;document.querySelectorAll('#mods-filter-chips .filter-chip').forEach(c=>c.classList.remove('active'));b.classList.add('active');modsFilter=b.dataset.cat;renderMods()});
@@ -577,7 +673,9 @@ document.getElementById('mods-filter-chips').addEventListener('click',e=>{const 
 // ARCHIVOS GAMER
 // ============================================
 let archivosSearch='',archivosFilter='all';
-function renderArchivos(){const g=document.getElementById('archivos-grid');if(!g)return;const q=archivosSearch.toLowerCase();const f=archivosFilter;let todos=archivosData.filter(a=>{const matchCat=f==='all'||a.categoria===f;const matchQ=!q||(a.nombre||'').toLowerCase().includes(q)||(a.descripcion||'').toLowerCase().includes(q);return matchCat&&matchQ});if(todos.length===0){g.innerHTML='<div class="col-span-full text-center py-10 text-gray-400"><i class="fa fa-folder-open-o text-4xl mb-3 opacity-50"></i><p>Sin archivos.</p></div>';return}g.innerHTML=todos.map((a,i)=>{const img=safeUrl(a.imagen,GENERIC_PLACEHOLDER);const cat=ARCHIVOS_CATEGORIES[a.categoria]||ARCHIVOS_CATEGORIES.otros;return `<div class="generic-card fade-in-item" style="animation-delay:${i*0.04}s"><div class="generic-card-img-wrap"><img class="generic-card-img" src="${escapeHtml(img)}" alt="${escapeHtml(a.nombre||'')}" loading="lazy" onerror="this.src='${GENERIC_PLACEHOLDER}'"></div><h4 class="generic-card-title">${escapeHtml(a.nombre||'Sin nombre')}</h4><div class="generic-card-meta"><span class="generic-category">${cat.icono} ${escapeHtml(cat.nombre)}</span>${a.sistema?`<span class="generic-platform"><i class="fa fa-gamepad"></i> ${escapeHtml(a.sistema)}</span>`:''}</div><p class="generic-card-desc">${escapeHtml(a.descripcion||'Sin descripción.')}</p><a href="${escapeHtml(a.link||'#')}" target="_blank" rel="noopener noreferrer" class="generic-card-btn orange"><i class="fa fa-download"></i> Descargar</a></div>`}).join('');bindNeon()}
+function renderArchivos(){const g=document.getElementById('archivos-grid');if(!g)return;const q=archivosSearch.toLowerCase();const f=archivosFilter;let todos=archivosData.filter(a=>{const matchCat=f==='all'||a.categoria===f;const matchQ=!q||(a.nombre||'').toLowerCase().includes(q)||(a.descripcion||'').toLowerCase().includes(q);return matchCat&&matchQ});if(todos.length===0){g.innerHTML='<div class="col-span-full text-center py-10 text-gray-400"><i class="fa fa-folder-open-o text-4xl mb-3 opacity-50"></i><p>Sin archivos.</p></div>';return}g.innerHTML=todos.map((a,i)=>{
+const img=safeUrl(a.imagen,GENERIC_PLACEHOLDER);
+const cat=ARCHIVOS_CATEGORIES[a.categoria]||ARCHIVOS_CATEGORIES.otros;return `<div class="generic-card fade-in-item" style="animation-delay:${i*0.04}s"><div class="generic-card-img-wrap"><img class="generic-card-img" src="${escapeHtml(img)}" alt="${escapeHtml(a.nombre||'')}" loading="lazy" onerror="this.onerror=null; this.src='${GENERIC_PLACEHOLDER}';"></div><h4 class="generic-card-title">${escapeHtml(a.nombre||'Sin nombre')}</h4><div class="generic-card-meta"><span class="generic-category">${cat.icono} ${escapeHtml(cat.nombre)}</span>${a.sistema?`<span class="generic-platform"><i class="fa fa-gamepad"></i> ${escapeHtml(a.sistema)}</span>`:''}</div><p class="generic-card-desc">${escapeHtml(a.descripcion||'Sin descripción.')}</p><a href="${escapeHtml(a.link||'#')}" target="_blank" rel="noopener noreferrer" class="generic-card-btn orange"><i class="fa fa-download"></i> Descargar</a></div>`}).join('');bindNeon()}
 document.getElementById('archivos-search').addEventListener('input',e=>{archivosSearch=e.target.value;document.getElementById('archivos-search-clear').classList.toggle('visible',archivosSearch.length>0);renderArchivos()});
 document.getElementById('archivos-search-clear').addEventListener('click',()=>{document.getElementById('archivos-search').value='';archivosSearch='';document.getElementById('archivos-search-clear').classList.remove('visible');renderArchivos()});
 document.getElementById('archivos-filter-chips').addEventListener('click',e=>{const b=e.target.closest('.filter-chip');if(!b)return;document.querySelectorAll('#archivos-filter-chips .filter-chip').forEach(c=>c.classList.remove('active'));b.classList.add('active');archivosFilter=b.dataset.cat;renderArchivos()});
@@ -596,7 +694,9 @@ const REPORT_MAX_POR_JUEGO=3;
 function getReportesLocales(){try{const d=localStorage.getItem(REPORT_STORAGE_KEY);return d?JSON.parse(d):{}}catch(e){return{}}}
 function guardarReporteLocal(j){const r=getReportesLocales();if(!r[j])r[j]=[];r[j].push(Date.now());if(r[j].length>10)r[j]=r[j].slice(-10);try{localStorage.setItem(REPORT_STORAGE_KEY,JSON.stringify(r))}catch(e){}}
 function puedeReportar(j){const r=getReportesLocales();const h=r[j]||[];const ahora=Date.now();const rec=h.filter(t=>ahora-t<30*24*60*60*1000);if(rec.length>=REPORT_MAX_POR_JUEGO)return{puede:false,razon:`Ya reportaste este juego ${REPORT_MAX_POR_JUEGO} veces.`};if(rec.length>0){const u=Math.max(...rec);const tp=ahora-u;if(tp<REPORT_COOLDOWN_MS){const hr=Math.ceil((REPORT_COOLDOWN_MS-tp)/(60*60*1000));return{puede:false,razon:`Podés volver a reportar en ${hr}h.`}}}return{puede:true}}
-window.openReportModal=function(){if(!currentGameModal){showToast('No hay juego','error');return}const{game,category}=currentGameModal;const j=game.id;const v=puedeReportar(j);if(!v.puede){showToast(v.razon,'warn',5000);return}const ck=game.consola||category||'';const r=getCoverRatio(ck);const ph=getPlaceholder(r);document.getElementById('report-game-thumb').src=safeUrl(game.cover,ph);document.getElementById('report-game-thumb').onerror=function(){this.onerror=null;this.src=ph};document.getElementById('report-game-title').textContent=getGameTitle(game);document.getElementById('report-game-console').textContent=getConsoleName(ck);document.getElementById('report-game-type').textContent=getTypeInfo(game.tipo).label;document.querySelectorAll('.report-type-option').forEach(o=>o.classList.remove('selected'));document.querySelectorAll('input[name="report-type"]').forEach(r=>r.checked=false);document.getElementById('report-message').value='';document.getElementById('report-counter').textContent='0 / 300';document.getElementById('report-counter').className='report-counter';document.getElementById('report-submit-btn').disabled=true;document.getElementById('modal-reportar').classList.add('active')};
+window.openReportModal=function(){if(!currentGameModal){showToast('No hay juego','error');return}const{game,category}=currentGameModal;const j=game.id;const v=puedeReportar(j);if(!v.puede){showToast(v.razon,'warn',5000);return}const ck=game.consola||category||'';const r=getCoverRatio(ck);const ph=getPlaceholder(r);
+document.getElementById('report-game-thumb').src=safeUrl(game.cover,ph);
+document.getElementById('report-game-thumb').onerror=function(){this.onerror=null;this.src=ph};document.getElementById('report-game-title').textContent=getGameTitle(game);document.getElementById('report-game-console').textContent=getConsoleName(ck);document.getElementById('report-game-type').textContent=getTypeInfo(game.tipo).label;document.querySelectorAll('.report-type-option').forEach(o=>o.classList.remove('selected'));document.querySelectorAll('input[name="report-type"]').forEach(r=>r.checked=false);document.getElementById('report-message').value='';document.getElementById('report-counter').textContent='0 / 300';document.getElementById('report-counter').className='report-counter';document.getElementById('report-submit-btn').disabled=true;document.getElementById('modal-reportar').classList.add('active')};
 window.closeReportModal=function(){document.getElementById('modal-reportar').classList.remove('active')};
 document.querySelectorAll('.report-type-option').forEach(o=>{o.addEventListener('click',()=>{document.querySelectorAll('.report-type-option').forEach(x=>x.classList.remove('selected'));o.classList.add('selected');const r=o.querySelector('input[type="radio"]');if(r)r.checked=true;updateSubmitButton()})});
 const reportMessage=document.getElementById('report-message');
