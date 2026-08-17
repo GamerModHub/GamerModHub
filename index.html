@@ -99,12 +99,17 @@
     <div id="contenido-manual" class="tab-content">
         <h3 class="font-neon text-2xl neon-animated mb-2 flex items-center gap-2"><i class="fa fa-folder-open"></i> Biblioteca</h3>
         <p class="text-gray-400 text-sm mb-6">Explorá el catálogo completo de consolas</p>
+  
+  <!-- MAS JUEGOS EN -->
         
-        <!-- 🔥 MÁS JUEGOS: ARRIBA DE CATEGORÍAS EN BIBLIOTECA -->
 <section class="seccion-mas-juegos fade-in-item">
-  <h3 class="titulo-mas-juegos">🔥 Más juegos en:</h3>
-  <div class="lista-paginas" id="mas-juegos-biblioteca"></div>
+  <button class="banner-futurista" id="btn-desplegar">
+    <span class="banner-texto">🔥 MÁS JUEGOS 🔥</span>
+    <i class="fa fa-chevron-down banner-flecha"></i>
+  </button>
+  <div class="lista-paginas" id="lista-juegos"></div>
 </section>
+
 
 
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4" id="biblioteca-grid"></div>
@@ -653,26 +658,28 @@ document.getElementById('form-pedir').addEventListener('submit',async e=>{
 // INICIALIZACIÓN
 // ============================================
 
-// CARGAR BOTONES DESDE JSON EN AMBAS SECCIONES
+// === DESPLEGAR BOTONES AL HACER CLIC ===
+const btnDesplegar = document.getElementById('btn-desplegar');
+const listaJuegos = document.getElementById('lista-juegos');
+const flecha = document.querySelector('.banner-flecha');
+
+btnDesplegar.addEventListener('click', () => {
+  listaJuegos.classList.toggle('mostrar');
+  flecha.classList.toggle('girar');
+});
+
+// CARGAR BOTONES DESDE JSON
 fetch('mas-juegos.json')
   .then(res => res.json())
   .then(sitios => {
-    const cont1 = document.getElementById('mas-juegos-inicio');
-    const cont2 = document.getElementById('mas-juegos-biblioteca');
-
     sitios.forEach(s => {
-      // Botón para la página de Inicio
-      const a1 = document.createElement('a');
-      a1.href = s.url;
-      a1.target = '_blank';
-      a1.rel = 'noopener noreferrer';
-      a1.className = 'btn-fuego';
-      a1.textContent = s.nombre;
-      cont1.appendChild(a1);
-
-      // Botón para la página Biblioteca
-      const a2 = a1.cloneNode(true);
-      cont2.appendChild(a2);
+      const a = document.createElement('a');
+      a.href = s.url;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.className = 'btn-fuego';
+      a.textContent = s.nombre;
+      listaJuegos.appendChild(a);
     });
   })
   .catch(e => console.warn('No se pudo cargar sitios externos:', e));
