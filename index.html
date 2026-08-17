@@ -98,6 +98,14 @@
     <div id="contenido-manual" class="tab-content">
         <h3 class="font-neon text-2xl neon-animated mb-2 flex items-center gap-2"><i class="fa fa-folder-open"></i> Biblioteca</h3>
         <p class="text-gray-400 text-sm mb-6">Explorá el catálogo completo de consolas</p>
+        
+        <!-- 🔥 MÁS JUEGOS: ARRIBA DE CATEGORÍAS EN BIBLIOTECA -->
+<section class="seccion-mas-juegos fade-in-item">
+  <h3 class="titulo-mas-juegos">🔥 Más juegos en:</h3>
+  <div class="lista-paginas" id="mas-juegos-biblioteca"></div>
+</section>
+
+
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4" id="biblioteca-grid"></div>
     </div>
 
@@ -489,7 +497,19 @@ async function loadArchivos(){try{const d=await dbFirestore.collection('sistema'
 
 function renderBiblioteca(){const g=document.getElementById('biblioteca-grid');if(!g)return;g.innerHTML='';const cs=getAllCategoryKeys().filter(c=>getCategoryCount(c)>0).sort((a,b)=>getCategoryCount(b)-getCategoryCount(a));if(cs.length===0){g.innerHTML='<div class="col-span-full text-center py-12 text-gray-400"><i class="fa fa-inbox text-4xl mb-3 opacity-50"></i><p>Sin categorías.</p></div>';return}cs.forEach(c=>{const d=document.createElement('div');d.className='folder-card p-6 text-center';d.onclick=()=>openCategory(c);d.innerHTML=`<div class="text-5xl mb-4">${ICONOS_CONSOLA[c]||'🎯'}</div><h4 class="font-neon font-bold text-lg mb-1">${escapeHtml(getConsoleName(c))}</h4><p class="text-xs text-cyan-400 font-semibold">${countLabel(getCategoryCount(c))}</p>`;g.appendChild(d)});bindNeon()}
 
-function renderHomeRows(){const c=document.getElementById('dynamic-home-rows');c.innerHTML='';if(latestTicker){latestTicker.destroy();latestTicker=null}if(topTicker){topTicker.destroy();topTicker=null}const ls=document.createElement('div');ls.className='carousel-section fade-in-item';ls.style.setProperty('--accent-from','var(--neon-blue)');ls.style.setProperty('--accent-to','var(--neon-purple)');ls.innerHTML=`<div class="carousel-header"><div class="carousel-icon-wrap" style="background:linear-gradient(135deg,var(--neon-blue),var(--neon-purple));box-shadow:0 0 14px rgba(0,240,255,0.35)"><i class="fa fa-clock-o"></i></div><div><h3 class="carousel-title neon-animated">Recién agregados</h3><p class="carousel-subtitle">Los últimos 20 juegos</p></div></div><div class="carousel-track" id="latest-games-track"></div>`;c.appendChild(ls);const ts=document.createElement('div');ts.className='carousel-section fade-in-item';ts.style.setProperty('--accent-from','var(--neon-orange)');ts.style.setProperty('--accent-to','var(--neon-red)');ts.innerHTML=`<div class="carousel-header"><div class="carousel-icon-wrap" style="background:linear-gradient(135deg,var(--neon-orange),var(--neon-red));box-shadow:0 0 14px rgba(255,149,0,0.35)"><i class="fa fa-fire"></i></div><div><h3 class="carousel-title neon-animated">Top 20 más buscados</h3><p class="carousel-subtitle">Los juegos más populares</p></div></div><div class="carousel-track" id="top-searched-track"></div>`;c.appendChild(ts);renderLatestGames();renderTopBuscados();latestTicker=new TickerCarousel('latest-games-track',{speed:30});latestTicker.start();topTicker=new TickerCarousel('top-searched-track',{speed:35});topTicker.start();const sc=getAllCategoryKeys().filter(c=>getCategoryCount(c)>0).sort((a,b)=>getCategoryCount(b)-getCategoryCount(a));if(sc.length===0){const e=document.createElement('div');e.className='text-center py-10 text-gray-400';e.innerHTML='<i class="fa fa-inbox text-4xl mb-3 opacity-50"></i><p>Sin juegos aún.</p>';c.appendChild(e);return}sc.forEach(cat=>{const dn=getConsoleName(cat);const cnt=getCategoryCount(cat);const s=document.createElement('div');s.className='mb-10 fade-in-item';s.innerHTML=`<div class="flex items-center justify-between flex-wrap gap-2 mb-4"><h3 class="font-neon text-lg neon-animated flex items-center gap-2"><i class="fa fa-gamepad"></i> ${escapeHtml(dn)}</h3><span class="text-xs sm:text-sm flex items-center gap-2 sm:gap-4 w-full sm:w-auto justify-between sm:justify-end"><span class="text-gray-400 font-semibold">${countLabel(cnt)}</span><span class="ver-mas btn-ver-mas-cat" data-cat="${cat}">Ver más →</span></span></div><div class="scroll-row" data-cat-row="${cat}"></div>`;c.appendChild(s);const r=s.querySelector(`[data-cat-row="${cat}"]`);(db[cat]||[]).slice(0,ROMS_PREVIEW).forEach((g,i)=>r.appendChild(createGameCard(g,cat,{extraClass:'shrink-0',delay:i*0.05})))});document.querySelectorAll('.btn-ver-mas-cat').forEach(b=>{b.onclick=()=>openCategory(b.dataset.cat)});bindNeon()}
+function renderHomeRows(){const c=document.getElementById('dynamic-home-rows');c.innerHTML='';if(latestTicker){latestTicker.destroy();latestTicker=null}if(topTicker){topTicker.destroy();topTicker=null}const ls=document.createElement('div');ls.className='carousel-section fade-in-item';ls.style.setProperty('--accent-from','var(--neon-blue)');ls.style.setProperty('--accent-to','var(--neon-purple)');ls.innerHTML=`<div class="carousel-header"><div class="carousel-icon-wrap" style="background:linear-gradient(135deg,var(--neon-blue),var(--neon-purple));box-shadow:0 0 14px rgba(0,240,255,0.35)"><i class="fa fa-clock-o"></i></div><div><h3 class="carousel-title neon-animated">Recién agregados</h3><p class="carousel-subtitle">Los últimos 20 juegos</p></div></div><div class="carousel-track" id="latest-games-track"></div>`;c.appendChild(ls);const ts=document.createElement('div');ts.className='carousel-section fade-in-item';ts.style.setProperty('--accent-from','var(--neon-orange)');ts.style.setProperty('--accent-to','var(--neon-red)');ts.innerHTML=`<div class="carousel-header"><div class="carousel-icon-wrap" style="background:linear-gradient(135deg,var(--neon-orange),var(--neon-red));box-shadow:0 0 14px rgba(255,149,0,0.35)"><i class="fa fa-fire"></i></div><div><h3 class="carousel-title neon-animated">Top 20 más buscados</h3><p class="carousel-subtitle">Los juegos más populares</p></div></div><div class="carousel-track" id="top-searched-track"></div>`
+
+
+<!-- 🔥 MÁS JUEGOS: DEBAJO DEL TOP 20 -->
+<section class="seccion-mas-juegos fade-in-item" style="animation-delay: 0.25s;">
+  <h3 class="titulo-mas-juegos">🔥 Más juegos en:</h3>
+  <div class="lista-paginas" id="mas-juegos-inicio"></div>
+</section>
+
+
+
+
+;c.appendChild(ts);renderLatestGames();renderTopBuscados();latestTicker=new TickerCarousel('latest-games-track',{speed:30});latestTicker.start();topTicker=new TickerCarousel('top-searched-track',{speed:35});topTicker.start();const sc=getAllCategoryKeys().filter(c=>getCategoryCount(c)>0).sort((a,b)=>getCategoryCount(b)-getCategoryCount(a));if(sc.length===0){const e=document.createElement('div');e.className='text-center py-10 text-gray-400';e.innerHTML='<i class="fa fa-inbox text-4xl mb-3 opacity-50"></i><p>Sin juegos aún.</p>';c.appendChild(e);return}sc.forEach(cat=>{const dn=getConsoleName(cat);const cnt=getCategoryCount(cat);const s=document.createElement('div');s.className='mb-10 fade-in-item';s.innerHTML=`<div class="flex items-center justify-between flex-wrap gap-2 mb-4"><h3 class="font-neon text-lg neon-animated flex items-center gap-2"><i class="fa fa-gamepad"></i> ${escapeHtml(dn)}</h3><span class="text-xs sm:text-sm flex items-center gap-2 sm:gap-4 w-full sm:w-auto justify-between sm:justify-end"><span class="text-gray-400 font-semibold">${countLabel(cnt)}</span><span class="ver-mas btn-ver-mas-cat" data-cat="${cat}">Ver más →</span></span></div><div class="scroll-row" data-cat-row="${cat}"></div>`;c.appendChild(s);const r=s.querySelector(`[data-cat-row="${cat}"]`);(db[cat]||[]).slice(0,ROMS_PREVIEW).forEach((g,i)=>r.appendChild(createGameCard(g,cat,{extraClass:'shrink-0',delay:i*0.05})))});document.querySelectorAll('.btn-ver-mas-cat').forEach(b=>{b.onclick=()=>openCategory(b.dataset.cat)});bindNeon()}
 
 window.openCategory=function(c){currentCategory=c;currentLetter='all';filteredList=[...(db[c]||[])];currentPage=1;document.getElementById('cat-title').textContent=`Catálogo ${getConsoleName(c)}`;document.getElementById('cat-search').value='';document.getElementById('cat-search-clear').classList.add('hidden');document.getElementById('cat-search-clear').classList.remove('block');document.querySelectorAll('.letter-btn').forEach(b=>b.classList.remove('active'));document.querySelector('.letter-btn-all').classList.add('active');renderCategoryPage();showSection('contenido-categoria');tabs.forEach(t=>t.classList.remove('tab-active'))};
 
@@ -643,6 +663,31 @@ document.getElementById('form-pedir').addEventListener('submit',async e=>{
 // ============================================
 // INICIALIZACIÓN
 // ============================================
+
+// CARGAR BOTONES DESDE JSON EN AMBAS SECCIONES
+fetch('mas-juegos.json')
+  .then(res => res.json())
+  .then(sitios => {
+    const cont1 = document.getElementById('mas-juegos-inicio');
+    const cont2 = document.getElementById('mas-juegos-biblioteca');
+
+    sitios.forEach(s => {
+      // Botón para la página de Inicio
+      const a1 = document.createElement('a');
+      a1.href = s.url;
+      a1.target = '_blank';
+      a1.rel = 'noopener noreferrer';
+      a1.className = 'btn-fuego';
+      a1.textContent = s.nombre;
+      cont1.appendChild(a1);
+
+      // Botón para la página Biblioteca
+      const a2 = a1.cloneNode(true);
+      cont2.appendChild(a2);
+    });
+  })
+  .catch(e => console.warn('No se pudo cargar sitios externos:', e));
+
 loadData();
 loadNovedades();
 loadTopBuscados();
