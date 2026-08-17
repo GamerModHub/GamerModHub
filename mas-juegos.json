@@ -4,15 +4,19 @@
     "url": "https://gamesgx.net"
   },
   {
-    "nombre": "RomsPure.cc",
-    "url": "https://romspure.cc"
-  },
-  {
-    "nombre": "RomsFun.com",
-    "url": "https://romsfun.com"
-  },
-  {
     "nombre": "RomsIm.net",
     "url": "https://romsim.net"
+  },
+  {
+    "nombre": "CoolROM.com",
+    "url": "https://coolrom.com"
+  },
+  {
+    "nombre": "EmulatorGames.net",
+    "url": "https://emulatorgames.net"
+  },
+  {
+    "nombre": "RomsMania.cc",
+    "url": "https://romsmania.cc"
   }
 ]
