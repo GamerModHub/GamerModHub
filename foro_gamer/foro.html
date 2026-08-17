@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#05050c">
+    <title>GamerModHub — Foro Gamer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <style>
+        :root {
+            --neon-blue: #00f0ff;
+            --neon-purple: #bd00ff;
+            --neon-pink: #ff00aa;
+            --neon-green: #00ff94;
+            --neon-orange: #ff9500;
+            --neon-red: #ff0055;
+            --bg-dark: #05050c;
+            --bg-card: #0d0d1a;
+            --bg-sidebar: #0a0a14;
+            --border-color: rgba(0, 240, 255, 0.2);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg-dark);
+            color: #fff;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ============================================ */
+        /* ANIMACIONES NEÓN */
+        /* ============================================ */
+        @keyframes neonPulse {
+            0%, 100% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor; }
+            50% { opacity: 0.8; text-shadow: 0 0 5px currentColor, 0 0 10px currentColor; }
+        }
+
+        @keyframes neonBorder {
+            0%, 100% { box-shadow: 0 0 5px var(--neon-blue), 0 0 10px var(--neon-blue), inset 0 0 5px rgba(0, 240, 255, 0.1); }
+            50% { box-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue), inset 0 0 10px rgba(0, 240, 255, 0.2); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* ============================================ */
+        /* LAYOUT PRINCIPAL */
+        /* ============================================ */
+        .app-container {
+            display: flex;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* ============================================ */
+        /* SIDEBAR */
+        /* ============================================ */
+        .sidebar {
+            width: 320px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.05), rgba(189, 0, 255, 0.05));
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            animation: float 3s ease-in-out infinite;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+        }
+
+        .logo-text {
+            font-size: 1.3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: neonPulse 3s ease-in-out infinite;
+        }
+
+        .user-panel {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: rgba(0, 240, 255, 0.05);
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--neon-green), var(--neon-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            border: 2px solid var(--neon-green);
+            box-shadow: 0 0 15px rgba(0, 255, 148, 0.4);
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .user-status {
+            font-size: 0.75rem;
+            color: var(--neon-green);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--neon-green);
+            border-radius: 50%;
+            animation: neonPulse 2s ease-in-out infinite;
+        }
+
+        /* Canales */
+        .channels-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .channel-section {
+            margin-bottom: 20px;
+        }
+
+        .channel-section-title {
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            padding-left: 10px;
+        }
+
+        .channel-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 5px;
+            border: 1px solid transparent;
+        }
+
+        .channel-item:hover {
+            background: rgba(0, 240, 255, 0.05);
+            border-color: var(--border-color);
+        }
+
+        .channel-item.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(189, 0, 255, 0.1));
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+        }
+
+        .channel-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .channel-info {
+            flex: 1;
+        }
+
+        .channel-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .channel-preview {
+            font-size: 0.75rem;
+            color: #666;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .channel-badge {
+            background: var(--neon-pink);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 0, 170, 0.5);
+        }
+
+        /* ============================================ */
+        /* CHAT PRINCIPAL */
+        /* ============================================ */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-dark);
+        }
+
+        .chat-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(13, 13, 26, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-channel-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(189, 0, 255, 0.2));
+            border: 1px solid var(--border-color);
+        }
+
+        .chat-channel-info h3 {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .chat-channel-info p {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .chat-header-right {
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: rgba(0, 240, 255, 0.05);
+            color: var(--neon-blue);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .header-btn:hover {
+            background: rgba(0, 240, 255, 0.1);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+
+        /* Mensajes */
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            animation: slideIn 0.3s ease;
+            max-width: 80%;
+        }
+
+        .message.own {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .message.own .message-content {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(189, 0, 255, 0.1));
+            border-color: rgba(0, 240, 255, 0.3);
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 5px;
+        }
+
+        .message-author {
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            color: #666;
+        }
+
+        .message-text {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        .message-role {
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .role-admin {
+            background: rgba(255, 0, 85, 0.2);
+            color: var(--neon-red);
+            border: 1px solid rgba(255, 0, 85, 0.3);
+        }
+
+        .role-mod {
+            background: rgba(255, 149, 0, 0.2);
+            color: var(--neon-orange);
+            border: 1px solid rgba(255, 149, 0, 0.3);
+        }
+
+        .role-user {
+            background: rgba(0, 240, 255, 0.2);
+            color: var(--neon-blue);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+        }
+
+        /* Input de mensaje */
+        .chat-input-container {
+            padding: 15px 20px;
+            border-top: 1px solid var(--border-color);
+            background: rgba(13, 13, 26, 0.8);
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 12px 20px;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            resize: none;
+            max-height: 120px;
+            transition: all 0.3s;
+        }
+
+        .chat-input:focus {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+        }
+
+        .send-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.3s;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+
+        .send-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.5);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Typing indicator */
+        .typing-indicator {
+            display: none;
+            padding: 10px 20px;
+            font-size: 0.8rem;
+            color: #888;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .typing-indicator.active {
+            display: flex;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 3px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--neon-blue);
+            border-radius: 50%;
+            animation: typing 1s ease-in-out infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        /* ============================================ */
+        /* MODAL LOGIN */
+        /* ============================================ */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(5, 5, 12, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.hidden {
+            display: none;
+        }
+
+        .login-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 40px;
+            width: 90%;
+            max-width: 400px;
+            animation: slideIn 0.5s ease;
+        }
+
+        .login-title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .login-subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 30px;
+        }
+
+        .login-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            color: #fff;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .login-input:focus {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 240, 255, 0.4);
+        }
+
+        /* ============================================ */
+        /* SCROLLBAR */
+        /* ============================================ */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 240, 255, 0.3);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 240, 255, 0.5);
+        }
+
+        /* ============================================ */
+        /* RESPONSIVE */
+        /* ============================================ */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: absolute;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                transform: translateX(-100%);
+                box-shadow: 5px 0 20px rgba(0, 0, 0, 0.5);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .message {
+                max-width: 90%;
+            }
+
+            .mobile-menu-btn {
+                display: flex !important;
+            }
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: rgba(0, 240, 255, 0.05);
+            color: var(--neon-blue);
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Efectos de fondo */
+        .bg-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--neon-blue);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <!-- Partículas de fondo -->
+    <div class="bg-particles" id="particles"></div>
+
+    <!-- Modal de Login -->
+    <div class="modal-overlay" id="login-modal">
+        <div class="login-card">
+            <div class="text-center mb-6">
+                <div class="text-5xl mb-4">🎮</div>
+                <h2 class="login-title">FORO GAMER</h2>
+                <p class="login-subtitle">Únete a la comunidad</p>
+            </div>
+            <input type="text" class="login-input" id="username-input" placeholder="Tu nombre de usuario" maxlength="20">
+            <button class="login-btn" onclick="entrarAlForo()">
+                <i class="fa fa-gamepad"></i> Entrar al Foro
+            </button>
+        </div>
+    </div>
+
+    <!-- App principal -->
+    <div class="app-container" id="app" style="display: none;">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <div class="logo-icon">🎮</div>
+                    <span class="logo-text">GAMERMODHUB</span>
+                </div>
+                <div class="user-panel">
+                    <div class="user-avatar" id="user-avatar">?</div>
+                    <div class="user-info">
+                        <div class="user-name" id="user-name">Usuario</div>
+                        <div class="user-status">
+                            <span class="status-dot"></span>
+                            <span>En línea</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="channels-container">
+                <!-- Canales de texto -->
+                <div class="channel-section">
+                    <div class="channel-section-title">💬 Canales de Texto</div>
+                    <div class="channel-item active" data-channel="general" onclick="cambiarCanal('general')">
+                        <div class="channel-icon" style="background: linear-gradient(135deg, #00f0ff22, #00f0ff11);">💬</div>
+                        <div class="channel-info">
+                            <div class="channel-name">General</div>
+                            <div class="channel-preview">Charla libre</div>
+                        </div>
+                        <span class="channel-badge" id="badge-general" style="display: none;">0</span>
+                    </div>
+                    <div class="channel-item" data-channel="ayuda" onclick="cambiarCanal('ayuda')">
+                        <div class="channel-icon" style="background: linear-gradient(135deg, #00ff9422, #00ff9411);">🆘</div>
+                        <div class="channel-info">
+                            <div class="channel-name">Ayuda</div>
+                            <div class="channel-preview">Soporte y preguntas</div>
+                        </div>
+                        <span class="channel-badge" id="badge-ayuda" style="display: none;">0</span>
+                    </div>
+                    <div class="channel-item" data-channel="trading" onclick="cambiarCanal('trading')">
+                        <div class="channel-icon" style="background: linear-gradient(135deg, #ff950022, #ff950011);">💰</div>
+                        <div class="channel-info">
+                            <div class="channel-name">Trading</div>
+                            <div class="channel-preview">Compra y venta</div>
+                        </div>
+                        <span class="channel-badge" id="badge-trading" style="display: none;">0</span>
+                    </div>
+                    <div class="channel-item" data-channel="clips" onclick="cambiarCanal('clips')">
+                        <div class="channel-icon" style="background: linear-gradient(135deg, #bd00ff22, #bd00ff11);">🎬</div>
+                        <div class="channel-info">
+                            <div class="channel-name">Clips</div>
+                            <div class="channel-preview">Mejores jugadas</div>
+                        </div>
+                        <span class="channel-badge" id="badge-clips" style="display: none;">0</span>
+                    </div>
+                </div>
+
+                <!-- Canales de juegos -->
+                <div class="channel-section">
+                    <div class="channel-section-title">🎮 Juegos</div>
+                    <div class="channel-item" data-channel="minecraft" onclick="cambiarCanal('minecraft')">
+                        <div class="channel-icon" style="background: linear-gradient(135deg, #00ff9422, #00ff9411);">⛏️</div>
+                        <div class="channel-info">
+                            <div class="channel-name">Minecraft</div>
+                            <div class="channel-preview">Construcciones y servers</div>
+                        </div>
+                    </div>
+                    <div class="channel-item" data-channel="fortnite" onclick="cambiarCanal('fortnite')">
+                        <div class="channel-icon" style="background: linear-gradient(135deg, #bd00ff22, #bd00ff11);">🪂</div>
+                        <div class="channel-info">
+                            <div class="channel-name">Fortnite</div>
+                            <div class="channel-preview">Squad y torneos</div>
+                        </div>
+                    </div>
+                    <div class="channel-item" data-channel="retro" onclick="cambiarCanal('retro')">
+                        <div class="channel-icon" style="background: linear-gradient(135deg, #ff00aa22, #ff00aa11);">🕹️</div>
+                        <div class="channel-info">
+                            <div class="channel-name">Retro Gaming</div>
+                            <div class="channel-preview">Clásicos y emulación</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Chat principal -->
+        <main class="chat-container">
+            <div class="chat-header">
+                <div class="chat-header-left">
+                    <button class="mobile-menu-btn" onclick="toggleSidebar()">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <div class="chat-channel-icon" id="chat-channel-icon">💬</div>
+                    <div class="chat-channel-info">
+                        <h3 id="chat-channel-name">General</h3>
+                        <p id="chat-channel-desc">Charla libre</p>
+                    </div>
+                </div>
+                <div class="chat-header-right">
+                    <button class="header-btn" title="Miembros">
+                        <i class="fa fa-users"></i>
+                    </button>
+                    <button class="header-btn" title="Buscar">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="messages-container" id="messages-container">
+                <div class="text-center py-10 text-gray-500">
+                    <i class="fa fa-comments text-4xl mb-3 opacity-50"></i>
+                    <p>Cargando mensajes...</p>
+                </div>
+            </div>
+
+            <div class="typing-indicator" id="typing-indicator">
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+                <span id="typing-text">Alguien está escribiendo...</span>
+            </div>
+
+            <div class="chat-input-container">
+                <div class="chat-input-wrapper">
+                    <textarea 
+                        class="chat-input" 
+                        id="message-input" 
+                        placeholder="Escribí un mensaje..." 
+                        rows="1"
+                        onkeypress="handleKeyPress(event)"
+                        oninput="autoResize(this)"
+                    ></textarea>
+                    <button class="send-btn" onclick="enviarMensaje()" id="send-btn">
+                        <i class="fa fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ============================================
+        // CONFIGURACIÓN
+        // ============================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyAd6_jbAZjMQlocFOkQPzIQ11NEGFfudcw",
+            authDomain: "base-administrativa-dea20.firebaseapp.com",
+            projectId: "base-administrativa-dea20",
+            storageBucket: "base-administrativa-dea20.firebasestorage.app",
+            messagingSenderId: "592943708135",
+            appId: "1:592943708135:web:117c98bf2d947e19bf2f42"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Variables globales
+        let currentUser = null;
+        let currentChannel = 'general';
+        let messageListener = null;
+
+        const CHANNELS = {
+            general: { nombre: 'General', icono: '💬', desc: 'Charla libre', color: '#00f0ff' },
+            ayuda: { nombre: 'Ayuda', icono: '🆘', desc: 'Soporte y preguntas', color: '#00ff94' },
+            trading: { nombre: 'Trading', icono: '💰', desc: 'Compra y venta', color: '#ff9500' },
+            clips: { nombre: 'Clips', icono: '🎬', desc: 'Mejores jugadas', color: '#bd00ff' },
+            minecraft: { nombre: 'Minecraft', icono: '⛏️', desc: 'Construcciones y servers', color: '#00ff94' },
+            fortnite: { nombre: 'Fortnite', icono: '🪂', desc: 'Squad y torneos', color: '#bd00ff' },
+            retro: { nombre: 'Retro Gaming', icono: '🕹️', desc: 'Clásicos y emulación', color: '#ff00aa' }
+        };
+
+        const USER_COLORS = [
+            '#00f0ff', '#bd00ff', '#ff00aa', '#00ff94', 
+            '#ff9500', '#ff0055', '#ffd700', '#00ffff'
+        ];
+
+        // ============================================
+        // INICIALIZACIÓN
+        // ============================================
+        function init() {
+            crearParticulas();
+            
+            // Verificar si hay usuario guardado
+            const savedUser = localStorage.getItem('foro_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                mostrarApp();
+            }
+
+            // Enter para login
+            document.getElementById('username-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') entrarAlForo();
+            });
+        }
+
+        function crearParticulas() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (4 + Math.random() * 4) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // ============================================
+        // LOGIN
+        // ============================================
+        function entrarAlForo() {
+            const username = document.getElementById('username-input').value.trim();
+            
+            if (!username) {
+                alert('Por favor ingresá un nombre de usuario');
+                return;
+            }
+
+            if (username.length < 3) {
+                alert('El nombre debe tener al menos 3 caracteres');
+                return;
+            }
+
+            currentUser = {
+                id: 'user_' + Date.now(),
+                nombre: username,
+                color: USER_COLORS[Math.floor(Math.random() * USER_COLORS.length)],
+                rol: 'user',
+                fechaRegistro: Date.now()
+            };
+
+            localStorage.setItem('foro_user', JSON.stringify(currentUser));
+            mostrarApp();
+        }
+
+        function mostrarApp() {
+            document.getElementById('login-modal').classList.add('hidden');
+            document.getElementById('app').style.display = 'flex';
+            
+            // Actualizar UI de usuario
+            document.getElementById('user-name').textContent = currentUser.nombre;
+            document.getElementById('user-avatar').textContent = currentUser.nombre.charAt(0).toUpperCase();
+            document.getElementById('user-avatar').style.background = `linear-gradient(135deg, ${currentUser.color}, ${currentUser.color}88)`;
+            document.getElementById('user-avatar').style.borderColor = currentUser.color;
+            document.getElementById('user-avatar').style.boxShadow = `0 0 15px ${currentUser.color}66`;
+
+            cargarMensajes();
+        }
+
+        // ============================================
+        // CANALES
+        // ============================================
+        function cambiarCanal(channelId) {
+            currentChannel = channelId;
+            
+            // Actualizar UI
+            document.querySelectorAll('.channel-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`[data-channel="${channelId}"]`).classList.add('active');
+
+            const channel = CHANNELS[channelId];
+            document.getElementById('chat-channel-name').textContent = channel.nombre;
+            document.getElementById('chat-channel-desc').textContent = channel.desc;
+            document.getElementById('chat-channel-icon').textContent = channel.icono;
+
+            // Cerrar sidebar en mobile
+            document.getElementById('sidebar').classList.remove('open');
+
+            cargarMensajes();
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // ============================================
+        // MENSAJES
+        // ============================================
+        function cargarMensajes() {
+            // Limpiar listener anterior
+            if (messageListener) {
+                messageListener();
+            }
+
+            const container = document.getElementById('messages-container');
+            container.innerHTML = '<div class="text-center py-10 text-gray-500"><i class="fa fa-spinner fa-spin text-2xl"></i><p class="mt-2">Cargando mensajes...</p></div>';
+
+            // Escuchar mensajes en tiempo real
+            messageListener = db.collection('foro_mensajes')
+                .where('canal', '==', currentChannel)
+                .orderBy('timestamp', 'desc')
+                .limit(100)
+                .onSnapshot(snapshot => {
+                    const messages = [];
+                    snapshot.forEach(doc => {
+                        messages.push({ id: doc.id, ...doc.data() });
+                    });
+
+                    messages.reverse();
+                    renderMensajes(messages);
+                }, error => {
+                    console.error('Error cargando mensajes:', error);
+                    container.innerHTML = '<div class="text-center py-10 text-red-400"><i class="fa fa-exclamation-triangle text-2xl"></i><p class="mt-2">Error al cargar mensajes</p></div>';
+                });
+        }
+
+        function renderMensajes(messages) {
+            const container = document.getElementById('messages-container');
+            
+            if (messages.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-10 text-gray-500">
+                        <i class="fa fa-comments text-4xl mb-3 opacity-50"></i>
+                        <p>No hay mensajes todavía. ¡Sé el primero en escribir!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = messages.map(msg => {
+                const isOwn = msg.userId === currentUser.id;
+                const roleClass = msg.rol === 'admin' ? 'role-admin' : msg.rol === 'mod' ? 'role-mod' : 'role-user';
+                const roleText = msg.rol === 'admin' ? 'ADMIN' : msg.rol === 'mod' ? 'MOD' : 'USER';
+                
+                return `
+                    <div class="message ${isOwn ? 'own' : ''}">
+                        <div class="message-avatar" style="background: linear-gradient(135deg, ${msg.color}, ${msg.color}88); border: 2px solid ${msg.color};">
+                            ${msg.autor.charAt(0).toUpperCase()}
+                        </div>
+                        <div class="message-content">
+                            <div class="message-header">
+                                <span class="message-author" style="color: ${msg.color};">${escapeHtml(msg.autor)}</span>
+                                <span class="message-role ${roleClass}">${roleText}</span>
+                                <span class="message-time">${formatTime(msg.timestamp)}</span>
+                            </div>
+                            <div class="message-text">${escapeHtml(msg.texto)}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Scroll al final
+            container.scrollTop = container.scrollHeight;
+        }
+
+        async function enviarMensaje() {
+            const input = document.getElementById('message-input');
+            const texto = input.value.trim();
+
+            if (!texto) return;
+
+            const sendBtn = document.getElementById('send-btn');
+            sendBtn.disabled = true;
+
+            try {
+                await db.collection('foro_mensajes').add({
+                    canal: currentChannel,
+                    userId: currentUser.id,
+                    autor: currentUser.nombre,
+                    color: currentUser.color,
+                    rol: currentUser.rol,
+                    texto: texto,
+                    timestamp: Date.now()
+                });
+
+                input.value = '';
+                input.style.height = 'auto';
+                
+            } catch (error) {
+                console.error('Error enviando mensaje:', error);
+                alert('Error al enviar el mensaje');
+            } finally {
+                sendBtn.disabled = false;
+                input.focus();
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                enviarMensaje();
+            }
+        }
+
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+        }
+
+        // ============================================
+        // UTILIDADES
+        // ============================================
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const isToday = date.toDateString() === now.toDateString();
+            
+            if (isToday) {
+                return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+            } else {
+                return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) + ' ' + 
+                       date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Iniciar
+        init();
+    </script>
+</body>
+</html>
