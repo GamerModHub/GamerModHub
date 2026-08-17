@@ -845,10 +845,10 @@ body.no-neon .form-neon-input:focus,body.no-neon .form-neon-select:focus,body.no
 
 
 /* === SECCIÓN MÁS JUEGOS - EFECTO FUEGO === */
-/* === SECCIÓN MÁS JUEGOS - VERSIÓN COMPACTA EXAGERADA === */
+/* === SECCIÓN MÁS JUEGOS - BOTONES VISIBLES Y COMPACTOS === */
 .seccion-mas-juegos {
   margin: 1rem 0;
-  padding: 0.7rem;
+  padding: 0.8rem;
   background: rgba(10, 10, 20, 0.6);
   border-radius: 8px;
   border: 1px solid rgba(255, 80, 0, 0.25);
@@ -866,7 +866,7 @@ body.no-neon .form-neon-input:focus,body.no-neon .form-neon-select:focus,body.no
 .lista-paginas {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 0.4rem;
+  gap: 0.5rem;
 }
 
 @media (min-width: 640px) {
@@ -877,18 +877,19 @@ body.no-neon .form-neon-input:focus,body.no-neon .form-neon-select:focus,body.no
 
 .btn-fuego {
   position: relative;
-  overflow: hidden;
   background: linear-gradient(180deg, #ff5500, #ff2b00, #ff0000);
-  color: white;
+  color: white !important;
   font-weight: bold;
   font-size: 0.75rem;
-  padding: 0.35rem 0.5rem;
+  padding: 0.4rem 0.6rem;
   border-radius: 5px;
   text-align: center;
-  text-decoration: none;
+  text-decoration: none !important;
   transition: all 0.2s ease;
   box-shadow: 0 0 4px #ff4400, 0 0 8px rgba(255, 60, 0, 0.25);
-  z-index: 1;
+  z-index: 2; /* El texto queda por encima del efecto */
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
 .btn-fuego:hover {
@@ -903,7 +904,8 @@ body.no-neon .form-neon-input:focus,body.no-neon .form-neon-select:focus,body.no
   background: radial-gradient(circle, rgba(255, 220, 0, 0.25) 0%, transparent 65%);
   animation: llamas 2s ease-in-out infinite;
   opacity: 0.6;
-  z-index: -1;
+  z-index: 1; /* El efecto va atrás del texto */
+  pointer-events: none;
 }
 
 @keyframes llamas {
