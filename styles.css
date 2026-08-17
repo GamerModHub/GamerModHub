@@ -846,26 +846,26 @@ body.no-neon .form-neon-input:focus,body.no-neon .form-neon-select:focus,body.no
 
 /* === SECCIÓN MÁS JUEGOS - EFECTO FUEGO === */
 /* === SECCIÓN MÁS JUEGOS - EFECTO FUEGO === */
-/* === SECCIÓN MÁS JUEGOS - EFECTO FUEGO === */
+/* === SECCIÓN MÁS JUEGOS - BOTONES CHICOS === */
 .seccion-mas-juegos {
-  margin: 2.5rem 0;
-  padding: 1.5rem;
+  margin: 1.5rem 0;
+  padding: 1rem;
   background: rgba(10, 10, 20, 0.6);
-  border-radius: 12px;
+  border-radius: 10px;
   border: 1px solid rgba(255, 80, 0, 0.25);
 }
 .titulo-mas-juegos {
   text-align: center;
   font-family: 'font-neon', sans-serif;
-  font-size: 1.4rem;
+  font-size: 1.1rem;
   color: #ff9500;
-  margin-bottom: 1rem;
-  text-shadow: 0 0 8px rgba(255, 120, 0, 0.6);
+  margin-bottom: 0.8rem;
+  text-shadow: 0 0 6px rgba(255, 120, 0, 0.6);
 }
 .lista-paginas {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 0.8rem;
+  gap: 0.5rem;
 }
 @media (min-width: 640px) {
   .lista-paginas { grid-template-columns: repeat(4, 1fr); }
@@ -876,29 +876,30 @@ body.no-neon .form-neon-input:focus,body.no-neon .form-neon-select:focus,body.no
   background: linear-gradient(180deg, #ff5500, #ff2b00, #ff0000);
   color: white;
   font-weight: bold;
-  padding: 0.8rem 1rem;
-  border-radius: 8px;
+  font-size: 0.8rem;
+  padding: 0.5rem 0.7rem;
+  border-radius: 6px;
   text-align: center;
   text-decoration: none;
-  transition: all 0.3s ease;
-  box-shadow: 0 0 8px #ff4400, 0 0 15px rgba(255, 60, 0, 0.4);
+  transition: all 0.2s ease;
+  box-shadow: 0 0 5px #ff4400, 0 0 10px rgba(255, 60, 0, 0.3);
   z-index: 1;
 }
 .btn-fuego:hover {
-  transform: scale(1.06);
-  box-shadow: 0 0 12px #ff2200, 0 0 25px rgba(255, 30, 0, 0.6);
+  transform: scale(1.05);
+  box-shadow: 0 0 8px #ff2200, 0 0 15px rgba(255, 30, 0, 0.5);
 }
 .btn-fuego::before {
   content: '';
   position: absolute;
   inset: -50%;
-  background: radial-gradient(circle, rgba(255, 220, 0, 0.35) 0%, transparent 65%);
-  animation: llamas 2.2s ease-in-out infinite;
-  opacity: 0.8;
+  background: radial-gradient(circle, rgba(255, 220, 0, 0.3) 0%, transparent 65%);
+  animation: llamas 2s ease-in-out infinite;
+  opacity: 0.7;
   z-index: -1;
 }
 @keyframes llamas {
   0% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-6px) rotate(3deg); }
+  50% { transform: translateY(-3px) rotate(2deg); }
   100% { transform: translateY(0) rotate(0deg); }
 }
