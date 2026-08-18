@@ -33,9 +33,6 @@
             overflow: hidden;
         }
 
-        /* ============================================ */
-        /* ANIMACIONES NEÓN */
-        /* ============================================ */
         @keyframes neonPulse {
             0%, 100% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor; }
             50% { opacity: 0.8; text-shadow: 0 0 5px currentColor, 0 0 10px currentColor; }
@@ -61,20 +58,15 @@
             50% { transform: translateY(-5px); }
         }
 
-        /* ============================================ */
-        /* LAYOUT PRINCIPAL */
-        /* ============================================ */
         .app-container {
             display: flex;
             height: 100vh;
             position: relative;
         }
 
-        /* ============================================ */
         /* SIDEBAR */
-        /* ============================================ */
         .sidebar {
-            width: 320px;
+            width: 280px;
             background: var(--bg-sidebar);
             border-right: 1px solid var(--border-color);
             display: flex;
@@ -110,7 +102,7 @@
         }
 
         .logo-text {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 900;
             background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple), var(--neon-pink));
             -webkit-background-clip: text;
@@ -132,50 +124,23 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--neon-green), var(--neon-blue));
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
             font-size: 16px;
-            border: 2px solid var(--neon-green);
-            box-shadow: 0 0 15px rgba(0, 255, 148, 0.4);
+            border: 2px solid;
         }
 
-        .user-info {
-            flex: 1;
-        }
+        .user-info { flex: 1; }
+        .user-name { font-weight: bold; font-size: 0.9rem; }
+        .user-status { font-size: 0.75rem; color: var(--neon-green); display: flex; align-items: center; gap: 5px; }
+        .status-dot { width: 8px; height: 8px; background: var(--neon-green); border-radius: 50%; animation: neonPulse 2s ease-in-out infinite; }
 
-        .user-name {
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-
-        .user-status {
-            font-size: 0.75rem;
-            color: var(--neon-green);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--neon-green);
-            border-radius: 50%;
-            animation: neonPulse 2s ease-in-out infinite;
-        }
-
-        /* Canales */
         .channels-container {
             flex: 1;
             overflow-y: auto;
             padding: 15px;
-        }
-
-        .channel-section {
-            margin-bottom: 20px;
         }
 
         .channel-section-title {
@@ -219,38 +184,14 @@
             align-items: center;
             justify-content: center;
             font-size: 16px;
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(189, 0, 255, 0.2));
         }
 
-        .channel-info {
-            flex: 1;
-        }
+        .channel-info { flex: 1; }
+        .channel-name { font-weight: 600; font-size: 0.9rem; }
+        .channel-preview { font-size: 0.75rem; color: #666; }
 
-        .channel-name {
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .channel-preview {
-            font-size: 0.75rem;
-            color: #666;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .channel-badge {
-            background: var(--neon-pink);
-            color: #fff;
-            font-size: 0.7rem;
-            font-weight: bold;
-            padding: 2px 8px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(255, 0, 170, 0.5);
-        }
-
-        /* ============================================ */
-        /* CHAT PRINCIPAL */
-        /* ============================================ */
+        /* CHAT */
         .chat-container {
             flex: 1;
             display: flex;
@@ -268,11 +209,7 @@
             justify-content: space-between;
         }
 
-        .chat-header-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+        .chat-header-left { display: flex; align-items: center; gap: 12px; }
 
         .chat-channel-icon {
             width: 40px;
@@ -286,20 +223,10 @@
             border: 1px solid var(--border-color);
         }
 
-        .chat-channel-info h3 {
-            font-size: 1.1rem;
-            font-weight: bold;
-        }
+        .chat-channel-info h3 { font-size: 1.1rem; font-weight: bold; }
+        .chat-channel-info p { font-size: 0.8rem; color: #888; }
 
-        .chat-channel-info p {
-            font-size: 0.8rem;
-            color: #888;
-        }
-
-        .chat-header-right {
-            display: flex;
-            gap: 10px;
-        }
+        .chat-header-right { display: flex; gap: 10px; }
 
         .header-btn {
             width: 35px;
@@ -320,7 +247,6 @@
             box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
         }
 
-        /* Mensajes */
         .messages-container {
             flex: 1;
             overflow-y: auto;
@@ -352,6 +278,7 @@
             font-weight: bold;
             font-size: 14px;
             flex-shrink: 0;
+            border: 2px solid;
         }
 
         .message-content {
@@ -359,7 +286,6 @@
             border-radius: 15px;
             padding: 12px 15px;
             border: 1px solid var(--border-color);
-            position: relative;
         }
 
         .message.own .message-content {
@@ -374,21 +300,9 @@
             margin-bottom: 5px;
         }
 
-        .message-author {
-            font-weight: bold;
-            font-size: 0.85rem;
-        }
-
-        .message-time {
-            font-size: 0.7rem;
-            color: #666;
-        }
-
-        .message-text {
-            font-size: 0.95rem;
-            line-height: 1.5;
-            word-wrap: break-word;
-        }
+        .message-author { font-weight: bold; font-size: 0.85rem; }
+        .message-time { font-size: 0.7rem; color: #666; }
+        .message-text { font-size: 0.95rem; line-height: 1.5; word-wrap: break-word; }
 
         .message-role {
             font-size: 0.65rem;
@@ -397,25 +311,10 @@
             font-weight: bold;
         }
 
-        .role-admin {
-            background: rgba(255, 0, 85, 0.2);
-            color: var(--neon-red);
-            border: 1px solid rgba(255, 0, 85, 0.3);
-        }
+        .role-admin { background: rgba(255, 0, 85, 0.2); color: var(--neon-red); border: 1px solid rgba(255, 0, 85, 0.3); }
+        .role-mod { background: rgba(255, 149, 0, 0.2); color: var(--neon-orange); border: 1px solid rgba(255, 149, 0, 0.3); }
+        .role-user { background: rgba(0, 240, 255, 0.2); color: var(--neon-blue); border: 1px solid rgba(0, 240, 255, 0.3); }
 
-        .role-mod {
-            background: rgba(255, 149, 0, 0.2);
-            color: var(--neon-orange);
-            border: 1px solid rgba(255, 149, 0, 0.3);
-        }
-
-        .role-user {
-            background: rgba(0, 240, 255, 0.2);
-            color: var(--neon-blue);
-            border: 1px solid rgba(0, 240, 255, 0.3);
-        }
-
-        /* Input de mensaje */
         .chat-input-container {
             padding: 15px 20px;
             border-top: 1px solid var(--border-color);
@@ -463,18 +362,9 @@
             box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
         }
 
-        .send-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 30px rgba(0, 240, 255, 0.5);
-        }
+        .send-btn:hover { transform: scale(1.1); box-shadow: 0 0 30px rgba(0, 240, 255, 0.5); }
+        .send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-        .send-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* Typing indicator */
         .typing-indicator {
             display: none;
             padding: 10px 20px;
@@ -484,35 +374,16 @@
             gap: 8px;
         }
 
-        .typing-indicator.active {
-            display: flex;
-        }
-
-        .typing-dots {
-            display: flex;
-            gap: 3px;
-        }
-
-        .typing-dot {
-            width: 6px;
-            height: 6px;
-            background: var(--neon-blue);
-            border-radius: 50%;
-            animation: typing 1s ease-in-out infinite;
-        }
-
+        .typing-indicator.active { display: flex; }
+        .typing-dots { display: flex; gap: 3px; }
+        .typing-dot { width: 6px; height: 6px; background: var(--neon-blue); border-radius: 50%; animation: typing 1s ease-in-out infinite; }
         .typing-dot:nth-child(2) { animation-delay: 0.2s; }
         .typing-dot:nth-child(3) { animation-delay: 0.4s; }
 
-        /* ============================================ */
-        /* MODAL LOGIN */
-        /* ============================================ */
+        /* LOGIN */
         .modal-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(5, 5, 12, 0.95);
             display: flex;
             align-items: center;
@@ -520,9 +391,7 @@
             z-index: 1000;
         }
 
-        .modal-overlay.hidden {
-            display: none;
-        }
+        .modal-overlay.hidden { display: none; }
 
         .login-card {
             background: var(--bg-card);
@@ -544,11 +413,7 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .login-subtitle {
-            text-align: center;
-            color: #888;
-            margin-bottom: 30px;
-        }
+        .login-subtitle { text-align: center; color: #888; margin-bottom: 30px; }
 
         .login-input {
             width: 100%;
@@ -563,10 +428,7 @@
             transition: all 0.3s;
         }
 
-        .login-input:focus {
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
-        }
+        .login-input:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 240, 255, 0.2); }
 
         .login-btn {
             width: 100%;
@@ -581,61 +443,28 @@
             transition: all 0.3s;
         }
 
-        .login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(0, 240, 255, 0.4);
-        }
+        .login-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0, 240, 255, 0.4); }
 
-        /* ============================================ */
-        /* SCROLLBAR */
-        /* ============================================ */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.3); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0, 240, 255, 0.5); }
 
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: rgba(0, 240, 255, 0.3);
-            border-radius: 3px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(0, 240, 255, 0.5);
-        }
-
-        /* ============================================ */
-        /* RESPONSIVE */
-        /* ============================================ */
         @media (max-width: 768px) {
             .sidebar {
                 position: absolute;
-                left: 0;
-                top: 0;
-                bottom: 0;
+                left: 0; top: 0; bottom: 0;
                 transform: translateX(-100%);
                 box-shadow: 5px 0 20px rgba(0, 0, 0, 0.5);
             }
-
-            .sidebar.open {
-                transform: translateX(0);
-            }
-
-            .message {
-                max-width: 90%;
-            }
-
-            .mobile-menu-btn {
-                display: flex !important;
-            }
+            .sidebar.open { transform: translateX(0); }
+            .message { max-width: 90%; }
+            .mobile-menu-btn { display: flex !important; }
         }
 
         .mobile-menu-btn {
             display: none;
-            width: 35px;
-            height: 35px;
+            width: 35px; height: 35px;
             border-radius: 8px;
             border: 1px solid var(--border-color);
             background: rgba(0, 240, 255, 0.05);
@@ -645,13 +474,9 @@
             justify-content: center;
         }
 
-        /* Efectos de fondo */
         .bg-particles {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             pointer-events: none;
             z-index: 0;
             overflow: hidden;
@@ -659,8 +484,7 @@
 
         .particle {
             position: absolute;
-            width: 2px;
-            height: 2px;
+            width: 2px; height: 2px;
             background: var(--neon-blue);
             border-radius: 50%;
             animation: float 6s ease-in-out infinite;
@@ -669,10 +493,9 @@
     </style>
 </head>
 <body>
-    <!-- Partículas de fondo -->
     <div class="bg-particles" id="particles"></div>
 
-    <!-- Modal de Login -->
+    <!-- Login -->
     <div class="modal-overlay" id="login-modal">
         <div class="login-card">
             <div class="text-center mb-6">
@@ -687,9 +510,8 @@
         </div>
     </div>
 
-    <!-- App principal -->
+    <!-- App -->
     <div class="app-container" id="app" style="display: none;">
-        <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="logo-container">
@@ -709,90 +531,37 @@
             </div>
 
             <div class="channels-container">
-                <!-- Canales de texto -->
                 <div class="channel-section">
-                    <div class="channel-section-title">💬 Canales de Texto</div>
-                    <div class="channel-item active" data-channel="general" onclick="cambiarCanal('general')">
-                        <div class="channel-icon" style="background: linear-gradient(135deg, #00f0ff22, #00f0ff11);">💬</div>
+                    <div class="channel-section-title">💬 Chat</div>
+                    <div class="channel-item active" data-channel="general">
+                        <div class="channel-icon">💬</div>
                         <div class="channel-info">
                             <div class="channel-name">General</div>
                             <div class="channel-preview">Charla libre</div>
-                        </div>
-                        <span class="channel-badge" id="badge-general" style="display: none;">0</span>
-                    </div>
-                    <div class="channel-item" data-channel="ayuda" onclick="cambiarCanal('ayuda')">
-                        <div class="channel-icon" style="background: linear-gradient(135deg, #00ff9422, #00ff9411);">🆘</div>
-                        <div class="channel-info">
-                            <div class="channel-name">Ayuda</div>
-                            <div class="channel-preview">Soporte y preguntas</div>
-                        </div>
-                        <span class="channel-badge" id="badge-ayuda" style="display: none;">0</span>
-                    </div>
-                    <div class="channel-item" data-channel="trading" onclick="cambiarCanal('trading')">
-                        <div class="channel-icon" style="background: linear-gradient(135deg, #ff950022, #ff950011);">💰</div>
-                        <div class="channel-info">
-                            <div class="channel-name">Trading</div>
-                            <div class="channel-preview">Compra y venta</div>
-                        </div>
-                        <span class="channel-badge" id="badge-trading" style="display: none;">0</span>
-                    </div>
-                    <div class="channel-item" data-channel="clips" onclick="cambiarCanal('clips')">
-                        <div class="channel-icon" style="background: linear-gradient(135deg, #bd00ff22, #bd00ff11);">🎬</div>
-                        <div class="channel-info">
-                            <div class="channel-name">Clips</div>
-                            <div class="channel-preview">Mejores jugadas</div>
-                        </div>
-                        <span class="channel-badge" id="badge-clips" style="display: none;">0</span>
-                    </div>
-                </div>
-
-                <!-- Canales de juegos -->
-                <div class="channel-section">
-                    <div class="channel-section-title">🎮 Juegos</div>
-                    <div class="channel-item" data-channel="minecraft" onclick="cambiarCanal('minecraft')">
-                        <div class="channel-icon" style="background: linear-gradient(135deg, #00ff9422, #00ff9411);">⛏️</div>
-                        <div class="channel-info">
-                            <div class="channel-name">Minecraft</div>
-                            <div class="channel-preview">Construcciones y servers</div>
-                        </div>
-                    </div>
-                    <div class="channel-item" data-channel="fortnite" onclick="cambiarCanal('fortnite')">
-                        <div class="channel-icon" style="background: linear-gradient(135deg, #bd00ff22, #bd00ff11);">🪂</div>
-                        <div class="channel-info">
-                            <div class="channel-name">Fortnite</div>
-                            <div class="channel-preview">Squad y torneos</div>
-                        </div>
-                    </div>
-                    <div class="channel-item" data-channel="retro" onclick="cambiarCanal('retro')">
-                        <div class="channel-icon" style="background: linear-gradient(135deg, #ff00aa22, #ff00aa11);">🕹️</div>
-                        <div class="channel-info">
-                            <div class="channel-name">Retro Gaming</div>
-                            <div class="channel-preview">Clásicos y emulación</div>
                         </div>
                     </div>
                 </div>
             </div>
         </aside>
 
-        <!-- Chat principal -->
         <main class="chat-container">
             <div class="chat-header">
                 <div class="chat-header-left">
                     <button class="mobile-menu-btn" onclick="toggleSidebar()">
                         <i class="fa fa-bars"></i>
                     </button>
-                    <div class="chat-channel-icon" id="chat-channel-icon">💬</div>
+                    <div class="chat-channel-icon">💬</div>
                     <div class="chat-channel-info">
-                        <h3 id="chat-channel-name">General</h3>
-                        <p id="chat-channel-desc">Charla libre</p>
+                        <h3>General</h3>
+                        <p>Charla libre</p>
                     </div>
                 </div>
                 <div class="chat-header-right">
                     <button class="header-btn" title="Miembros">
                         <i class="fa fa-users"></i>
                     </button>
-                    <button class="header-btn" title="Buscar">
-                        <i class="fa fa-search"></i>
+                    <button class="header-btn" title="Volver al sitio" onclick="window.location.href='index.html'">
+                        <i class="fa fa-home"></i>
                     </button>
                 </div>
             </div>
@@ -832,9 +601,6 @@
     </div>
 
     <script>
-        // ============================================
-        // CONFIGURACIÓN
-        // ============================================
         const firebaseConfig = {
             apiKey: "AIzaSyAd6_jbAZjMQlocFOkQPzIQ11NEGFfudcw",
             authDomain: "base-administrativa-dea20.firebaseapp.com",
@@ -847,40 +613,23 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // Variables globales
         let currentUser = null;
-        let currentChannel = 'general';
-        let messageListener = null;
-
-        const CHANNELS = {
-            general: { nombre: 'General', icono: '💬', desc: 'Charla libre', color: '#00f0ff' },
-            ayuda: { nombre: 'Ayuda', icono: '🆘', desc: 'Soporte y preguntas', color: '#00ff94' },
-            trading: { nombre: 'Trading', icono: '💰', desc: 'Compra y venta', color: '#ff9500' },
-            clips: { nombre: 'Clips', icono: '🎬', desc: 'Mejores jugadas', color: '#bd00ff' },
-            minecraft: { nombre: 'Minecraft', icono: '⛏️', desc: 'Construcciones y servers', color: '#00ff94' },
-            fortnite: { nombre: 'Fortnite', icono: '🪂', desc: 'Squad y torneos', color: '#bd00ff' },
-            retro: { nombre: 'Retro Gaming', icono: '🕹️', desc: 'Clásicos y emulación', color: '#ff00aa' }
-        };
+        const CURRENT_CHANNEL = 'general';
 
         const USER_COLORS = [
             '#00f0ff', '#bd00ff', '#ff00aa', '#00ff94', 
             '#ff9500', '#ff0055', '#ffd700', '#00ffff'
         ];
 
-        // ============================================
-        // INICIALIZACIÓN
-        // ============================================
         function init() {
             crearParticulas();
             
-            // Verificar si hay usuario guardado
             const savedUser = localStorage.getItem('foro_user');
             if (savedUser) {
                 currentUser = JSON.parse(savedUser);
                 mostrarApp();
             }
 
-            // Enter para login
             document.getElementById('username-input').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') entrarAlForo();
             });
@@ -899,9 +648,6 @@
             }
         }
 
-        // ============================================
-        // LOGIN
-        // ============================================
         function entrarAlForo() {
             const username = document.getElementById('username-input').value.trim();
             
@@ -931,7 +677,6 @@
             document.getElementById('login-modal').classList.add('hidden');
             document.getElementById('app').style.display = 'flex';
             
-            // Actualizar UI de usuario
             document.getElementById('user-name').textContent = currentUser.nombre;
             document.getElementById('user-avatar').textContent = currentUser.nombre.charAt(0).toUpperCase();
             document.getElementById('user-avatar').style.background = `linear-gradient(135deg, ${currentUser.color}, ${currentUser.color}88)`;
@@ -941,48 +686,15 @@
             cargarMensajes();
         }
 
-        // ============================================
-        // CANALES
-        // ============================================
-        function cambiarCanal(channelId) {
-            currentChannel = channelId;
-            
-            // Actualizar UI
-            document.querySelectorAll('.channel-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            document.querySelector(`[data-channel="${channelId}"]`).classList.add('active');
-
-            const channel = CHANNELS[channelId];
-            document.getElementById('chat-channel-name').textContent = channel.nombre;
-            document.getElementById('chat-channel-desc').textContent = channel.desc;
-            document.getElementById('chat-channel-icon').textContent = channel.icono;
-
-            // Cerrar sidebar en mobile
-            document.getElementById('sidebar').classList.remove('open');
-
-            cargarMensajes();
-        }
-
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
         }
 
-        // ============================================
-        // MENSAJES
-        // ============================================
         function cargarMensajes() {
-            // Limpiar listener anterior
-            if (messageListener) {
-                messageListener();
-            }
-
             const container = document.getElementById('messages-container');
-            container.innerHTML = '<div class="text-center py-10 text-gray-500"><i class="fa fa-spinner fa-spin text-2xl"></i><p class="mt-2">Cargando mensajes...</p></div>';
 
-            // Escuchar mensajes en tiempo real
-            messageListener = db.collection('foro_mensajes')
-                .where('canal', '==', currentChannel)
+            db.collection('foro_mensajes')
+                .where('canal', '==', CURRENT_CHANNEL)
                 .orderBy('timestamp', 'desc')
                 .limit(100)
                 .onSnapshot(snapshot => {
@@ -1019,7 +731,7 @@
                 
                 return `
                     <div class="message ${isOwn ? 'own' : ''}">
-                        <div class="message-avatar" style="background: linear-gradient(135deg, ${msg.color}, ${msg.color}88); border: 2px solid ${msg.color};">
+                        <div class="message-avatar" style="background: linear-gradient(135deg, ${msg.color}, ${msg.color}88); border-color: ${msg.color};">
                             ${msg.autor.charAt(0).toUpperCase()}
                         </div>
                         <div class="message-content">
@@ -1034,7 +746,6 @@
                 `;
             }).join('');
 
-            // Scroll al final
             container.scrollTop = container.scrollHeight;
         }
 
@@ -1049,7 +760,7 @@
 
             try {
                 await db.collection('foro_mensajes').add({
-                    canal: currentChannel,
+                    canal: CURRENT_CHANNEL,
                     userId: currentUser.id,
                     autor: currentUser.nombre,
                     color: currentUser.color,
@@ -1082,9 +793,6 @@
             textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
         }
 
-        // ============================================
-        // UTILIDADES
-        // ============================================
         function formatTime(timestamp) {
             const date = new Date(timestamp);
             const now = new Date();
@@ -1104,7 +812,6 @@
             return div.innerHTML;
         }
 
-        // Iniciar
         init();
     </script>
 </body>
