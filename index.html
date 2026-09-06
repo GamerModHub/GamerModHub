@@ -100,17 +100,14 @@
         <h3 class="font-neon text-2xl neon-animated mb-2 flex items-center gap-2"><i class="fa fa-folder-open"></i> Biblioteca</h3>
         <p class="text-gray-400 text-sm mb-6">Explorá el catálogo completo de consolas</p>
   
-  <!-- MAS JUEGOS EN -->
-        
-<section class="seccion-mas-juegos fade-in-item">
-  <button class="banner-futurista" id="btn-desplegar">
-    <span class="banner-texto">🔥 MÁS JUEGOS 🔥</span>
-    <i class="fa fa-chevron-down banner-flecha"></i>
-  </button>
-  <div class="lista-paginas" id="lista-juegos"></div>
-</section>
-
-
+        <!-- MAS JUEGOS EN -->
+        <section class="seccion-mas-juegos fade-in-item">
+            <button class="banner-futurista" id="btn-desplegar">
+                <span class="banner-texto">🔥 MÁS JUEGOS 🔥</span>
+                <i class="fa fa-chevron-down banner-flecha"></i>
+            </button>
+            <div class="lista-paginas" id="lista-juegos"></div>
+        </section>
 
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4" id="biblioteca-grid"></div>
     </div>
@@ -177,8 +174,6 @@
             <button type="button" class="filter-chip active" data-plat="all">Todas</button>
             <button type="button" class="filter-chip" data-plat="windows">💻 Windows</button>
             <button type="button" class="filter-chip" data-plat="android">🤖 Android</button>
-            <button type="button" class="filter-chip" data-plat="linux">🐧 Linux</button>
-            <button type="button" class="filter-chip" data-plat="macos">🍎 macOS</button>
             <button type="button" class="filter-chip" data-plat="multi">🌐 Multiplataforma</button>
         </div>
         <div id="emuladores-grid" class="grid-3-col">
@@ -199,7 +194,6 @@
             <button type="button" class="filter-chip active" data-cat="all">Todas</button>
             <button type="button" class="filter-chip" data-cat="launchers">🚀 Launchers</button>
             <button type="button" class="filter-chip" data-cat="herramientas">🧰 Herramientas</button>
-            <button type="button" class="filter-chip" data-cat="optimizacion">⚡ Optimización</button>
             <button type="button" class="filter-chip" data-cat="apk">📱 APKs</button>
             <button type="button" class="filter-chip" data-cat="otros">📦 Otros</button>
         </div>
@@ -413,7 +407,7 @@ const CONSOLE_ASPECT_RATIOS={
 const ICONOS_CONSOLA={'android':'🤖','windows':'💻','psvita':'🎮','psp':'📀','ps1':'💿','ps2':'🕹️','ps3':'🎮','ps4':'🎮','nes':'👾','snes':'👾','n64':'🕹️','gamecube':'🎲','wii':'🎮','wiiu':'🎮','gameboy':'📱','gameboycolor':'📱','gameboyadvance':'📱','nds':'📱','3ds':'📱','xbox':'🎮','xbox360':'🎮','segagenesis':'🕹️','segasaturn':'💿','sega_dreamcast':'💿','mame':'🕹️','arcade_y_mas':'👾'};
 
 const MODS_CATEGORIES={texturas_pc:{nombre:'Texturas PC',icono:'🖼️',color:'#bd00ff',desc:'Packs de texturas HD para juegos de PC'},texturas_iso:{nombre:'Texturas ISO',icono:'💿',color:'#00f0ff',desc:'Texturas mejoradas para ISOs'},parches:{nombre:'Parches',icono:'🔧',color:'#ff9500',desc:'Patches de traducción y fixes'},mods_juego:{nombre:'Mods de Juegos',icono:'🎮',color:'#ff00aa',desc:'Modificaciones completas'},configs:{nombre:'Configuraciones',icono:'⚙️',color:'#00ff94',desc:'Archivos de configuración'},shaders:{nombre:'Shaders',icono:'✨',color:'#ffd700',desc:'Shaders y efectos visuales'},otros:{nombre:'Otros',icono:'📦',color:'#9ca3af',desc:'Otros mods'}};
-const APPS_CATEGORIES={launchers:{nombre:'Launchers',icono:'🚀'},herramientas:{nombre:'Herramientas',icono:'🧰'},optimizacion:{nombre:'Optimización',icono:'⚡'},apk:{nombre:'APKs',icono:'📱'},otros:{nombre:'Otros',icono:'📦'}};
+const APPS_CATEGORIES={launchers:{nombre:'Launchers',icono:'🚀'},herramientas:{nombre:'Herramientas',icono:'🧰'},apk:{nombre:'APKs',icono:'📱'},otros:{nombre:'Otros',icono:'📦'}};
 const ARCHIVOS_CATEGORIES={bios:{nombre:'BIOS',icono:'💾'},firmwares:{nombre:'Firmwares',icono:'🔌'},saves:{nombre:'Saves',icono:'💽'},configs:{nombre:'Configuraciones',icono:'⚙️'},otros:{nombre:'Otros',icono:'📦'}};
 
 // ============================================
@@ -589,7 +583,7 @@ async function loadMods(){try{const d=await dbFirestore.collection('sistema').do
 
 async function loadArchivos(){try{const d=await dbFirestore.collection('sistema').doc('archivos_gamer').get();if(d.exists&&d.data().items){archivosData=d.data().items.sort((a,b)=>(b.timestamp||0)-(a.timestamp||0))}}catch(e){console.error('Error archivos:',e)}renderArchivos()}
 
-function renderBiblioteca(){const g=document.getElementById('biblioteca-grid');if(!g)return;g.innerHTML='';const cs=getAllCategoryKeys().filter(c=>getCategoryCount(c)>0).sort((a,b)=>getCategoryCount(b)-getCategoryCount(a));if(cs.length===0){g.innerHTML='<div class="col-span-full text-center py-12 text-gray-400"><i class="fa fa-inbox text-4xl mb-3 opacity-50"></i><p>Sin categorías.</p></div>';return}cs.forEach(c=>{const d=document.createElement('div');d.className='folder-card p-6 text-center';d.onclick=()=>openCategory(c);d.innerHTML=`<div class="text-5xl mb-4">${ICONOS_CONSOLA[c]||'🎯'}</div><h4 class="font-neon font-bold text-lg mb-1">${escapeHtml(getConsoleName(c))}</h4><p class="text-xs text-cyan-400 font-semibold">${countLabel(getCategoryCount(c))}</p>`;g.appendChild(d)});bindNeon()}
+function renderBiblioteca(){const g=document.getElementById('biblioteca-grid');if(!g)return;g.innerHTML='';const cs=getAllCategoryKeys().filter(c=>getCategoryCount(c)>0).sort((a,b)=>getCategoryCount(b)-getCategoryCount(a));if(cs.length===0){g.innerHTML='<div class="col-span-full text-center py-12 text-gray-400"><i class="fa fa-inbox text-4xl mb-3 opacity-50"></i><p>Sin categorías.</p></div>';return}cs.forEach(c=>{const d=document.createElement('div');d.className='folder-card p-6 text-center';d.onclick=()=>openCategory(c);const fallbackIcon=ICONOS_CONSOLA[c]||'🎯';d.innerHTML=`<div class="mb-4 flex justify-center items-center h-16"><img src="images/biblioteca-categorias/${c}.png" alt="${escapeHtml(getConsoleName(c))}" class="w-16 h-16 object-contain drop-shadow-[0_0_10px_rgba(0,240,255,0.4)] transition-transform duration-300 hover:scale-110" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="text-5xl hidden items-center justify-center w-16 h-16">${fallbackIcon}</div></div><h4 class="font-neon font-bold text-lg mb-1">${escapeHtml(getConsoleName(c))}</h4><p class="text-xs text-cyan-400 font-semibold">${countLabel(getCategoryCount(c))}</p>`;g.appendChild(d)});bindNeon()}
 
 function renderHomeRows(){const c=document.getElementById('dynamic-home-rows');c.innerHTML='';if(latestTicker){latestTicker.destroy();latestTicker=null}if(topTicker){topTicker.destroy();topTicker=null}const ls=document.createElement('div');ls.className='carousel-section fade-in-item';ls.style.setProperty('--accent-from','var(--neon-blue)');ls.style.setProperty('--accent-to','var(--neon-purple)');ls.innerHTML=`<div class="carousel-header"><div class="carousel-icon-wrap" style="background:linear-gradient(135deg,var(--neon-blue),var(--neon-purple));box-shadow:0 0 14px rgba(0,240,255,0.35)"><i class="fa fa-clock-o"></i></div><div><h3 class="carousel-title neon-animated">Recién agregados</h3><p class="carousel-subtitle">Los últimos 20 juegos</p></div></div><div class="carousel-track" id="latest-games-track"></div>`;c.appendChild(ls);const ts=document.createElement('div');ts.className='carousel-section fade-in-item';ts.style.setProperty('--accent-from','var(--neon-orange)');ts.style.setProperty('--accent-to','var(--neon-red)');ts.innerHTML=`<div class="carousel-header"><div class="carousel-icon-wrap" style="background:linear-gradient(135deg,var(--neon-orange),var(--neon-red));box-shadow:0 0 14px rgba(255,149,0,0.35)"><i class="fa fa-fire"></i></div><div><h3 class="carousel-title neon-animated">Top 20 más buscados</h3><p class="carousel-subtitle">Los juegos más populares</p></div></div><div class="carousel-track" id="top-searched-track"></div>`;c.appendChild(ts);renderLatestGames();renderTopBuscados();latestTicker=new TickerCarousel('latest-games-track',{speed:30});latestTicker.start();topTicker=new TickerCarousel('top-searched-track',{speed:35});topTicker.start();const sc=getAllCategoryKeys().filter(c=>getCategoryCount(c)>0).sort((a,b)=>getCategoryCount(b)-getCategoryCount(a));if(sc.length===0){const e=document.createElement('div');e.className='text-center py-10 text-gray-400';e.innerHTML='<i class="fa fa-inbox text-4xl mb-3 opacity-50"></i><p>Sin juegos aún.</p>';c.appendChild(e);return}sc.forEach(cat=>{const dn=getConsoleName(cat);const cnt=getCategoryCount(cat);const s=document.createElement('div');s.className='mb-10 fade-in-item';s.innerHTML=`<div class="flex items-center justify-between flex-wrap gap-2 mb-4"><h3 class="font-neon text-lg neon-animated flex items-center gap-2"><i class="fa fa-gamepad"></i> ${escapeHtml(dn)}</h3><span class="text-xs sm:text-sm flex items-center gap-2 sm:gap-4 w-full sm:w-auto justify-between sm:justify-end"><span class="text-gray-400 font-semibold">${countLabel(cnt)}</span><span class="ver-mas btn-ver-mas-cat" data-cat="${cat}">Ver más →</span></span></div><div class="scroll-row" data-cat-row="${cat}"></div>`;c.appendChild(s);const r=s.querySelector(`[data-cat-row="${cat}"]`);(db[cat]||[]).slice(0,ROMS_PREVIEW).forEach((g,i)=>r.appendChild(createGameCard(g,cat,{extraClass:'shrink-0',delay:i*0.05})))});document.querySelectorAll('.btn-ver-mas-cat').forEach(b=>{b.onclick=()=>openCategory(b.dataset.cat)});bindNeon()}
 
