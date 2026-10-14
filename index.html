@@ -15,17 +15,9 @@
             0%, 100% { box-shadow: 0 0 5px rgba(0, 240, 255, 0.3); }
             50% { box-shadow: 0 0 15px rgba(0, 240, 255, 0.6); }
         }
-        .stat-container {
-            animation: pulse-glow 3s ease-in-out infinite;
-        }
-        .stat-label {
-            font-size: 0.65rem;
-            opacity: 0.8;
-            letter-spacing: 0.05em;
-        }
-        @media (max-width: 640px) {
-            .stat-label { font-size: 0.6rem; }
-        }
+        .stat-container { animation: pulse-glow 3s ease-in-out infinite; }
+        .stat-label { font-size: 0.65rem; opacity: 0.8; letter-spacing: 0.05em; }
+        @media (max-width: 640px) { .stat-label { font-size: 0.6rem; } }
     </style>
 </head>
 <body>
@@ -38,7 +30,7 @@
             <i class="fa fa-bolt text-cyan-400"></i> <span class="hidden sm:inline">GAMERMODHUB</span><span class="sm:hidden">GMH</span>
         </h1>
         
-        <!-- CONTADOR DE VISITAS GLOBALES EN TIEMPO REAL -->
+        <!-- CONTADOR DE VISITAS -->
         <div class="stat-container flex items-center gap-1 sm:gap-3 text-[10px] sm:text-xs font-bold bg-gradient-to-r from-cyan-500/10 to-purple-500/10 border border-cyan-500/30 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 shrink-0">
             <div class="flex items-center gap-1.5 text-cyan-400">
                 <i class="fa fa-users text-[10px] sm:text-xs"></i>
@@ -58,7 +50,12 @@
                 <span class="stat-label text-[8px] sm:text-[10px] text-pink-300/80">este mes</span>
             </div>
         </div>
-        <!-- FIN CONTADOR -->
+
+        <!-- BOTÓN DE VIDEOS EN ROJO (AL LADO DEL CONTADOR) -->
+        <a href="https://m.youtube.com/@DraculordxInmortalgames/videos" target="_blank" rel="noopener noreferrer" 
+           class="flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white text-[10px] sm:text-xs font-bold px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg transition-all shadow-lg shadow-red-600/30 hover:shadow-red-600/50 hover:scale-105 shrink-0">
+            <i class="fa fa-youtube-play"></i> <span class="hidden sm:inline">Videos</span>
+        </a>
 
         <div class="flex-1"></div>
         <button type="button" id="btn-toggle-neon" class="neon-toggle-btn" title="Apagar efectos neon" aria-label="Alternar efectos neon">
@@ -637,10 +634,6 @@ document.getElementById('form-pedir').addEventListener('submit',async e=>{
     finally{btn.disabled=false;btn.classList.remove('disabled');btn.innerHTML='<i class="fa fa-paper-plane"></i> Enviar pedido'}
 });
 
-// ============================================
-// ESTADÍSTICAS DE VISITAS GLOBALES EN TIEMPO REAL (ANTI-FANTASMAS)
-// ============================================
-
 function getWeekString(date) {
     const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
     const dayNum = d.getUTCDay() || 7;
@@ -652,87 +645,53 @@ function getWeekString(date) {
 
 async function registrarVisitaGlobal() {
     try {
-        const userId = getAnonId(); // ID persistente del dispositivo
+        const userId = getAnonId();
         const now = new Date();
         const hoyStr = now.toISOString().split('T')[0];
         const semanaStr = getWeekString(now);
         const mesStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-
         const userRef = dbFirestore.collection('usuarios_visitas').doc(userId);
         const userDoc = await userRef.get();
         const data = userDoc.exists ? userDoc.data() : {};
-
         const checkAndUpdate = async (campo, valorActual, nuevoValor, docGlobal) => {
             if (valorActual !== nuevoValor) {
-                // 1. Marcar que este usuario ya visitó en este período (evita recargas/fantasmas)
                 await userRef.set({ [campo]: nuevoValor }, { merge: true });
-                
-                // 2. Incrementar el contador GLOBAL atómicamente en Firebase
                 await dbFirestore.collection('stats_visitas').doc(docGlobal).set({
-                    count: firebase.firestore.FieldValue.increment(1),
-                    periodo: nuevoValor,
+                    count: firebase.firestore.FieldValue.increment(1), periodo: nuevoValor,
                     ultima_actualizacion: firebase.firestore.FieldValue.serverTimestamp()
                 }, { merge: true });
             }
         };
-
         await checkAndUpdate('last_hoy', data.last_hoy, hoyStr, 'hoy');
         await checkAndUpdate('last_semana', data.last_semana, semanaStr, 'semana');
         await checkAndUpdate('last_mes', data.last_mes, mesStr, 'mes');
-
-    } catch (e) {
-        console.error('Error al registrar visita:', e);
-    }
+    } catch (e) { console.error('Error al registrar visita:', e); }
 }
 
 function escucharVisitasEnTiempoReal() {
-    // Escuchar HOY en tiempo real
-    dbFirestore.collection('stats_visitas').doc('hoy').onSnapshot(doc => {
-        const count = doc.exists ? (doc.data().count || 0) : 0;
-        animateNumber('stat-hoy', count);
-    });
-
-    // Escuchar SEMANA en tiempo real
-    dbFirestore.collection('stats_visitas').doc('semana').onSnapshot(doc => {
-        const count = doc.exists ? (doc.data().count || 0) : 0;
-        animateNumber('stat-semana', count);
-    });
-
-    // Escuchar MES en tiempo real
-    dbFirestore.collection('stats_visitas').doc('mes').onSnapshot(doc => {
-        const count = doc.exists ? (doc.data().count || 0) : 0;
-        animateNumber('stat-mes', count);
-    });
+    dbFirestore.collection('stats_visitas').doc('hoy').onSnapshot(doc => { animateNumber('stat-hoy', doc.exists ? (doc.data().count || 0) : 0); });
+    dbFirestore.collection('stats_visitas').doc('semana').onSnapshot(doc => { animateNumber('stat-semana', doc.exists ? (doc.data().count || 0) : 0); });
+    dbFirestore.collection('stats_visitas').doc('mes').onSnapshot(doc => { animateNumber('stat-mes', doc.exists ? (doc.data().count || 0) : 0); });
 }
 
 function animateNumber(elementId, target) {
     const element = document.getElementById(elementId);
     if (!element) return;
     const current = parseInt(element.textContent.replace(/,/g, '')) || 0;
-    if (current === target) return; // Evitar animación si no cambió
-    
-    const duration = 800;
-    const start = performance.now();
-    
+    if (current === target) return;
+    const duration = 800, start = performance.now();
     function update(currentTime) {
         const elapsed = currentTime - start;
         const progress = Math.min(elapsed / duration, 1);
         const easeOutQuart = 1 - Math.pow(1 - progress, 4);
         const value = Math.floor(current + (target - current) * easeOutQuart);
         element.textContent = value.toLocaleString('es-ES');
-        
-        if (progress < 1) {
-            requestAnimationFrame(update);
-        } else {
-            element.textContent = target.toLocaleString('es-ES');
-        }
+        if (progress < 1) requestAnimationFrame(update);
+        else element.textContent = target.toLocaleString('es-ES');
     }
     requestAnimationFrame(update);
 }
 
-// ============================================
-// INICIALIZACIÓN
-// ============================================
 const btnDesplegar = document.getElementById('btn-desplegar');
 const listaJuegos = document.getElementById('lista-juegos');
 const flecha = document.querySelector('.banner-flecha');
@@ -753,8 +712,8 @@ fetch('mas-juegos.json').then(res => res.json()).then(sitios => {
 loadData();
 loadNovedades();
 loadTopBuscados();
-registrarVisitaGlobal();       // Registra la visita anti-fantasmas
-escucharVisitasEnTiempoReal(); // Mantiene los números actualizados en vivo
+registrarVisitaGlobal();
+escucharVisitasEnTiempoReal();
 bindNeon();
 </script>
 </body>
