@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Centro administrativo | Admin Pro 3.6</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<div id="toast-container"></div>
+
+<!-- MODAL PROCESO -->
+<div id="modal-proceso" class="modal-global">
+    <div class="caja-modal">
+        <i id="icono-modal" class="fa fa-cog fa-spin fa-3x titulo-dorado mb-4"></i>
+        <h2 id="titulo-modal" class="font-gamer text-xl sm:text-2xl titulo-dorado">PROCESANDO</h2>
+        <p id="detalle-modal" class="text-amber-300 my-4 text-sm"></p>
+        <div class="w-full h-2 bg-amber-900/30 rounded-full overflow-hidden mb-6">
+            <div id="barra-progreso" class="h-full bg-gradient-to-r from-yellow-600 to-yellow-300 transition-all duration-300" style="width: 0%"></div>
+        </div>
+        <button id="cerrar-modal-proceso" class="boton-accion bg-amber-900/40 text-amber-200 border border-amber-600/50 w-full hidden">Cerrar</button>
+    </div>
+</div>
+
+<!-- 1. PANTALLA DE LOGIN -->
+<div id="pantalla-login" class="pantalla-completa">
+    <div class="marco-real caja-centro">
+        <i class="fa fa-shield titulo-dorado text-5xl mb-4"></i>
+        <h1 class="font-gamer text-2xl sm:text-3xl titulo-dorado mb-2">PANEL DE ADMINISTRACIÓN</h1>
+        <p class="text-amber-500/60 text-sm mb-5">Sistema de Gestión Seguro</p>
+        
+        <div class="text-left bg-red-900/10 border border-red-600/30 rounded-lg p-3 mb-6">
+            <div class="flex items-start gap-2">
+                <i class="fa fa-exclamation-triangle text-orange-400 mt-1"></i>
+                <div class="text-sm">
+                    <div class="font-bold text-orange-400 uppercase tracking-wider text-xs">Acceso Restringido</div>
+                    <div class="text-amber-200/70 text-xs mt-1">Esta sesión está reservada exclusivamente para administradores autorizados.</div>
+                </div>
+            </div>
+        </div>
+        
+        <form id="form-login" class="space-y-5">
+            <input type="text" id="usuario" class="input-lujo" placeholder="Usuario" required autocomplete="username">
+            <input type="password" id="clave" class="input-lujo" placeholder="Contraseña" required autocomplete="current-password">
+            <button type="submit" class="btn-soberano w-full mt-4">INGRESAR AL SISTEMA</button>
+        </form>
+
+        <div id="diagnostico-login">
+            <h4><i class="fa fa-exclamation-circle"></i> Problema detectado</h4>
+            <ul id="diagnostico-detalles"></ul>
+        </div>
+    </div>
+</div>
+
+<!-- 2. PANTALLA DE BIENVENIDA -->
+<div id="pantalla-bienvenida" class="pantalla-completa">
+    <div class="marco-real caja-centro">
+        <i class="fa fa-user-circle-o titulo-dorado text-7xl mb-6"></i>
+        <h1 class="font-gamer text-2xl sm:text-3xl titulo-dorado mb-2">BIENVENIDO</h1>
+        <h2 class="text-xl sm:text-2xl text-white mb-1" id="nombre-admin-display">ADMIN</h2>
+        <p class="text-amber-400/70 mb-10 text-base sm:text-lg">Sistema de Gestión de Catálogo v3.6</p>
+        
+        <button id="btn-ir-al-panel" class="btn-soberano w-full text-base sm:text-xl py-4 sm:py-5 mb-3 shadow-lg shadow-yellow-500/20">
+            <i class="fa fa-upload mr-2"></i> SUBIR ROMS / GESTIONAR
+        </button>
+        <button id="btn-ir-al-validador" class="btn-soberano w-full text-base sm:text-xl py-4 sm:py-5 mb-3 shadow-lg shadow-yellow-500/20" style="background: linear-gradient(135deg, #0066cc, #00aaff, #66ccff);">
+            <i class="fa fa-check-circle mr-2"></i> VALIDAR URLs
+        </button>
+        <button id="btn-ir-a-huerfanas" class="btn-soberano w-full text-base sm:text-xl py-4 sm:py-5 mb-3 shadow-lg shadow-orange-500/20" style="background: linear-gradient(135deg, #cc6600, #ff9500, #ffcc66);">
+            <i class="fa fa-ghost mr-2"></i> ELIMINAR FOTOS HUÉRFANAS
+        </button>
+        <button id="btn-ir-a-reportes" class="btn-soberano w-full text-base sm:text-xl py-4 sm:py-5 mb-3 shadow-lg shadow-red-500/20" style="background: linear-gradient(135deg, #990033, #ff0055, #ff6688);">
+            <i class="fa fa-flag mr-2"></i> REPORTES DE USUARIOS
+        </button>
+        <button onclick="window.location.href='pedidos.html'" class="btn-soberano w-full text-base sm:text-xl py-4 sm:py-5 mb-3 shadow-lg shadow-cyan-500/20" style="background: linear-gradient(135deg, #006699, #00f0ff, #66eeff);">
+            <i class="fa fa-gamepad mr-2"></i> PEDIDOS DE JUEGOS
+        </button>
+        <button id="btn-ir-a-extras" class="btn-soberano w-full text-base sm:text-xl py-4 sm:py-5 mb-4 shadow-lg shadow-purple-500/20" style="background: linear-gradient(135deg, #6600cc, #bd00ff, #e066ff);">
+            <i class="fa fa-puzzle-piece mr-2"></i> EMULADORES / APPS / MODS / ARCHIVOS / NOVEDADES
+        </button>
+        <button id="btn-logout-bienvenida" class="boton-accion bg-red-900/30 text-red-300 border border-red-600/50 w-full py-3 hover:bg-red-900/50">
+            <i class="fa fa-sign-out mr-2"></i> Cerrar Sesión
+        </button>
+    </div>
+</div>
+
+<!-- 3. PANEL PRINCIPAL (Gestión ROMs) -->
+<div id="panel-principal" class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-10">
+    <header class="mb-6 sm:mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div class="w-full md:w-auto">
+            <h1 class="font-gamer text-xl sm:text-3xl md:text-4xl titulo-dorado">CATÁLOGO <span class="text-xs sm:text-sm align-top bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded border border-yellow-500/30">ADMIN</span></h1>
+            <p class="text-amber-400/70 text-xs sm:text-sm mt-1"><i class="fa fa-database text-green-400"></i> Base de datos estructurada por plataformas</p>
+            <p class="text-green-400 text-xs mt-1"><i class="fa fa-user"></i> Conectado: <span class="font-bold" id="admin-header-name">-</span></p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+            <button id="btn-ir-validador-desde-panel" class="boton-accion bg-blue-900/30 text-blue-200 border border-blue-600/50 hover:bg-blue-900/50 w-full md:w-auto">
+                <i class="fa fa-check-circle"></i> <span class="hidden sm:inline">Validar URLs</span>
+            </button>
+            <button id="btn-volver-inicio" class="boton-accion bg-amber-900/30 text-amber-200 border border-amber-600/50 hover:bg-amber-900/50 w-full md:w-auto">
+                <i class="fa fa-arrow-left"></i> <span class="hidden sm:inline">Volver al </span>Inicio
+            </button>
+        </div>
+    </header>
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 mb-6 sm:mb-8">
+        <div class="tarjeta-estadistica text-center">
+            <p class="font-gamer text-2xl sm:text-3xl md:text-4xl titulo-dorado" id="total">0</p>
+            <p class="text-amber-500/70 text-xs sm:text-sm uppercase tracking-wider">Total</p>
+        </div>
+        <div class="tarjeta-estadistica text-center">
+            <p class="font-gamer text-2xl sm:text-3xl md:text-4xl text-yellow-300" id="roms">0</p>
+            <p class="text-amber-500/70 text-xs sm:text-sm uppercase tracking-wider">ROMs</p>
+        </div>
+        <div class="tarjeta-estadistica text-center">
+            <p class="font-gamer text-2xl sm:text-3xl md:text-4xl text-pink-400" id="mods">0</p>
+            <p class="text-amber-500/70 text-xs sm:text-sm uppercase tracking-wider">MODs</p>
+        </div>
+        <div class="tarjeta-estadistica text-center">
+            <p class="font-gamer text-2xl sm:text-3xl md:text-4xl text-cyan-400" id="ports">0</p>
+            <p class="text-amber-500/70 text-xs sm:text-sm uppercase tracking-wider">PORTs</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
+        <!-- FORMULARIO NUEVO JUEGO -->
+        <div class="marco-real p-4 sm:p-6 md:p-8">
+            <h2 class="font-gamer text-lg sm:text-xl md:text-2xl mb-4 sm:mb-6 titulo-dorado flex items-center gap-2">
+                <i class="fa fa-plus-circle"></i> NUEVO JUEGO
+            </h2>
+            <form id="form-juego" class="space-y-4 sm:space-y-5">
+                <select id="consola" class="input-lujo" required>
+                    <option value="">-- Seleccionar Plataforma --</option>
+                    <option value="android">Android</option>
+                    <option value="windows">Windows</option>
+                    <option value="psp">PSP</option>
+                    <option value="psvita">PS Vita</option>
+                    <option value="ps1">PS1</option>
+                    <option value="ps2">PS2</option>
+                    <option value="ps3">PS3</option>
+                    <option value="ps4">PS4</option>
+                    <option value="nes">NES</option>
+                    <option value="snes">SNES</option>
+                    <option value="n64">N64</option>
+                    <option value="gamecube">GameCube</option>
+                    <option value="wii">Wii</option>
+                    <option value="wiiu">Wii U</option>
+                    <option value="gameboy">Game Boy</option>
+                    <option value="gameboycolor">Game Boy Color</option>
+                    <option value="gameboyadvance">Game Boy Advance</option>
+                    <option value="nds">NDS</option>
+                    <option value="3ds">3DS</option>
+                    <option value="xbox">Xbox</option>
+                    <option value="xbox360">Xbox 360</option>
+                    <option value="segagenesis">Sega Genesis</option>
+                    <option value="segasaturn">Sega Saturn</option>
+                    <option value="sega_dreamcast">Sega Dreamcast</option>
+                    <option value="mame">MAME</option>
+                    <option value="arcade_y_mas">Arcade y Más</option>
+                </select>
+                
+                <div class="grid grid-cols-3 gap-2 sm:gap-3">
+                    <label class="cursor-pointer border border-yellow-600/30 bg-yellow-900/10 rounded-xl p-2 sm:p-3 text-center hover:bg-yellow-900/20 transition-colors has-[:checked]:border-yellow-400 has-[:checked]:bg-yellow-900/30">
+                        <input type="radio" name="tipo" value="rom" checked class="accent-yellow-400 hidden"> 
+                        <span class="text-yellow-300 font-bold text-xs sm:text-sm">ROM</span>
+                    </label>
+                    <label class="cursor-pointer border border-pink-600/30 bg-pink-900/10 rounded-xl p-2 sm:p-3 text-center hover:bg-pink-900/20 transition-colors has-[:checked]:border-pink-400 has-[:checked]:bg-pink-900/30">
+                        <input type="radio" name="tipo" value="mod" class="accent-pink-400 hidden"> 
+                        <span class="text-pink-300 font-bold text-xs sm:text-sm">MOD</span>
+                    </label>
+                    <label class="cursor-pointer border border-cyan-600/30 bg-cyan-900/10 rounded-xl p-2 sm:p-3 text-center hover:bg-cyan-900/20 transition-colors has-[:checked]:border-cyan-400 has-[:checked]:bg-cyan-900/30">
+                        <input type="radio" name="tipo" value="port" class="accent-cyan-400 hidden"> 
+                        <span class="text-cyan-300 font-bold text-xs sm:text-sm">PORT</span>
+                    </label>
+                </div>
+
+                <input type="text" id="titulo" class="input-lujo" placeholder="Título del Juego" required>
+                <input type="text" id="idJuego" class="input-lujo" placeholder="ID Interno (Opcional)">
+
+                <div class="border border-dashed border-amber-700/50 rounded-xl p-3 sm:p-4 bg-black/20">
+                    <p class="text-amber-400/70 text-xs sm:text-sm mb-3 font-bold">📷 PORTADA</p>
+                    <input type="file" id="imgPortada" accept="image/*" class="hidden">
+                    <button type="button" onclick="document.getElementById('imgPortada').click()" class="btn-soberano w-full text-xs sm:text-sm">
+                        <i class="fa fa-cloud-upload"></i> SELECCIONAR IMAGEN
+                    </button>
+                    <img id="prevPortada" class="vista-previa mx-auto shadow-lg">
+                    <input type="hidden" id="coverUrl">
+                    <input type="hidden" id="coverPath">
+                </div>
+
+                <div class="border border-dashed border-amber-700/50 rounded-xl p-3 sm:p-4 bg-black/20">
+                    <p class="text-amber-400/70 text-xs sm:text-sm mb-3 font-bold">🖼️ CAPTURAS (Múltiple)</p>
+                    <input type="file" id="imgCapturas" accept="image/*" multiple class="hidden">
+                    <button type="button" onclick="document.getElementById('imgCapturas').click()" class="boton-accion bg-blue-900/20 text-blue-300 border border-blue-600/40 w-full hover:bg-blue-900/40 text-xs sm:text-sm">
+                        <i class="fa fa-images"></i> SELECCIONAR CAPTURAS
+                    </button>
+                    <div id="prevCapturas" class="flex flex-wrap gap-2 mt-3"></div>
+                    <input type="hidden" id="capturasData">
+                </div>
+
+                <!-- Link principal ahora es opcional si hay partes -->
+                <input type="url" id="link" class="input-lujo" placeholder="Enlace de Descarga Principal (Opcional si hay Partes)">
+                <textarea id="descripcion" class="input-lujo" placeholder="Descripción breve..." rows="3"></textarea>
+                
+                <!-- SECCIÓN DATOS ADICIONALES -->
+                <div class="border border-dashed border-amber-700/50 rounded-xl p-3 sm:p-4 bg-black/20 mt-4">
+                    <div class="flex justify-between items-center mb-3">
+                        <p class="text-amber-400/70 text-xs sm:text-sm font-bold flex items-center gap-2">
+                            <i class="fa fa-database"></i> DATOS (Saves, Parches, etc.)
+                        </p>
+                        <button type="button" id="btn-agregar-dato" class="text-xs bg-amber-900/40 text-amber-200 border border-amber-600/50 px-3 py-1.5 rounded hover:bg-amber-900/60 transition-colors">
+                            <i class="fa fa-plus"></i> Agregar
+                        </button>
+                    </div>
+                    <div id="contenedor-datos" class="space-y-2"></div>
+                </div>
+
+                <!-- SECCIÓN PARTES -->
+                <div class="border border-dashed border-amber-700/50 rounded-xl p-3 sm:p-4 bg-black/20 mt-4">
+                    <div class="flex justify-between items-center mb-3">
+                        <p class="text-amber-400/70 text-xs sm:text-sm font-bold flex items-center gap-2">
+                            <i class="fa fa-cubes"></i> PARTES DEL JUEGO
+                        </p>
+                        <button type="button" id="btn-agregar-parte" class="text-xs bg-amber-900/40 text-amber-200 border border-amber-600/50 px-3 py-1.5 rounded hover:bg-amber-900/60 transition-colors">
+                            <i class="fa fa-plus"></i> Agregar
+                        </button>
+                    </div>
+                    <div id="contenedor-partes" class="space-y-2"></div>
+                </div>
+
+                <button type="submit" class="btn-soberano w-full text-sm sm:text-lg mt-6">
+                    <i class="fa fa-save"></i> GUARDAR EN BASE DE DATOS
+                </button>
+            </form>
+        </div>
+
+        <!-- LISTADO CATÁLOGO -->
+        <div class="marco-real p-4 sm:p-6 md:p-8 flex flex-col h-full">
+            <h2 class="font-gamer text-lg sm:text-xl md:text-2xl mb-4 sm:mb-6 titulo-dorado flex items-center gap-2">
+                <i class="fa fa-list"></i> CATÁLOGO COMPLETO
+            </h2>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mb-4 sm:mb-6">
+                <div class="relative sm:col-span-2 lg:col-span-1">
+                    <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-amber-600"></i>
+                    <input type="text" id="buscar" class="input-lujo pl-9 sm:pl-10 text-sm" placeholder="Buscar por nombre...">
+                </div>
+                <select id="filtroTipo" class="input-lujo text-sm">
+                    <option value="">Todos los tipos</option>
+                    <option value="rom">ROMs</option><option value="mod">MODs</option><option value="port">PORTs</option>
+                </select>
+                <select id="filtroConsola" class="input-lujo text-sm">
+                    <option value="">Todas las plataformas</option>
+                </select>
+                <select id="filtroAdmin" class="input-lujo text-sm border-green-600/40 bg-green-900/10">
+                    <option value="todos">🌍 Ver todos los juegos</option>
+                    <option value="mio">👤 Solo mis subidas</option>
+                </select>
+            </div>
+
+            <div id="lista" class="space-y-2 sm:space-y-3 flex-1 overflow-y-auto pr-1 barra-dorada max-h-[50vh] sm:max-h-[600px]">
+                <div class="text-center py-10 text-amber-500/50">
+                    <i class="fa fa-circle-o-notch fa-spin text-3xl mb-3"></i>
+                    <p class="text-sm">Cargando catálogo...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR JUEGO -->
+    <div id="modal-editar" class="modal-global">
+        <div class="marco-real p-4 sm:p-6 md:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <h2 class="font-gamer text-lg sm:text-2xl mb-4 sm:mb-6 titulo-dorado border-b border-amber-700/30 pb-3 sm:pb-4">EDITAR JUEGO</h2>
+            
+            <div class="mb-3 sm:mb-4 p-3 sm:p-4 bg-gradient-to-r from-blue-900/20 to-amber-900/20 rounded-lg border border-blue-500/30 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <p class="text-blue-300 text-xs sm:text-sm"><i class="fa fa-user"></i> Subido por: <span id="edit-subido-por" class="font-bold text-white">-</span></p>
+                <p class="text-amber-300 text-xs sm:text-sm"><i class="fa fa-pencil"></i> Editado por: <span id="edit-editado-por" class="font-bold text-white">-</span></p>
+            </div>
+
+            <form id="formEditar" class="space-y-3 sm:space-y-4">
+                <input type="hidden" id="editId">
+                <input type="hidden" id="editConsolaOriginal">
+                <input type="hidden" id="editUploadedBy">
+                <input type="hidden" id="editOriginalTimestamp">
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                    <select id="editConsola" class="input-lujo text-sm"></select>
+                    <input type="text" id="editIdJuego" class="input-lujo text-sm" placeholder="ID Interno">
+                </div>
+                
+                <div class="flex flex-wrap gap-3 sm:gap-4 justify-center py-2">
+                    <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="editTipo" value="rom" class="accent-yellow-400"> <span class="text-sm">ROM</span></label>
+                    <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="editTipo" value="mod" class="accent-pink-400"> <span class="text-sm">MOD</span></label>
+                    <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="editTipo" value="port" class="accent-cyan-400"> <span class="text-sm">PORT</span></label>
+                </div>
+
+                <input type="text" id="editTitulo" class="input-lujo text-sm" placeholder="Título" required>
+
+                <div class="border border-dashed border-amber-700/50 rounded-xl p-3 bg-black/20">
+                    <p class="text-amber-400/70 text-xs sm:text-sm mb-2 font-bold">📷 PORTADA</p>
+                    <div class="relative mb-3">
+                        <img id="edit-cover-preview" class="vista-previa-edit mx-auto" style="display:none;">
+                        <p id="edit-cover-no-img" class="text-center text-gray-500 text-sm py-4 hidden">Sin portada actual</p>
+                        <button type="button" id="btn-delete-edit-cover" class="hidden absolute top-2 right-2 bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg hover:bg-red-700 active:scale-95 transition-transform">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input type="file" id="edit-imgPortada" accept="image/*" class="hidden">
+                        <button type="button" onclick="document.getElementById('edit-imgPortada').click()" class="boton-accion bg-blue-900/20 text-blue-300 border border-blue-600/40 flex-1 text-xs sm:text-sm">
+                            <i class="fa fa-upload"></i> Subir/Reemplazar
+                        </button>
+                        <input type="url" id="editCoverUrlInput" class="input-lujo text-xs flex-1" placeholder="O pega URL directa">
+                    </div>
+                </div>
+
+                <div class="border border-dashed border-amber-700/50 rounded-xl p-3 bg-black/20">
+                    <p class="text-amber-400/70 text-xs sm:text-sm mb-2 font-bold">🖼️ CAPTURAS</p>
+                    <div id="edit-capturas-grid" class="flex flex-wrap gap-2 mb-3"></div>
+                    <p id="edit-capturas-no-img" class="text-center text-gray-500 text-sm py-2 hidden">Sin capturas actuales</p>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input type="file" id="edit-imgCapturas" accept="image/*" multiple class="hidden">
+                        <button type="button" onclick="document.getElementById('edit-imgCapturas').click()" class="boton-accion bg-blue-900/20 text-blue-300 border border-blue-600/40 flex-1 text-xs sm:text-sm">
+                            <i class="fa fa-plus"></i> Agregar nuevas
+                        </button>
+                        <textarea id="editCapturasUrlInput" class="input-lujo text-xs flex-1" placeholder="O pega URLs (una por línea)" rows="2"></textarea>
+                    </div>
+                </div>
+
+                <input type="url" id="editLink" class="input-lujo text-sm" placeholder="Enlace de Descarga Principal (Opcional si hay Partes)">
+                <textarea id="editDesc" class="input-lujo text-sm" placeholder="Descripción" rows="3"></textarea>
+
+                <!-- SECCIÓN DATOS ADICIONALES (EDICIÓN) -->
+                <div class="border border-dashed border-amber-700/50 rounded-xl p-3 bg-black/20 mt-3">
+                    <div class="flex justify-between items-center mb-2">
+                        <p class="text-amber-400/70 text-xs font-bold uppercase flex items-center gap-2"><i class="fa fa-database"></i> Datos Adicionales</p>
+                        <button type="button" class="text-xs bg-amber-900/40 text-amber-200 border border-amber-600/50 px-2 py-1 rounded btn-agregar-edit-datos">
+                            <i class="fa fa-plus"></i> Agregar
+                        </button>
+                    </div>
+                    <div id="contenedor-edit-datos" class="space-y-2"></div>
+                </div>
+
+                <!-- SECCIÓN PARTES (EDICIÓN) -->
+                <div class="border border-dashed border-amber-700/50 rounded-xl p-3 bg-black/20 mt-3">
+                    <div class="flex justify-between items-center mb-2">
+                        <p class="text-amber-400/70 text-xs font-bold uppercase flex items-center gap-2"><i class="fa fa-cubes"></i> Partes del Juego</p>
+                        <button type="button" class="text-xs bg-amber-900/40 text-amber-200 border border-amber-600/50 px-2 py-1 rounded btn-agregar-edit-partes">
+                            <i class="fa fa-plus"></i> Agregar
+                        </button>
+                    </div>
+                    <div id="contenedor-edit-partes" class="space-y-2"></div>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4">
+                    <button type="submit" class="btn-soberano flex-1 text-sm">ACTUALIZAR REGISTRO</button>
+                    <button type="button" onclick="document.getElementById('modal-editar').style.display='none'" class="boton-accion bg-gray-800 text-gray-300 border border-gray-600 flex-1">CANCELAR</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 4. PANEL VALIDADOR DE URLs -->
+<div id="panel-validador" class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-10">
+    <header class="mb-6 sm:mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div class="w-full md:w-auto">
+            <h1 class="font-gamer text-xl sm:text-3xl md:text-4xl titulo-dorado flex items-center gap-3">
+                <i class="fa fa-check-circle text-blue-400"></i> VALIDADOR DE URLs
+                <span class="text-xs sm:text-sm align-top bg-blue-500/20 text-blue-300 px-2 py-1 rounded border border-blue-500/30">PRO</span>
+            </h1>
+            <p class="text-amber-400/70 text-xs sm:text-sm mt-1"><i class="fa fa-stethoscope text-green-400"></i> Diagnóstico completo de portadas, capturas y enlaces</p>
+            <p class="text-green-400 text-xs mt-1"><i class="fa fa-user"></i> Analista: <span class="font-bold" id="admin-validator-name">-</span></p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+            <button id="btn-volver-inicio-desde-val" class="boton-accion bg-amber-900/30 text-amber-200 border border-amber-600/50 hover:bg-amber-900/50 w-full md:w-auto">
+                <i class="fa fa-home"></i> <span class="hidden sm:inline">Inicio</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="val-stats-grid">
+        <div class="val-stat total">
+            <div class="num" id="val-stat-total">0</div>
+            <div class="lbl">URLs Totales</div>
+        </div>
+        <div class="val-stat ok">
+            <div class="num" id="val-stat-ok">0</div>
+            <div class="lbl">✅ Funcionan</div>
+        </div>
+        <div class="val-stat error">
+            <div class="num" id="val-stat-error">0</div>
+            <div class="lbl">❌ Rotas</div>
+        </div>
+        <div class="val-stat warn">
+            <div class="num" id="val-stat-pending">0</div>
+            <div class="lbl">⏳ Pendientes</div>
+        </div>
+    </div>
+
+    <div class="marco-real p-4 sm:p-5 mb-4">
+        <h3 class="font-gamer text-sm sm:text-base titulo-dorado mb-3 flex items-center gap-2">
+            <i class="fa fa-filter"></i> CONFIGURACIÓN DEL ANÁLISIS
+        </h3>
+        <div class="val-filtro-grupo">
+            <div>
+                <label class="text-xs text-amber-400/70 uppercase tracking-wider mb-1 block">Consola / Categoría</label>
+                <select id="val-filtro-consola" class="input-lujo text-sm">
+                    <option value="todas">🌐 Todas las plataformas</option>
+                </select>
+            </div>
+            <div>
+                <label class="text-xs text-amber-400/70 uppercase tracking-wider mb-1 block">Tipo de URL</label>
+                <select id="val-filtro-tipo-url" class="input-lujo text-sm">
+                    <option value="todas">📊 Todas las URLs</option>
+                    <option value="cover">📷 Solo portadas</option>
+                    <option value="screenshot">🖼️ Solo capturas</option>
+                    <option value="download">⬇️ Solo descargas</option>
+                </select>
+            </div>
+            <div>
+                <label class="text-xs text-amber-400/70 uppercase tracking-wider mb-1 block">Estado</label>
+                <select id="val-filtro-estado" class="input-lujo text-sm">
+                    <option value="todos">🔍 Todos los estados</option>
+                    <option value="error">❌ Solo rotas</option>
+                    <option value="ok">✅ Solo funcionales</option>
+                    <option value="pending">⏳ Solo pendientes</option>
+                </select>
+            </div>
+            <div>
+                <label class="text-xs text-amber-400/70 uppercase tracking-wider mb-1 block">Concurrencia</label>
+                <select id="val-concurrencia" class="input-lujo text-sm">
+                    <option value="3">3 simultáneas (seguro)</option>
+                    <option value="5" selected>5 simultáneas (recomendado)</option>
+                    <option value="8">8 simultáneas (rápido)</option>
+                    <option value="12">12 simultáneas (agresivo)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="val-actions">
+            <button id="val-btn-cargar" class="val-action-btn">
+                <i class="fa fa-refresh"></i> Cargar URLs
+            </button>
+            <button id="val-btn-validar-todas" class="val-action-btn primary">
+                <i class="fa fa-play-circle"></i> Validar todas
+            </button>
+            <button id="val-btn-validar-pendientes" class="val-action-btn">
+                <i class="fa fa-hourglass-half"></i> Validar pendientes
+            </button>
+            <button id="val-btn-validar-rotas" class="val-action-btn danger">
+                <i class="fa fa-exclamation-triangle"></i> Revalidar rotas
+            </button>
+            <button id="val-btn-cancelar" class="val-action-btn danger" disabled>
+                <i class="fa fa-stop-circle"></i> Cancelar
+            </button>
+            <button id="val-btn-limpiar-cache" class="val-action-btn">
+                <i class="fa fa-eraser"></i> Limpiar cache
+            </button>
+        </div>
+
+        <div class="val-progress-bar" id="val-progress-bar" style="display:none;">
+            <div class="val-progress-fill" id="val-progress-fill"></div>
+        </div>
+        <p id="val-progress-text" class="text-xs text-amber-400/70 text-center" style="display:none;">
+            <span id="val-progress-current">0</span> / <span id="val-progress-total">0</span> URLs analizadas
+            <span id="val-progress-eta" class="ml-2"></span>
+        </p>
+    </div>
+
+    <div class="marco-real p-4 sm:p-5">
+        <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
+            <h3 class="font-gamer text-sm sm:text-base titulo-dorado flex items-center gap-2">
+                <i class="fa fa-list-alt"></i> LISTADO COMPLETO DE URLs
+                <span id="val-list-count" class="text-xs bg-amber-900/30 text-amber-300 px-2 py-0.5 rounded border border-amber-700/30">0</span>
+            </h3>
+            <div class="flex gap-2">
+                <input type="text" id="val-buscar" class="input-lujo text-sm" placeholder="🔍 Buscar por título..." style="max-width: 250px; padding: 0.5rem 0.8rem;">
+            </div>
+        </div>
+        <div id="val-lista-urls" class="val-url-list">
+            <div class="text-center py-10 text-amber-500/50">
+                <i class="fa fa-info-circle text-3xl mb-3"></i>
+                <p class="text-sm">Presioná "Cargar URLs" para comenzar el análisis</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="val-rotas-container" class="val-rotas-container" style="display:none;">
+        <div class="val-rotas-header">
+            <div class="val-rotas-title">
+                <i class="fa fa-exclamation-triangle"></i> URLs ROTAS DETECTADAS
+            </div>
+            <div class="val-rotas-count">
+                <span id="val-rotas-count">0</span> problemas
+            </div>
+        </div>
+        <p class="text-xs text-amber-400/70 mb-4">
+            <i class="fa fa-info-circle"></i> 
+            <strong>Capturas:</strong> podés reemplazarlas o eliminarlas. · 
+            <strong>Portadas y enlaces de descarga:</strong> solo podés reemplazarlos. 
+            Para eliminar completamente un juego, usá la sección "Cargar ROMs".
+        </p>
+        <div id="val-rotas-lista"></div>
+    </div>
+</div>
+
+<!-- MODAL EDITAR URL ROTA -->
+<div id="modal-editar-url-rota" class="modal-global">
+    <div class="marco-real p-4 sm:p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <h2 class="font-gamer text-lg sm:text-2xl mb-4 titulo-dorado border-b border-amber-700/30 pb-3 flex items-center gap-2">
+            <i class="fa fa-wrench"></i> REPARAR URL ROTA
+        </h2>
+        
+        <div class="info-juego-roto">
+            <p class="text-white font-bold text-base mb-1" id="roto-juego-titulo">-</p>
+            <div class="flex flex-wrap gap-2 text-xs">
+                <span class="val-rota-badge consola" id="roto-juego-consola">-</span>
+                <span class="val-rota-badge tipo-rom" id="roto-juego-tipo">-</span>
+                <span class="val-rota-badge tipo-url" id="roto-tipo-url">-</span>
+            </div>
+            <p class="text-xs text-amber-400/50 mt-2"><i class="fa fa-user"></i> Subido por: <span id="roto-juego-uploader">-</span></p>
+        </div>
+
+        <div class="url-actual-rota">
+            <p class="text-xs text-red-400 font-bold mb-1"><i class="fa fa-times-circle"></i> URL ACTUAL (ROTA)</p>
+            <p id="roto-url-actual" style="font-family: monospace;">-</p>
+            <p class="text-xs mt-1" id="roto-codigo-error">-</p>
+        </div>
+
+        <form id="form-reparar-url" class="space-y-3">
+            <input type="hidden" id="roto-url-id">
+            
+            <div class="border border-dashed border-blue-500/40 rounded-xl p-3 bg-black/20">
+                <p class="text-blue-300 text-xs sm:text-sm mb-2 font-bold" id="roto-nueva-label">🔧 NUEVA URL</p>
+                
+                <div id="roto-imagen-container" style="display:none;">
+                    <input type="file" id="roto-img-input" accept="image/*" class="hidden">
+                    <button type="button" onclick="document.getElementById('roto-img-input').click()" class="boton-accion bg-blue-900/20 text-blue-300 border border-blue-600/40 w-full mb-2 text-xs sm:text-sm">
+                        <i class="fa fa-cloud-upload"></i> Subir nueva imagen
+                    </button>
+                    <img id="roto-img-preview" class="preview-nueva-url mx-auto">
+                </div>
+
+                <input type="url" id="roto-nueva-url" class="input-lujo text-sm" placeholder="O pegá la URL directa aquí">
+                <input type="hidden" id="roto-nuevo-path">
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3 pt-4">
+                <button type="submit" class="btn-soberano flex-1 text-sm">
+                    <i class="fa fa-check"></i> GUARDAR REPARACIÓN
+                </button>
+                <button type="button" onclick="document.getElementById('modal-editar-url-rota').style.display='none'" class="boton-accion bg-gray-800 text-gray-300 border border-gray-600 flex-1">CANCELAR</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 5. PANEL HUÉRFANAS -->
+<div id="panel-huerfanas" class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-10">
+    <header class="mb-6 sm:mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <h1 class="font-gamer text-xl sm:text-3xl titulo-dorado flex items-center gap-3">
+                <i class="fa fa-ghost text-orange-400"></i> FOTOS HUÉRFANAS
+            </h1>
+            <p class="text-amber-400/70 text-xs sm:text-sm mt-1">Detecta imágenes en GitHub sin vincular a la base de datos</p>
+        </div>
+        <button id="btn-volver-inicio-desde-huerfanas" class="boton-accion bg-amber-900/30 text-amber-200 border border-amber-600/50"><i class="fa fa-home"></i> Inicio</button>
+    </header>
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+        <div class="tarjeta-estadistica text-center"><p class="font-gamer text-2xl titulo-dorado" id="huer-stat-total">0</p><p class="text-amber-500/70 text-xs uppercase">Archivos</p></div>
+        <div class="tarjeta-estadistica text-center"><p class="font-gamer text-2xl text-green-400" id="huer-stat-vinculados">0</p><p class="text-amber-500/70 text-xs uppercase">Vinculados</p></div>
+        <div class="tarjeta-estadistica text-center"><p class="font-gamer text-2xl text-orange-400" id="huer-stat-huerfanos">0</p><p class="text-amber-500/70 text-xs uppercase">Huérfanos</p></div>
+        <div class="tarjeta-estadistica text-center"><p class="font-gamer text-2xl text-red-400" id="huer-stat-seleccionados">0</p><p class="text-amber-500/70 text-xs uppercase">Seleccionados</p></div>
+    </div>
+
+    <div class="marco-real p-4 mb-4">
+        <div class="flex flex-wrap gap-2 mb-3">
+            <button class="boton-accion bg-blue-900/30 text-blue-300 border border-blue-600/50" onclick="Huerfanas.escanear()"><i class="fa fa-search"></i> Escanear GitHub</button>
+            <button class="boton-accion boton-nuevo" onclick="Huerfanas.seleccionarTodos()"><i class="fa fa-check-square"></i> Seleccionar huérfanos</button>
+            <button class="boton-accion bg-gray-800 text-gray-300 border border-gray-600" onclick="Huerfanas.deseleccionarTodos()"><i class="fa fa-square-o"></i> Deseleccionar</button>
+            <button class="boton-accion boton-borrar" onclick="Huerfanas.eliminarSeleccionados()"><i class="fa fa-trash"></i> Eliminar seleccionados</button>
+        </div>
+        <div class="val-progress-bar" id="huer-progress-bar" style="display:none;"><div class="val-progress-fill" id="huer-progress-fill"></div></div>
+        <p id="huer-progress-text" class="text-xs text-amber-400/70 text-center" style="display:none;"><span id="huer-progress-detalle">-</span></p>
+    </div>
+
+    <div class="marco-real p-4">
+        <div id="huer-lista" class="space-y-2 max-h-[600px] overflow-y-auto pr-1">
+            <div class="text-center py-10 text-amber-500/50">
+                <i class="fa fa-ghost text-3xl mb-3"></i>
+                <p>Presioná "Escanear GitHub" para detectar archivos huérfanos</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 6. PANEL REPORTES -->
+<div id="panel-reportes" class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-10">
+    <header class="mb-6 sm:mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <h1 class="font-gamer text-xl sm:text-3xl titulo-dorado flex items-center gap-3">
+                <i class="fa fa-flag text-red-400"></i> REPORTES DE USUARIOS
+            </h1>
+            <p class="text-amber-400/70 text-xs sm:text-sm mt-1">Gestión de problemas reportados por la comunidad</p>
+        </div>
+        <button id="btn-volver-inicio-desde-reportes" class="boton-accion bg-amber-900/30 text-amber-200 border border-amber-600/50"><i class="fa fa-home"></i> Inicio</button>
+    </header>
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+        <div class="tarjeta-estadistica text-center"><p class="font-gamer text-2xl titulo-dorado" id="rep-stat-total">0</p><p class="text-amber-500/70 text-xs uppercase">Total</p></div>
+        <div class="tarjeta-estadistica text-center"><p class="font-gamer text-2xl text-orange-400" id="rep-stat-pendientes">0</p><p class="text-amber-500/70 text-xs uppercase">Pendientes</p></div>
+        <div class="tarjeta-estadistica text-center"><p class="font-gamer text-2xl text-green-400" id="rep-stat-resueltos">0</p><p class="text-amber-500/70 text-xs uppercase">Resueltos</p></div>
+        <div class="tarjeta-estadistica text-center"><p class="font-gamer text-2xl text-cyan-400" id="rep-stat-juegos">0</p><p class="text-amber-500/70 text-xs uppercase">Juegos</p></div>
+    </div>
+
+    <div class="marco-real p-4 mb-4">
+        <div class="flex flex-wrap gap-2 mb-3">
+            <button class="boton-accion bg-blue-900/30 text-blue-300 border border-blue-600/50" onclick="Reportes.cargar()"><i class="fa fa-refresh"></i> Cargar reportes</button>
+            <button class="boton-accion boton-nuevo" onclick="Reportes.marcarTodosResueltos()"><i class="fa fa-check-double"></i> Resolver todos</button>
+            <button class="boton-accion boton-borrar" onclick="Reportes.limpiarResueltos()"><i class="fa fa-trash"></i> Borrar resueltos</button>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <button class="filter-chip active" data-estado="pendientes" onclick="Reportes.filtrar('pendientes')">⏳ Pendientes</button>
+            <button class="filter-chip" data-estado="todos" onclick="Reportes.filtrar('todos')">📋 Todos</button>
+            <button class="filter-chip" data-estado="resueltos" onclick="Reportes.filtrar('resueltos')">✅ Resueltos</button>
+        </div>
+    </div>
+
+    <div class="marco-real p-4">
+        <div id="rep-lista" class="space-y-2">
+            <div class="text-center py-10 text-amber-500/50">
+                <i class="fa fa-flag text-3xl mb-3"></i>
+                <p>Presioná "Cargar reportes"</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 7. PANEL EXTRAS -->
+<div id="panel-extras" class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-10">
+    <header class="mb-6 sm:mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <h1 class="font-gamer text-xl sm:text-3xl titulo-dorado flex items-center gap-3">
+                <i class="fa fa-puzzle-piece text-purple-400"></i> SECCIONES EXTRA
+            </h1>
+            <p class="text-amber-400/70 text-xs sm:text-sm mt-1">Gestión de emuladores, apps, mods, archivos, novedades y top buscados</p>
+        </div>
+        <button id="btn-volver-inicio-desde-extras" class="boton-accion bg-amber-900/30 text-amber-200 border border-amber-600/50"><i class="fa fa-home"></i> Inicio</button>
+    </header>
+
+    <div class="panel-extras-tabs">
+        <button class="panel-extras-tab active" data-tab="emuladores"><i class="fa fa-microchip"></i> Emuladores</button>
+        <button class="panel-extras-tab" data-tab="apps"><i class="fa fa-android"></i> Apps</button>
+        <button class="panel-extras-tab" data-tab="mods"><i class="fa fa-paint-brush"></i> Mods</button>
+        <button class="panel-extras-tab" data-tab="archivos"><i class="fa fa-folder-open-o"></i> Archivos</button>
+        <button class="panel-extras-tab" data-tab="novedades"><i class="fa fa-bullhorn"></i> Novedades</button>
+        <button class="panel-extras-tab" data-tab="top"><i class="fa fa-fire"></i> Top Buscados</button>
+    </div>
+
+    <div id="extras-emuladores" class="panel-extras-seccion activa">
+        <div class="flex flex-wrap gap-2 mb-4 items-center justify-between">
+            <h2 class="font-gamer titulo-dorado text-xl"><i class="fa fa-microchip"></i> Gestión de Emuladores</h2>
+            <button class="boton-accion boton-nuevo" onclick="Emuladores.abrirModal()"><i class="fa fa-plus"></i> Nuevo Emulador</button>
+        </div>
+        <input type="text" id="emuladores-buscar" class="input-lujo mb-4" placeholder="🔍 Buscar emulador...">
+        <div id="emuladores-lista" class="items-grid"></div>
+    </div>
+
+    <div id="extras-apps" class="panel-extras-seccion">
+        <div class="flex flex-wrap gap-2 mb-4 items-center justify-between">
+            <h2 class="font-gamer titulo-dorado text-xl"><i class="fa fa-android"></i> Gestión de Aplicaciones</h2>
+            <button class="boton-accion boton-nuevo" onclick="Apps.abrirModal()"><i class="fa fa-plus"></i> Nueva App</button>
+        </div>
+        <input type="text" id="apps-buscar" class="input-lujo mb-4" placeholder="🔍 Buscar app...">
+        <div id="apps-lista" class="items-grid"></div>
+    </div>
+
+    <div id="extras-mods" class="panel-extras-seccion">
+        <div class="flex flex-wrap gap-2 mb-4 items-center justify-between">
+            <h2 class="font-gamer titulo-dorado text-xl"><i class="fa fa-paint-brush"></i> Gestión de Mods</h2>
+            <button class="boton-accion boton-nuevo" onclick="Mods.abrirModal()"><i class="fa fa-plus"></i> Nuevo Mod</button>
+        </div>
+        <div class="category-selector" id="mods-categorias"></div>
+        <input type="text" id="mods-buscar" class="input-lujo mb-4" placeholder="🔍 Buscar mod...">
+        <div id="mods-lista" class="items-grid"></div>
+    </div>
+
+    <div id="extras-archivos" class="panel-extras-seccion">
+        <div class="flex flex-wrap gap-2 mb-4 items-center justify-between">
+            <h2 class="font-gamer titulo-dorado text-xl"><i class="fa fa-folder-open-o"></i> Archivos Gamer</h2>
+            <button class="boton-accion boton-nuevo" onclick="Archivos.abrirModal()"><i class="fa fa-plus"></i> Nuevo Archivo</button>
+        </div>
+        <div class="category-selector" id="archivos-categorias"></div>
+        <input type="text" id="archivos-buscar" class="input-lujo mb-4" placeholder="🔍 Buscar archivo...">
+        <div id="archivos-lista" class="items-grid"></div>
+    </div>
+
+    <div id="extras-novedades" class="panel-extras-seccion">
+        <div class="flex flex-wrap gap-2 mb-4 items-center justify-between">
+            <h2 class="font-gamer titulo-dorado text-xl"><i class="fa fa-bullhorn"></i> Gestión de Novedades</h2>
+            <button class="boton-accion boton-nuevo" onclick="Novedades.abrirModal()"><i class="fa fa-plus"></i> Nueva Novedad</button>
+        </div>
+        <div id="novedades-lista" class="space-y-2"></div>
+    </div>
+
+    <div id="extras-top" class="panel-extras-seccion">
+        <div class="flex flex-wrap gap-2 mb-4 items-center justify-between">
+            <h2 class="font-gamer titulo-dorado text-xl"><i class="fa fa-fire"></i> Top 20 Más Buscados</h2>
+            <button class="boton-accion boton-nuevo" onclick="TopBuscados.abrirModal()"><i class="fa fa-plus"></i> Agregar al Top</button>
+        </div>
+        <p class="text-amber-400/70 text-sm mb-4"><i class="fa fa-info-circle"></i> Estos juegos aparecen en el ticker "Top 20 más buscados" del inicio</p>
+        <div id="top-lista" class="space-y-2"></div>
+    </div>
+</div>
+
+<!-- MODAL CRUD GENÉRICO -->
+<div id="modal-crud" class="modal-global">
+    <div class="marco-real p-4 sm:p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <h2 id="modal-crud-titulo" class="font-gamer text-xl titulo-dorado mb-4">Nuevo Item</h2>
+        <form id="form-crud" class="space-y-3 text-left">
+            <div id="modal-crud-campos"></div>
+            <div class="flex gap-2 pt-2">
+                <button type="button" class="boton-accion bg-gray-800 text-gray-300 border border-gray-600 flex-1" onclick="cerrarModalCrud()">Cancelar</button>
+                <button type="submit" class="btn-soberano flex-1 text-sm" id="modal-crud-submit"><i class="fa fa-save"></i> Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL TOP BUSCADOS -->
+<div id="modal-top" class="modal-global">
+    <div class="marco-real p-4 sm:p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <h2 class="font-gamer text-xl titulo-dorado mb-4">Agregar al Top</h2>
+        <div class="mb-3">
+            <label class="text-xs text-amber-400/70 uppercase font-bold">Seleccionar del catálogo</label>
+            <input type="text" id="top-buscar-juego" class="input-lujo mb-2" placeholder="🔍 Buscar juego...">
+            <div id="top-resultados" class="space-y-1 max-h-[300px] overflow-y-auto"></div>
+        </div>
+        <div class="text-center text-amber-500/50 my-2">— o —</div>
+        <form id="form-top-manual" class="space-y-2 text-left">
+            <input type="text" id="top-manual-titulo" class="input-lujo" placeholder="Título del juego">
+            <input type="text" id="top-manual-consola" class="input-lujo" placeholder="Consola">
+            <input type="url" id="top-manual-cover" class="input-lujo" placeholder="URL de portada">
+            <input type="url" id="top-manual-link" class="input-lujo" placeholder="Link de descarga">
+            <div class="flex gap-2 pt-2">
+                <button type="button" class="boton-accion bg-gray-800 text-gray-300 border border-gray-600 flex-1" onclick="document.getElementById('modal-top').style.display='none'">Cancelar</button>
+                <button type="submit" class="btn-soberano flex-1 text-sm"><i class="fa fa-plus"></i> Agregar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Aquí debes vincular tu archivo scripts.js -->
+<script src="scripts.js"></script>
+</body>
+</html>
