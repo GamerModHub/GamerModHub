@@ -185,7 +185,7 @@ function normalizarAdmins(data) {
         const usuario = item.usuario || item.user || item.username || item.email || item.nombre || '';
         const pass = item.pass || item.password || item.clave || item.contrasena || item.contrasenia || item.pin || '';
         if (usuario && pass) {
-            admins.push({ usuario: String(usuario).trim(), pass: String(pass).trim });
+            admins.push({ usuario: String(usuario).trim(), pass: String(pass).trim() });
         }
     });
     return admins;
