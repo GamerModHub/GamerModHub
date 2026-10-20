@@ -50,6 +50,62 @@
             0%, 100% { box-shadow: 0 0 5px rgba(255, 0, 64, 0.5); }
             50% { box-shadow: 0 0 15px rgba(255, 0, 64, 0.8); }
         }
+        
+        /* Banner NSFW en inicio */
+        .nsfw-banner {
+            background: linear-gradient(135deg, #1a0000 0%, #2d0000 50%, #1a0000 100%);
+            border: 2px solid #ff0040;
+            position: relative;
+            overflow: hidden;
+        }
+        .nsfw-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255, 0, 64, 0.03) 10px,
+                rgba(255, 0, 64, 0.03) 20px
+            );
+            animation: slide 20s linear infinite;
+        }
+        @keyframes slide {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+        
+        /* Toggle switch */
+        .nsfw-toggle {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: #333;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .nsfw-toggle.active {
+            background: linear-gradient(135deg, #ff0040, #cc0033);
+        }
+        .nsfw-toggle::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+        .nsfw-toggle.active::after {
+            left: 33px;
+        }
     </style>
 </head>
 <body>
@@ -63,7 +119,7 @@
         </div>
         <h2 class="text-2xl sm:text-3xl font-bold text-white mb-3">Verificación de Edad</h2>
         <p class="text-gray-300 mb-6 text-sm sm:text-base">
-            Este sitio contiene material destinado exclusivamente a adultos. Al ingresar, confirmas que tienes <strong class="text-red-400">18 años o más</strong>.
+            Este sitio contiene material destinado exclusivamente a adultos. Al activar el modo +18, confirmas que tienes <strong class="text-red-400">18 años o más</strong>.
         </p>
         <div class="space-y-3">
             <button id="btn-age-yes" class="btn-age-yes w-full py-3 rounded-xl text-white font-bold text-lg">
@@ -126,10 +182,6 @@
             <button type="button" class="tab-btn-chip" data-target="contenido-apps">Apps</button>
             <button type="button" class="tab-btn-chip" data-target="contenido-archivos">Archivos</button>
             <button type="button" class="tab-btn-chip" data-target="contenido-grupos">Grupos</button>
-            <!-- BOTÓN +18 CON ESTILO ESPECIAL -->
-            <button type="button" class="tab-btn-chip nsfw-tab" data-target="contenido-nsfw" style="background: linear-gradient(135deg, #ff0040, #cc0033); border-color: #ff0040;">
-                <i class="fa fa-exclamation-circle"></i> +18
-            </button>
             <button type="button" class="tab-btn-chip" data-target="contenido-pedir">Pedir juego</button>
         </div>
     </div>
@@ -138,6 +190,46 @@
 <main>
     <!-- INICIO -->
     <div id="contenido-inicio" class="tab-content active">
+        <!-- BANNER NSFW (aparece solo si el modo está activado) -->
+        <div id="nsfw-banner-container" class="hidden mb-6 fade-in-item">
+            <div class="nsfw-banner rounded-2xl p-6 relative z-10">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="nsfw-badge px-3 py-2 rounded-lg text-white font-bold text-lg">
+                            🔞 +18
+                        </div>
+                        <div>
+                            <h3 class="text-white font-bold text-lg">Modo Adulto Activado</h3>
+                            <p class="text-gray-300 text-sm">Contenido exclusivo para mayores de 18 años</p>
+                        </div>
+                    </div>
+                    <button id="btn-desactivar-nsfw" class="bg-black/50 hover:bg-black/70 text-white px-4 py-2 rounded-lg transition-all border border-red-500/50">
+                        <i class="fa fa-power-off mr-2"></i> Desactivar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN ACTIVAR +18 (aparece si el modo NO está activado) -->
+        <div id="nsfw-activar-container" class="mb-6 fade-in-item">
+            <div class="bg-gradient-to-r from-gray-900/50 to-gray-800/50 border border-gray-700/50 rounded-2xl p-6">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-gray-700 px-3 py-2 rounded-lg text-gray-400 font-bold text-lg">
+                            🔞 +18
+                        </div>
+                        <div>
+                            <h3 class="text-white font-bold text-lg">Contenido para Adultos</h3>
+                            <p class="text-gray-400 text-sm">Activá para ver juegos +18</p>
+                        </div>
+                    </div>
+                    <button id="btn-activar-nsfw" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-all border border-gray-600">
+                        <i class="fa fa-unlock mr-2"></i> Activar Modo +18
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <section class="banner-box p-4 sm:p-6 mb-6 fade-in-item">
             <div class="relative z-10 flex flex-col items-center text-center">
                 <span class="inline-block text-xs px-3 py-1 rounded-full bg-pink-500/10 text-pink-300 border border-pink-500/30 mb-4 font-bold tracking-wider">⭐ CENTRO GAMING</span>
@@ -174,6 +266,23 @@
     <div id="contenido-manual" class="tab-content">
         <h3 class="font-neon text-2xl neon-animated mb-2 flex items-center gap-2"><i class="fa fa-folder-open"></i> Biblioteca</h3>
         <p class="text-gray-400 text-sm mb-6">Explorá el catálogo completo de consolas</p>
+        
+        <!-- Toggle NSFW en Biblioteca -->
+        <div id="nsfw-biblioteca-toggle" class="mb-6 fade-in-item">
+            <div class="bg-gradient-to-r from-gray-900/50 to-gray-800/50 border border-gray-700/50 rounded-xl p-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <i class="fa fa-exclamation-circle text-2xl" id="nsfw-icon-biblioteca" style="color: #666;"></i>
+                        <div>
+                            <h4 class="text-white font-bold">Mostrar contenido +18</h4>
+                            <p class="text-gray-400 text-xs">Activá para ver juegos para adultos en la biblioteca</p>
+                        </div>
+                    </div>
+                    <div id="nsfw-toggle-biblioteca" class="nsfw-toggle"></div>
+                </div>
+            </div>
+        </div>
+
         <section class="seccion-mas-juegos fade-in-item">
             <button class="banner-futurista" id="btn-desplegar"><span class="banner-texto"> MÁS JUEGOS 🔥</span><i class="fa fa-chevron-down banner-flecha"></i></button>
             <div class="lista-paginas" id="lista-juegos"></div>
@@ -243,7 +352,7 @@
             <button type="button" class="filter-chip active" data-plat="all">Todas</button>
             <button type="button" class="filter-chip" data-plat="windows">💻 Windows</button>
             <button type="button" class="filter-chip" data-plat="android">🤖 Android</button>
-            <button type="button" class="filter-chip" data-plat="multi">🌐 Multiplataforma</button>
+            <button type="button" class="filter-chip" data-plat="multi"> Multiplataforma</button>
         </div>
         <div id="emuladores-grid" class="grid-3-col">
             <div class="col-span-full text-center py-10 text-gray-400"><i class="fa fa-spinner fa-spin text-2xl mb-2"></i><p>Cargando...</p></div>
@@ -320,34 +429,6 @@
                 </div>
                 <span class="grupo-btn"><i class="fa fa-whatsapp"></i> Unirse al grupo</span>
             </a>
-        </div>
-    </div>
-
-    <!-- SECCIÓN +18 (NSFW) -->
-    <div id="contenido-nsfw" class="tab-content">
-        <h3 class="font-neon text-2xl neon-animated mb-2 flex items-center gap-2">
-            <i class="fa fa-exclamation-circle text-red-500"></i> Juegos +18
-            <span class="nsfw-badge px-3 py-1 rounded-full text-xs ml-2">ADULTOS</span>
-        </h3>
-        <p class="text-gray-400 text-sm mb-6">Contenido exclusivo para mayores de 18 años</p>
-        
-        <div class="bg-red-900/20 border border-red-500/30 rounded-xl p-4 mb-6">
-            <div class="flex items-start gap-3">
-                <i class="fa fa-exclamation-triangle text-red-400 text-2xl mt-1"></i>
-                <div>
-                    <h4 class="text-red-400 font-bold mb-1">⚠️ Advertencia de Contenido</h4>
-                    <p class="text-gray-300 text-sm">
-                        Esta sección contiene material destinado exclusivamente a adultos. Al continuar, confirmas que tienes 18 años o más y aceptas ver contenido para mayores de edad.
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4" id="nsfw-grid">
-            <div class="col-span-full text-center py-10 text-gray-400">
-                <i class="fa fa-lock text-4xl mb-3 text-red-400"></i>
-                <p>Cargando contenido +18...</p>
-            </div>
         </div>
     </div>
 
@@ -466,11 +547,11 @@ const contents=document.querySelectorAll('.tab-content');
 
 const CONSOLE_NAMES={'android':'Android','windows':'Windows','psvita':'PS Vita','psp':'PSP','ps1':'PS1','ps2':'PS2','ps3':'PS3','ps4':'PS4','nes':'NES','snes':'SNES','n64':'N64','gamecube':'GameCube','wii':'Wii','wiiu':'Wii U','gameboy':'Game Boy','gameboycolor':'GB Color','gameboyadvance':'GBA','nds':'NDS','3ds':'3DS','xbox':'Xbox','xbox360':'Xbox 360','segagenesis':'Sega Genesis','segasaturn':'Sega Saturn','sega_dreamcast':'Dreamcast','mame':'MAME','arcade_y_mas':'Arcade','nsfw':'NSFW +18'};
 const CONSOLE_ASPECT_RATIOS={'android':'1/1','gameboy':'1/1','gameboycolor':'1/1','gameboyadvance':'1/1','nds':'1/1','3ds':'1/1','psp':'2/3','psvita':'3/4','ps3':'4/5','ps4':'4/5','sega_dreamcast':'4/5','windows':'3/4','ps1':'3/4','ps2':'3/4','nes':'3/4','snes':'3/4','n64':'3/4','gamecube':'3/4','wii':'3/4','wiiu':'3/4','xbox':'3/4','xbox360':'3/4','segagenesis':'3/4','segasaturn':'3/4','mame':'3/4','arcade_y_mas':'3/4','nsfw':'3/4'};
-const ICONOS_CONSOLA={'android':'🤖','windows':'💻','psvita':'🎮','psp':'','ps1':'💿','ps2':'️','ps3':'🎮','ps4':'🎮','nes':'👾','snes':'👾','n64':'🕹️','gamecube':'🎲','wii':'🎮','wiiu':'','gameboy':'📱','gameboycolor':'📱','gameboyadvance':'','nds':'📱','3ds':'📱','xbox':'🎮','xbox360':'🎮','segagenesis':'🕹️','segasaturn':'','sega_dreamcast':'💿','mame':'🕹️','arcade_y_mas':'👾','nsfw':'🔞'};
+const ICONOS_CONSOLA={'android':'🤖','windows':'💻','psvita':'🎮','psp':'','ps1':'💿','ps2':'️','ps3':'🎮','ps4':'🎮','nes':'👾','snes':'','n64':'🕹️','gamecube':'🎲','wii':'🎮','wiiu':'','gameboy':'📱','gameboycolor':'📱','gameboyadvance':'','nds':'📱','3ds':'📱','xbox':'🎮','xbox360':'🎮','segagenesis':'🕹️','segasaturn':'','sega_dreamcast':'💿','mame':'🕹️','arcade_y_mas':'👾','nsfw':'🔞'};
 
 const MODS_CATEGORIES={texturas_pc:{nombre:'Texturas PC',icono:'🖼️',color:'#bd00ff',desc:'Packs de texturas HD para juegos de PC'},texturas_iso:{nombre:'Texturas ISO',icono:'💿',color:'#00f0ff',desc:'Texturas mejoradas para ISOs'},parches:{nombre:'Parches',icono:'🔧',color:'#ff9500',desc:'Patches de traducción y fixes'},mods_juego:{nombre:'Mods de Juegos',icono:'🎮',color:'#ff00aa',desc:'Modificaciones completas'},configs:{nombre:'Configuraciones',icono:'⚙️',color:'#00ff94',desc:'Archivos de configuración'},shaders:{nombre:'Shaders',icono:'✨',color:'#ffd700',desc:'Shaders y efectos visuales'},otros:{nombre:'Otros',icono:'',color:'#9ca3af',desc:'Otros mods'}};
-const APPS_CATEGORIES={launchers:{nombre:'Launchers',icono:''},herramientas:{nombre:'Herramientas',icono:'🧰'},apk:{nombre:'APKs',icono:'📱'},otros:{nombre:'Otros',icono:''}};
-const ARCHIVOS_CATEGORIES={bios:{nombre:'BIOS',icono:'💾'},firmwares:{nombre:'Firmwares',icono:''},saves:{nombre:'Saves',icono:'💽'},configs:{nombre:'Configuraciones',icono:'⚙️'},otros:{nombre:'Otros',icono:'📦'}};
+const APPS_CATEGORIES={launchers:{nombre:'Launchers',icono:''},herramientas:{nombre:'Herramientas',icono:''},apk:{nombre:'APKs',icono:'📱'},otros:{nombre:'Otros',icono:''}};
+const ARCHIVOS_CATEGORIES={bios:{nombre:'BIOS',icono:''},firmwares:{nombre:'Firmwares',icono:''},saves:{nombre:'Saves',icono:'💽'},configs:{nombre:'Configuraciones',icono:'⚙️'},otros:{nombre:'Otros',icono:'📦'}};
 
 function convertToJsDelivr(url) {
     if (!url) return url;
@@ -505,7 +586,121 @@ class TickerCarousel{
 }
 let latestTicker=null,topTicker=null;
 
-function showSection(id){contents.forEach(c=>c.classList.remove('active'));const el=document.getElementById(id);if(el){el.classList.add('active');window.scrollTo({top:0,behavior:'smooth'})}setTimeout(bindNeon,40);if(id==='contenido-emuladores'&&emuladoresData.length===0)loadEmuladores();if(id==='contenido-apps'&&appsData.length===0)loadApps();if(id==='contenido-mods'&&modsData.length===0)loadMods();if(id==='contenido-archivos'&&archivosData.length===0)loadArchivos();if(id==='contenido-nsfw')loadNSFW()}
+// ==========================================
+// SISTEMA DE MODO +18 (FILTRO)
+// ==========================================
+const AGE_STORAGE_KEY = 'gmh_age_verified';
+const NSFW_MODE_KEY = 'gmh_nsfw_mode';
+const ageModal = document.getElementById('age-verification-modal');
+const btnAgeYes = document.getElementById('btn-age-yes');
+const btnAgeNo = document.getElementById('btn-age-no');
+
+function isAgeVerified() {
+    try { return localStorage.getItem(AGE_STORAGE_KEY) === 'true'; } catch (e) { return false; }
+}
+
+function isNSFWModeActive() {
+    try { return localStorage.getItem(NSFW_MODE_KEY) === 'true'; } catch (e) { return false; }
+}
+
+function setNSFWMode(active) {
+    try { localStorage.setItem(NSFW_MODE_KEY, active ? 'true' : 'false'); } catch (e) {}
+}
+
+function setAgeVerified() {
+    try { localStorage.setItem(AGE_STORAGE_KEY, 'true'); } catch (e) {}
+}
+
+function showAgeVerification(callback) {
+    ageModal.classList.remove('hidden');
+    ageModal.style.display = 'flex';
+    
+    btnAgeYes.onclick = () => {
+        setAgeVerified();
+        hideAgeVerification();
+        if (callback) callback();
+    };
+    
+    btnAgeNo.onclick = () => {
+        hideAgeVerification();
+        showToast(' Acceso denegado. Debes ser mayor de 18 años', 'error');
+    };
+}
+
+function hideAgeVerification() {
+    ageModal.classList.add('hidden');
+    ageModal.style.display = 'none';
+}
+
+function updateNSFWUI() {
+    const nsfwActive = isNSFWModeActive();
+    const bannerContainer = document.getElementById('nsfw-banner-container');
+    const activarContainer = document.getElementById('nsfw-activar-container');
+    const toggleBiblioteca = document.getElementById('nsfw-toggle-biblioteca');
+    const iconBiblioteca = document.getElementById('nsfw-icon-biblioteca');
+    
+    if (nsfwActive) {
+        bannerContainer.classList.remove('hidden');
+        activarContainer.classList.add('hidden');
+        if (toggleBiblioteca) toggleBiblioteca.classList.add('active');
+        if (iconBiblioteca) iconBiblioteca.style.color = '#ff0040';
+    } else {
+        bannerContainer.classList.add('hidden');
+        activarContainer.classList.remove('hidden');
+        if (toggleBiblioteca) toggleBiblioteca.classList.remove('active');
+        if (iconBiblioteca) iconBiblioteca.style.color = '#666';
+    }
+}
+
+// Botón activar NSFW en inicio
+document.getElementById('btn-activar-nsfw').addEventListener('click', () => {
+    if (isAgeVerified()) {
+        setNSFWMode(true);
+        updateNSFWUI();
+        showToast('🔞 Modo +18 activado', 'success');
+        renderBiblioteca();
+        renderHomeRows();
+    } else {
+        showAgeVerification(() => {
+            setNSFWMode(true);
+            updateNSFWUI();
+            showToast('🔞 Modo +18 activado', 'success');
+            renderBiblioteca();
+            renderHomeRows();
+        });
+    }
+});
+
+// Botón desactivar NSFW en inicio
+document.getElementById('btn-desactivar-nsfw').addEventListener('click', () => {
+    setNSFWMode(false);
+    updateNSFWUI();
+    showToast('Modo +18 desactivado', 'info');
+    renderBiblioteca();
+    renderHomeRows();
+});
+
+// Toggle NSFW en biblioteca
+document.getElementById('nsfw-toggle-biblioteca').addEventListener('click', () => {
+    if (isNSFWModeActive()) {
+        setNSFWMode(false);
+        showToast('Modo +18 desactivado', 'info');
+    } else {
+        if (isAgeVerified()) {
+            setNSFWMode(true);
+            showToast('🔞 Modo +18 activado', 'success');
+        } else {
+            showAgeVerification(() => {
+                setNSFWMode(true);
+                showToast(' Modo +18 activado', 'success');
+            });
+        }
+    }
+    updateNSFWUI();
+    renderBiblioteca();
+});
+
+function showSection(id){contents.forEach(c=>c.classList.remove('active'));const el=document.getElementById(id);if(el){el.classList.add('active');window.scrollTo({top:0,behavior:'smooth'})}setTimeout(bindNeon,40);if(id==='contenido-emuladores'&&emuladoresData.length===0)loadEmuladores();if(id==='contenido-apps'&&appsData.length===0)loadApps();if(id==='contenido-mods'&&modsData.length===0)loadMods();if(id==='contenido-archivos'&&archivosData.length===0)loadArchivos()}
 function goHome(){showSection('contenido-inicio');tabs.forEach(t=>t.classList.remove('tab-active'));const h=document.querySelector('[data-target="contenido-inicio"]');if(h)h.classList.add('tab-active')}
 
 const logoHome=document.getElementById('logo-home');
@@ -514,68 +709,7 @@ logoHome.addEventListener('pointerdown',()=>{logoPressTriggered=false;logoPressT
 ['pointerup','pointerleave','pointercancel'].forEach(ev=>logoHome.addEventListener(ev,()=>{if(logoPressTimer){clearTimeout(logoPressTimer);logoPressTimer=null}}));
 logoHome.addEventListener('click',()=>{if(logoPressTriggered){logoPressTriggered=false;return}goHome()});
 
-// ==========================================
-// SISTEMA DE VERIFICACIÓN DE EDAD +18
-// ==========================================
-const AGE_STORAGE_KEY = 'gmh_age_verified';
-const ageModal = document.getElementById('age-verification-modal');
-const btnAgeYes = document.getElementById('btn-age-yes');
-const btnAgeNo = document.getElementById('btn-age-no');
-
-function isAgeVerified() {
-    try {
-        return localStorage.getItem(AGE_STORAGE_KEY) === 'true';
-    } catch (e) {
-        return false;
-    }
-}
-
-function setAgeVerified() {
-    try {
-        localStorage.setItem(AGE_STORAGE_KEY, 'true');
-    } catch (e) {}
-}
-
-function showAgeVerification() {
-    ageModal.classList.remove('hidden');
-    ageModal.style.display = 'flex';
-}
-
-function hideAgeVerification() {
-    ageModal.classList.add('hidden');
-    ageModal.style.display = 'none';
-}
-
-btnAgeYes.addEventListener('click', () => {
-    setAgeVerified();
-    hideAgeVerification();
-    showSection('contenido-nsfw');
-    tabs.forEach(t => t.classList.remove('tab-active'));
-    document.querySelector('[data-target="contenido-nsfw"]').classList.add('tab-active');
-    showToast('✅ Acceso concedido. Bienvenido a la sección +18', 'success');
-});
-
-btnAgeNo.addEventListener('click', () => {
-    hideAgeVerification();
-    showToast(' Acceso denegado. Debes ser mayor de 18 años', 'error');
-    goHome();
-});
-
-tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-        if (!tab.dataset.target) return;
-        
-        // Si es la pestaña +18, verificar edad primero
-        if (tab.dataset.target === 'contenido-nsfw' && !isAgeVerified()) {
-            showAgeVerification();
-            return;
-        }
-        
-        tabs.forEach(t => t.classList.remove('tab-active'));
-        tab.classList.add('tab-active');
-        showSection(tab.dataset.target);
-    });
-});
+tabs.forEach(tab=>{tab.addEventListener('click',()=>{if(!tab.dataset.target)return;tabs.forEach(t=>t.classList.remove('tab-active'));tab.classList.add('tab-active');showSection(tab.dataset.target)})});
 
 function bindNeon(){document.querySelectorAll('.game-card,.folder-card,.generic-card').forEach(card=>{if(card.dataset.neonBound)return;card.dataset.neonBound='1';card.addEventListener('pointerenter',()=>{document.querySelectorAll('.neon-on').forEach(c=>c.classList.remove('neon-on'));card.classList.add('neon-on')});card.addEventListener('pointerleave',()=>card.classList.remove('neon-on'))})}
 
@@ -639,9 +773,6 @@ function setModalScreenshotFromUrl(u,l,f){const bg=document.getElementById('moda
 function setModalScreenshot(i){if(!modalScreenshots.length)return;currentModalScreenshot=i;const u=safeUrl(modalScreenshots[i],currentModalCover);const l=modalScreenshots.length>1?`Captura ${i+1}/${modalScreenshots.length}`:'Captura';setModalScreenshotFromUrl(u,l,false);document.querySelectorAll('.screenshot-thumb').forEach((t,j)=>t.classList.toggle('active',j===i))}
 function renderModalScreenshots(s,c){modalScreenshots=s;currentModalScreenshot=0;const t=document.getElementById('modal-screenshot-thumbs');t.innerHTML='';if(s.length>0){if(s.length>1)s.forEach((u,j)=>{const i=document.createElement('img');i.src=safeUrl(u,c);i.alt=`Captura ${j+1}`;i.className='screenshot-thumb'+(j===0?' active':'');i.onclick=()=>setModalScreenshot(j);i.onerror=()=>{i.src=c};t.appendChild(i)});setModalScreenshot(0)}else setModalScreenshotFromUrl(c,'Portada',true)}
 
-// ==========================================
-// MODAL CON BOTONES DINÁMICOS (JUEGO, DATOS, PARTES)
-// ==========================================
 window.openGameModal=function(g,c){
     if(!g)return;
     currentGameModal={game:g,category:c};
@@ -678,28 +809,19 @@ window.openGameModal=function(g,c){
     document.getElementById('modal-meta-capturas').textContent=sc.length?sc.length:'0';
     renderModalScreenshots(sc,currentModalCover);
 
-    // ==========================================
-    // GENERAR BOTONES DE DESCARGA DINÁMICOS
-    // ==========================================
     downloadContainer.innerHTML = '';
     let hasAnyLink = false;
 
     if (g.link && String(g.link).trim() !== '') {
         hasAnyLink = true;
-        downloadContainer.innerHTML += `
-            <a href="${escapeHtml(g.link)}" target="_blank" rel="noopener noreferrer" class="btn-neon modal-download-btn w-full text-center py-3">
-                <i class="fa fa-download mr-2"></i> Descargar Juego Completo
-            </a>`;
+        downloadContainer.innerHTML += `<a href="${escapeHtml(g.link)}" target="_blank" rel="noopener noreferrer" class="btn-neon modal-download-btn w-full text-center py-3"><i class="fa fa-download mr-2"></i> Descargar Juego Completo</a>`;
     }
 
     if (Array.isArray(g.datos) && g.datos.length > 0) {
         g.datos.forEach(d => {
             if(d.nombre && d.url) {
                 hasAnyLink = true;
-                downloadContainer.innerHTML += `
-                    <a href="${escapeHtml(d.url)}" target="_blank" rel="noopener noreferrer" class="btn-neon modal-download-btn w-full text-center py-3" style="background: linear-gradient(90deg, #ff9500, #ff5e00); border-color: #ff9500;">
-                        <i class="fa fa-database mr-2"></i> ${escapeHtml(d.nombre)}
-                    </a>`;
+                downloadContainer.innerHTML += `<a href="${escapeHtml(d.url)}" target="_blank" rel="noopener noreferrer" class="btn-neon modal-download-btn w-full text-center py-3" style="background: linear-gradient(90deg, #ff9500, #ff5e00); border-color: #ff9500;"><i class="fa fa-database mr-2"></i> ${escapeHtml(d.nombre)}</a>`;
             }
         });
     }
@@ -708,10 +830,7 @@ window.openGameModal=function(g,c){
         g.partes.forEach(p => {
             if(p.nombre && p.url) {
                 hasAnyLink = true;
-                downloadContainer.innerHTML += `
-                    <a href="${escapeHtml(p.url)}" target="_blank" rel="noopener noreferrer" class="btn-neon modal-download-btn w-full text-center py-3" style="background: linear-gradient(90deg, #bd00ff, #7a00ff); border-color: #bd00ff;">
-                        <i class="fa fa-cube mr-2"></i> ${escapeHtml(p.nombre)}
-                    </a>`;
+                downloadContainer.innerHTML += `<a href="${escapeHtml(p.url)}" target="_blank" rel="noopener noreferrer" class="btn-neon modal-download-btn w-full text-center py-3" style="background: linear-gradient(90deg, #bd00ff, #7a00ff); border-color: #bd00ff;"><i class="fa fa-cube mr-2"></i> ${escapeHtml(p.nombre)}</a>`;
             }
         });
     }
@@ -736,41 +855,89 @@ async function loadApps(){try{const d=await dbFirestore.collection('sistema').do
 async function loadMods(){try{const d=await dbFirestore.collection('sistema').doc('mods').get();if(d.exists&&d.data().items){modsData=d.data().items.sort((a,b)=>(b.timestamp||0)-(a.timestamp||0))}}catch(e){console.error('Error mods:',e)}renderMods()}
 async function loadArchivos(){try{const d=await dbFirestore.collection('sistema').doc('archivos_gamer').get();if(d.exists&&d.data().items){archivosData=d.data().items.sort((a,b)=>(b.timestamp||0)-(a.timestamp||0))}}catch(e){console.error('Error archivos:',e)}renderArchivos()}
 
-// ==========================================
-// CARGAR CONTENIDO +18
-// ==========================================
 async function loadNSFW() {
-    if (nsfwData.length > 0) return; // Ya cargado
+    if (nsfwData.length > 0) return;
     try {
         const d = await dbFirestore.collection('sistema').doc('nsfw_games').get();
         if (d.exists && d.data().games) {
             nsfwData = d.data().games.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-            renderNSFW();
-        } else {
-            document.getElementById('nsfw-grid').innerHTML = '<div class="col-span-full text-center py-10 text-gray-400"><i class="fa fa-inbox text-4xl mb-3 opacity-50"></i><p>Sin contenido +18 disponible</p></div>';
         }
-    } catch (e) {
-        console.error('Error cargando NSFW:', e);
-        document.getElementById('nsfw-grid').innerHTML = '<div class="col-span-full text-center py-10 text-gray-400"><i class="fa fa-exclamation-triangle text-4xl mb-3 text-red-400"></i><p>Error al cargar contenido</p></div>';
-    }
+    } catch (e) { console.error('Error cargando NSFW:', e); }
 }
 
-function renderNSFW() {
-    const grid = document.getElementById('nsfw-grid');
-    if (nsfwData.length === 0) {
-        grid.innerHTML = '<div class="col-span-full text-center py-10 text-gray-400"><i class="fa fa-inbox text-4xl mb-3 opacity-50"></i><p>Sin contenido +18 disponible</p></div>';
-        return;
+function renderBiblioteca(){
+    const g=document.getElementById('biblioteca-grid');
+    if(!g)return;
+    g.innerHTML='';
+    const cs=getAllCategoryKeys().filter(c=>getCategoryCount(c)>0).sort((a,b)=>getCategoryCount(b)-getCategoryCount(a));
+    
+    // Si el modo NSFW está activo, agregar la categoría nsfw
+    if (isNSFWModeActive() && nsfwData.length > 0) {
+        db['nsfw'] = nsfwData;
+        if (!cs.includes('nsfw')) cs.push('nsfw');
+    } else {
+        delete db['nsfw'];
     }
-    grid.innerHTML = '';
-    nsfwData.forEach((g, i) => {
-        grid.appendChild(createGameCard(g, 'nsfw', { extraClass: 'nsfw-card', delay: i * 0.05 }));
+    
+    if(cs.length===0){g.innerHTML='<div class="col-span-full text-center py-12 text-gray-400"><i class="fa fa-inbox text-4xl mb-3 opacity-50"></i><p>Sin categorías.</p></div>';return}
+    cs.forEach(c=>{
+        const d=document.createElement('div');
+        d.className='folder-card p-6 text-center';
+        d.onclick=()=>openCategory(c);
+        const fallbackIcon=ICONOS_CONSOLA[c]||'';
+        d.innerHTML=`<div class="mb-4 flex justify-center items-center h-16"><img src="images/biblioteca-categorias/${c}.png" alt="${escapeHtml(getConsoleName(c))}" class="w-16 h-16 object-contain drop-shadow-[0_0_10px_rgba(0,240,255,0.4)] transition-transform duration-300 hover:scale-110" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="text-5xl hidden items-center justify-center w-16 h-16">${fallbackIcon}</div></div><h4 class="font-neon font-bold text-lg mb-1">${escapeHtml(getConsoleName(c))}</h4><p class="text-xs text-cyan-400 font-semibold">${countLabel(getCategoryCount(c))}</p>`;
+        g.appendChild(d)
     });
-    bindNeon();
+    bindNeon()
 }
 
-function renderBiblioteca(){const g=document.getElementById('biblioteca-grid');if(!g)return;g.innerHTML='';const cs=getAllCategoryKeys().filter(c=>getCategoryCount(c)>0).sort((a,b)=>getCategoryCount(b)-getCategoryCount(a));if(cs.length===0){g.innerHTML='<div class="col-span-full text-center py-12 text-gray-400"><i class="fa fa-inbox text-4xl mb-3 opacity-50"></i><p>Sin categorías.</p></div>';return}cs.forEach(c=>{const d=document.createElement('div');d.className='folder-card p-6 text-center';d.onclick=()=>openCategory(c);const fallbackIcon=ICONOS_CONSOLA[c]||'';d.innerHTML=`<div class="mb-4 flex justify-center items-center h-16"><img src="images/biblioteca-categorias/${c}.png" alt="${escapeHtml(getConsoleName(c))}" class="w-16 h-16 object-contain drop-shadow-[0_0_10px_rgba(0,240,255,0.4)] transition-transform duration-300 hover:scale-110" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="text-5xl hidden items-center justify-center w-16 h-16">${fallbackIcon}</div></div><h4 class="font-neon font-bold text-lg mb-1">${escapeHtml(getConsoleName(c))}</h4><p class="text-xs text-cyan-400 font-semibold">${countLabel(getCategoryCount(c))}</p>`;g.appendChild(d)});bindNeon()}
-
-function renderHomeRows(){const c=document.getElementById('dynamic-home-rows');c.innerHTML='';if(latestTicker){latestTicker.destroy();latestTicker=null}if(topTicker){topTicker.destroy;topTicker=null}const ls=document.createElement('div');ls.className='carousel-section fade-in-item';ls.style.setProperty('--accent-from','var(--neon-blue)');ls.style.setProperty('--accent-to','var(--neon-purple)');ls.innerHTML=`<div class="carousel-header"><div class="carousel-icon-wrap" style="background:linear-gradient(135deg,var(--neon-blue),var(--neon-purple));box-shadow:0 0 14px rgba(0,240,255,0.35)"><i class="fa fa-clock-o"></i></div><div><h3 class="carousel-title neon-animated">Recién agregados</h3><p class="carousel-subtitle">Los últimos 20 juegos</p></div></div><div class="carousel-track" id="latest-games-track"></div>`;c.appendChild(ls);const ts=document.createElement('div');ts.className='carousel-section fade-in-item';ts.style.setProperty('--accent-from','var(--neon-orange)');ts.style.setProperty('--accent-to','var(--neon-red)');ts.innerHTML=`<div class="carousel-header"><div class="carousel-icon-wrap" style="background:linear-gradient(135deg,var(--neon-orange),var(--neon-red));box-shadow:0 0 14px rgba(255,149,0,0.35)"><i class="fa fa-fire"></i></div><div><h3 class="carousel-title neon-animated">Top 20 más buscados</h3><p class="carousel-subtitle">Los juegos más populares</p></div></div><div class="carousel-track" id="top-searched-track"></div>`;c.appendChild(ts);renderLatestGames();renderTopBuscados();latestTicker=new TickerCarousel('latest-games-track',{speed:30});latestTicker.start();topTicker=new TickerCarousel('top-searched-track',{speed:35});topTicker.start();const sc=getAllCategoryKeys().filter(c=>getCategoryCount(c)>0).sort((a,b)=>getCategoryCount(b)-getCategoryCount(a));if(sc.length===0){const e=document.createElement('div');e.className='text-center py-10 text-gray-400';e.innerHTML='<i class="fa fa-inbox text-4xl mb-3 opacity-50"></i><p>Sin juegos aún.</p>';c.appendChild(e);return}sc.forEach(cat=>{const dn=getConsoleName(cat);const cnt=getCategoryCount(cat);const s=document.createElement('div');s.className='mb-10 fade-in-item';s.innerHTML=`<div class="flex items-center justify-between flex-wrap gap-2 mb-4"><h3 class="font-neon text-lg neon-animated flex items-center gap-2"><i class="fa fa-gamepad"></i> ${escapeHtml(dn)}</h3><span class="text-xs sm:text-sm flex items-center gap-2 sm:gap-4 w-full sm:w-auto justify-between sm:justify-end"><span class="text-gray-400 font-semibold">${countLabel(cnt)}</span><span class="ver-mas btn-ver-mas-cat" data-cat="${cat}">Ver más →</span></span></div><div class="scroll-row" data-cat-row="${cat}"></div>`;c.appendChild(s);const r=s.querySelector(`[data-cat-row="${cat}"]`);(db[cat]||[]).slice(0,ROMS_PREVIEW).forEach((g,i)=>r.appendChild(createGameCard(g,cat,{extraClass:'shrink-0',delay:i*0.05})))});document.querySelectorAll('.btn-ver-mas-cat').forEach(b=>{b.onclick=()=>openCategory(b.dataset.cat)});bindNeon()}
+function renderHomeRows(){
+    const c=document.getElementById('dynamic-home-rows');
+    c.innerHTML='';
+    if(latestTicker){latestTicker.destroy();latestTicker=null}
+    if(topTicker){topTicker.destroy;topTicker=null}
+    const ls=document.createElement('div');
+    ls.className='carousel-section fade-in-item';
+    ls.style.setProperty('--accent-from','var(--neon-blue)');
+    ls.style.setProperty('--accent-to','var(--neon-purple)');
+    ls.innerHTML=`<div class="carousel-header"><div class="carousel-icon-wrap" style="background:linear-gradient(135deg,var(--neon-blue),var(--neon-purple));box-shadow:0 0 14px rgba(0,240,255,0.35)"><i class="fa fa-clock-o"></i></div><div><h3 class="carousel-title neon-animated">Recién agregados</h3><p class="carousel-subtitle">Los últimos 20 juegos</p></div></div><div class="carousel-track" id="latest-games-track"></div>`;
+    c.appendChild(ls);
+    const ts=document.createElement('div');
+    ts.className='carousel-section fade-in-item';
+    ts.style.setProperty('--accent-from','var(--neon-orange)');
+    ts.style.setProperty('--accent-to','var(--neon-red)');
+    ts.innerHTML=`<div class="carousel-header"><div class="carousel-icon-wrap" style="background:linear-gradient(135deg,var(--neon-orange),var(--neon-red));box-shadow:0 0 14px rgba(255,149,0,0.35)"><i class="fa fa-fire"></i></div><div><h3 class="carousel-title neon-animated">Top 20 más buscados</h3><p class="carousel-subtitle">Los juegos más populares</p></div></div><div class="carousel-track" id="top-searched-track"></div>`;
+    c.appendChild(ts);
+    renderLatestGames();
+    renderTopBuscados();
+    latestTicker=new TickerCarousel('latest-games-track',{speed:30});
+    latestTicker.start();
+    topTicker=new TickerCarousel('top-searched-track',{speed:35});
+    topTicker.start();
+    const sc=getAllCategoryKeys().filter(c=>getCategoryCount(c)>0).sort((a,b)=>getCategoryCount(b)-getCategoryCount(a));
+    
+    // Si el modo NSFW está activo, agregar la categoría nsfw
+    if (isNSFWModeActive() && nsfwData.length > 0) {
+        db['nsfw'] = nsfwData;
+        if (!sc.includes('nsfw')) sc.push('nsfw');
+    } else {
+        delete db['nsfw'];
+    }
+    
+    if(sc.length===0){const e=document.createElement('div');e.className='text-center py-10 text-gray-400';e.innerHTML='<i class="fa fa-inbox text-4xl mb-3 opacity-50"></i><p>Sin juegos aún.</p>';c.appendChild(e);return}
+    sc.forEach(cat=>{
+        const dn=getConsoleName(cat);
+        const cnt=getCategoryCount(cat);
+        const s=document.createElement('div');
+        s.className='mb-10 fade-in-item';
+        s.innerHTML=`<div class="flex items-center justify-between flex-wrap gap-2 mb-4"><h3 class="font-neon text-lg neon-animated flex items-center gap-2"><i class="fa fa-gamepad"></i> ${escapeHtml(dn)}</h3><span class="text-xs sm:text-sm flex items-center gap-2 sm:gap-4 w-full sm:w-auto justify-between sm:justify-end"><span class="text-gray-400 font-semibold">${countLabel(cnt)}</span><span class="ver-mas btn-ver-mas-cat" data-cat="${cat}">Ver más →</span></span></div><div class="scroll-row" data-cat-row="${cat}"></div>`;
+        c.appendChild(s);
+        const r=s.querySelector(`[data-cat-row="${cat}"]`);
+        (db[cat]||[]).slice(0,ROMS_PREVIEW).forEach((g,i)=>r.appendChild(createGameCard(g,cat,{extraClass:'shrink-0',delay:i*0.05})))
+    });
+    document.querySelectorAll('.btn-ver-mas-cat').forEach(b=>{b.onclick=()=>openCategory(b.dataset.cat)});
+    bindNeon()
+}
 
 window.openCategory=function(c){currentCategory=c;currentLetter='all';filteredList=[...(db[c]||[])];currentPage=1;document.getElementById('cat-title').textContent=`Catálogo ${getConsoleName(c)}`;document.getElementById('cat-search').value='';document.getElementById('cat-search-clear').classList.add('hidden');document.getElementById('cat-search-clear').classList.remove('block');document.querySelectorAll('.letter-btn').forEach(b=>b.classList.remove('active'));document.querySelector('.letter-btn-all').classList.add('active');renderCategoryPage();showSection('contenido-categoria');tabs.forEach(t=>t.classList.remove('tab-active'))};
 function renderCategoryPage(){const g=document.getElementById('cat-grid');g.innerHTML='';const s=(currentPage-1)*ROMS_PER_PAGE;const sl=filteredList.slice(s,s+ROMS_PER_PAGE);if(!sl.length)g.innerHTML='<div class="col-span-full text-center py-12 text-gray-400"><i class="fa fa-search text-4xl mb-3 opacity-50"></i><p>Sin resultados</p></div>';else sl.forEach((g,i)=>document.getElementById('cat-grid').appendChild(createGameCard(g,currentCategory,{extraClass:'grid-card',delay:i*0.05})));totalPages=Math.max(1,Math.ceil(filteredList.length/ROMS_PER_PAGE));document.getElementById('page-info').textContent=currentPage+' / '+totalPages;document.getElementById('prev-page').disabled=currentPage<=1;document.getElementById('next-page').disabled=currentPage>=totalPages;const q=document.getElementById('cat-search').value.trim();const lt=currentLetter!=='all'?` (Letra: ${currentLetter})`:'';document.getElementById('cat-subtitle').textContent=q?`${filteredList.length} resultados para "${q}"${lt}`:`${gamesLabel(filteredList.length)}${lt}`;bindNeon()}
@@ -948,9 +1115,12 @@ fetch('mas-juegos.json').then(res => res.json()).then(sitios => {
     });
 }).catch(e => console.warn('No se pudo cargar sitios externos:', e));
 
+// Inicialización
+updateNSFWUI();
 loadData();
 loadNovedades();
 loadTopBuscados();
+loadNSFW();
 registrarVisitaGlobal();
 escucharVisitasEnTiempoReal();
 bindNeon();
