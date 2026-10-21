@@ -12,7 +12,8 @@
     <link rel="stylesheet" href="styles.css">
     <style>
         @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 5px rgba(0, 240, 255, 0.3); } 50% { box-shadow: 0 0 15px rgba(0, 240, 255, 0.6); } }
-        .stat-container { animation: pulse-glow 3s ease-in-out infinite; }
+        .stat-container { animation: pulse-glow 3s ease-in-out infinite; cursor: pointer; transition: transform 0.2s; }
+        .stat-container:hover { transform: scale(1.03); }
         .stat-label { font-size: 0.65rem; opacity: 0.8; letter-spacing: 0.05em; }
         @media (max-width: 640px) { .stat-label { font-size: 0.6rem; } }
         
@@ -41,43 +42,108 @@
         }
         .btn-age-no:hover { background: linear-gradient(135deg, #444, #333); }
         
-        /* Botón +18 filtro */
-        .nsfw-filter-btn {
+        /* Botón +18 en header */
+        .nsfw-header-btn {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 6px 14px;
-            border-radius: 9999px;
-            font-size: 0.75rem;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 0.7rem;
             font-weight: 700;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             background: rgba(255, 255, 255, 0.03);
             color: #666;
             cursor: pointer;
             transition: all 0.3s ease;
             user-select: none;
+            white-space: nowrap;
         }
-        .nsfw-filter-btn:hover {
-            background: rgba(255, 0, 64, 0.08);
-            border-color: rgba(255, 0, 64, 0.3);
+        .nsfw-header-btn:hover {
+            background: rgba(255, 0, 64, 0.1);
+            border-color: rgba(255, 0, 64, 0.4);
             color: #ff4070;
         }
-        .nsfw-filter-btn.active {
-            background: linear-gradient(135deg, rgba(255, 0, 64, 0.2), rgba(204, 0, 51, 0.15));
+        .nsfw-header-btn.active {
+            background: linear-gradient(135deg, rgba(255, 0, 64, 0.25), rgba(204, 0, 51, 0.2));
             border-color: #ff0040;
             color: #ff4070;
-            box-shadow: 0 0 15px rgba(255, 0, 64, 0.3);
+            box-shadow: 0 0 12px rgba(255, 0, 64, 0.35);
         }
-        .nsfw-filter-btn .nsfw-dot {
-            width: 6px;
-            height: 6px;
+        .nsfw-header-btn .nsfw-dot {
+            width: 5px;
+            height: 5px;
             border-radius: 50%;
             background: #666;
             transition: all 0.3s;
         }
-        .nsfw-filter-btn.active .nsfw-dot {
+        .nsfw-header-btn.active .nsfw-dot {
             background: #ff0040;
             box-shadow: 0 0 8px #ff0040;
+        }
+        
+        /* Panel de estadísticas expandible */
+        .stats-panel {
+            position: fixed;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-10px);
+            background: rgba(10, 10, 20, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 12px;
+            padding: 12px 16px;
+            z-index: 9998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            min-width: 220px;
+        }
+        .stats-panel.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+        .stats-panel::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%) rotate(45deg);
+            width: 12px;
+            height: 12px;
+            background: rgba(10, 10, 20, 0.95);
+            border-left: 1px solid rgba(0, 240, 255, 0.3);
+            border-top: 1px solid rgba(0, 240, 255, 0.3);
+        }
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .stats-row:last-child { border-bottom: none; }
+        .stats-label {
+            font-size: 0.75rem;
+            color: #888;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .stats-value {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #fff;
+        }
+        .stats-date {
+            text-align: center;
+            font-size: 0.65rem;
+            color: #555;
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
     </style>
 </head>
@@ -108,37 +174,56 @@
     </div>
 </div>
 
+<!-- PANEL DE ESTADÍSTICAS (popup al clickear contador) -->
+<div id="stats-panel" class="stats-panel">
+    <div class="stats-row">
+        <span class="stats-label"><i class="fa fa-calendar-day text-cyan-400"></i> Hoy</span>
+        <span class="stats-value text-cyan-400" id="stats-hoy">0</span>
+    </div>
+    <div class="stats-row">
+        <span class="stats-label"><i class="fa fa-calendar-week text-purple-400"></i> Esta semana</span>
+        <span class="stats-value text-purple-400" id="stats-semana">0</span>
+    </div>
+    <div class="stats-row">
+        <span class="stats-label"><i class="fa fa-calendar text-pink-400"></i> Este mes</span>
+        <span class="stats-value text-pink-400" id="stats-mes">0</span>
+    </div>
+    <div class="stats-date" id="stats-fecha-hoy">—</div>
+</div>
+
 <header class="sticky top-0 z-50 header-glass px-4 py-3">
-    <div class="max-w-7xl mx-auto flex items-center gap-3 sm:gap-4">
+    <div class="max-w-7xl mx-auto flex items-center gap-2 sm:gap-3">
         <h1 class="font-neon text-base sm:text-xl font-black neon-text tracking-wider shrink-0 cursor-pointer flex items-center gap-2" id="logo-home">
             <i class="fa fa-bolt text-cyan-400"></i> <span class="hidden sm:inline">GAMERMODHUB</span><span class="sm:hidden">GMH</span>
         </h1>
-        <div class="stat-container flex items-center gap-1 sm:gap-3 text-[10px] sm:text-xs font-bold bg-gradient-to-r from-cyan-500/10 to-purple-500/10 border border-cyan-500/30 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 shrink-0">
-            <div class="flex items-center gap-1.5 text-cyan-400">
-                <i class="fa fa-users text-[10px] sm:text-xs"></i>
-                <div class="flex flex-col leading-tight">
-                    <span class="text-[10px] sm:text-xs text-white font-black" id="stat-hoy">0</span>
-                    <span class="stat-label text-[8px] sm:text-[10px] text-cyan-300/80">hoy</span>
-                </div>
-            </div>
-            <div class="hidden sm:block w-px h-4 bg-cyan-500/30"></div>
-            <div class="hidden sm:flex flex-col leading-tight">
-                <span class="text-[10px] sm:text-xs text-white font-black" id="stat-semana">0</span>
-                <span class="stat-label text-[8px] sm:text-[10px] text-purple-300/80">esta semana</span>
-            </div>
-            <div class="hidden sm:block w-px h-4 bg-cyan-500/30"></div>
-            <div class="hidden sm:flex flex-col leading-tight">
-                <span class="text-[10px] sm:text-xs text-white font-black" id="stat-mes">0</span>
-                <span class="stat-label text-[8px] sm:text-[10px] text-pink-300/80">este mes</span>
+        
+        <!-- CONTADOR DE VISITAS (clickeable) -->
+        <div class="stat-container flex items-center gap-1 sm:gap-2 text-[10px] sm:text-xs font-bold bg-gradient-to-r from-cyan-500/10 to-purple-500/10 border border-cyan-500/30 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 shrink-0" id="stats-counter-btn" title="Ver estadísticas completas">
+            <i class="fa fa-users text-[10px] sm:text-xs text-cyan-400"></i>
+            <div class="flex flex-col leading-tight">
+                <span class="text-[10px] sm:text-xs text-white font-black" id="stat-hoy">0</span>
+                <span class="stat-label text-[8px] sm:text-[10px] text-cyan-300/80">hoy</span>
             </div>
         </div>
+
+        <!-- BOTÓN +18 (entre YouTube y tuerca) -->
+        <button type="button" id="nsfw-filter-btn" class="nsfw-header-btn" title="Activar/Desactivar contenido +18">
+            <span class="nsfw-dot"></span>
+            <span>+18</span>
+        </button>
+
+        <!-- BOTÓN YOUTUBE -->
         <a href="https://m.youtube.com/@DraculordxInmortalgames/videos" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white text-[10px] sm:text-xs font-bold px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg transition-all shadow-lg shadow-red-600/30 hover:shadow-red-600/50 hover:scale-105 shrink-0">
             <i class="fa fa-youtube-play"></i> <span class="hidden sm:inline">Videos</span>
         </a>
+
         <div class="flex-1"></div>
+        
+        <!-- BOTÓN NEON (tuerca) -->
         <button type="button" id="btn-toggle-neon" class="neon-toggle-btn" title="Apagar efectos neon" aria-label="Alternar efectos neon">
             <i class="fa fa-cog"></i><span class="neon-toggle-label">Neon</span>
         </button>
+        
         <div class="w-10 h-10 rounded-full overflow-hidden shrink-0 shadow-lg shadow-cyan-500/20 cursor-pointer hover:scale-105 transition-transform border border-cyan-500/30">
             <img src="wallpaper/icono.png" alt="Usuario" class="w-full h-full object-cover" onerror="this.style.display='none'">
         </div>
@@ -192,15 +277,6 @@
                 <div class="search-results-grid" id="search-grid"></div>
             </div>
         </div>
-
-        <!-- BOTÓN FILTRO +18 (debajo del buscador) -->
-        <div class="flex justify-center mb-6 fade-in-item">
-            <button type="button" id="nsfw-filter-btn" class="nsfw-filter-btn">
-                <span class="nsfw-dot"></span>
-                <span>+18</span>
-            </button>
-        </div>
-
         <div class="inicio-content" id="dynamic-home-rows"></div>
     </div>
 
@@ -275,7 +351,7 @@
         </div>
         <div class="filter-chips" id="emuladores-filter-chips">
             <button type="button" class="filter-chip active" data-plat="all">Todas</button>
-            <button type="button" class="filter-chip" data-plat="windows">💻 Windows</button>
+            <button type="button" class="filter-chip" data-plat="windows"> Windows</button>
             <button type="button" class="filter-chip" data-plat="android">🤖 Android</button>
             <button type="button" class="filter-chip" data-plat="multi">🌐 Multiplataforma</button>
         </div>
@@ -296,7 +372,7 @@
         <div class="filter-chips" id="apps-filter-chips">
             <button type="button" class="filter-chip active" data-cat="all">Todas</button>
             <button type="button" class="filter-chip" data-cat="launchers">🚀 Launchers</button>
-            <button type="button" class="filter-chip" data-cat="herramientas">🧰 Herramientas</button>
+            <button type="button" class="filter-chip" data-cat="herramientas"> Herramientas</button>
             <button type="button" class="filter-chip" data-cat="apk">📱 APKs</button>
             <button type="button" class="filter-chip" data-cat="otros">📦 Otros</button>
         </div>
@@ -317,7 +393,7 @@
         <div class="filter-chips" id="archivos-filter-chips">
             <button type="button" class="filter-chip active" data-cat="all">Todos</button>
             <button type="button" class="filter-chip" data-cat="bios">💾 BIOS</button>
-            <button type="button" class="filter-chip" data-cat="firmwares"> Firmwares</button>
+            <button type="button" class="filter-chip" data-cat="firmwares">🔌 Firmwares</button>
             <button type="button" class="filter-chip" data-cat="saves">💽 Saves</button>
             <button type="button" class="filter-chip" data-cat="configs">⚙️ Configuraciones</button>
             <button type="button" class="filter-chip" data-cat="otros">📦 Otros</button>
@@ -469,11 +545,11 @@ const contents=document.querySelectorAll('.tab-content');
 
 const CONSOLE_NAMES={'android':'Android','windows':'Windows','psvita':'PS Vita','psp':'PSP','ps1':'PS1','ps2':'PS2','ps3':'PS3','ps4':'PS4','nes':'NES','snes':'SNES','n64':'N64','gamecube':'GameCube','wii':'Wii','wiiu':'Wii U','gameboy':'Game Boy','gameboycolor':'GB Color','gameboyadvance':'GBA','nds':'NDS','3ds':'3DS','xbox':'Xbox','xbox360':'Xbox 360','segagenesis':'Sega Genesis','segasaturn':'Sega Saturn','sega_dreamcast':'Dreamcast','mame':'MAME','arcade_y_mas':'Arcade','nsfw':'NSFW +18'};
 const CONSOLE_ASPECT_RATIOS={'android':'1/1','gameboy':'1/1','gameboycolor':'1/1','gameboyadvance':'1/1','nds':'1/1','3ds':'1/1','psp':'2/3','psvita':'3/4','ps3':'4/5','ps4':'4/5','sega_dreamcast':'4/5','windows':'3/4','ps1':'3/4','ps2':'3/4','nes':'3/4','snes':'3/4','n64':'3/4','gamecube':'3/4','wii':'3/4','wiiu':'3/4','xbox':'3/4','xbox360':'3/4','segagenesis':'3/4','segasaturn':'3/4','mame':'3/4','arcade_y_mas':'3/4','nsfw':'3/4'};
-const ICONOS_CONSOLA={'android':'','windows':'💻','psvita':'','psp':'📀','ps1':'💿','ps2':'🕹️','ps3':'🎮','ps4':'','nes':'👾','snes':'👾','n64':'🕹️','gamecube':'🎲','wii':'','wiiu':'🎮','gameboy':'📱','gameboycolor':'','gameboyadvance':'📱','nds':'📱','3ds':'📱','xbox':'🎮','xbox360':'🎮','segagenesis':'🕹️','segasaturn':'💿','sega_dreamcast':'💿','mame':'️','arcade_y_mas':'👾','nsfw':'🔞'};
+const ICONOS_CONSOLA={'android':'','windows':'💻','psvita':'','psp':'📀','ps1':'💿','ps2':'🕹️','ps3':'','ps4':'','nes':'','snes':'👾','n64':'🕹️','gamecube':'🎲','wii':'','wiiu':'','gameboy':'📱','gameboycolor':'','gameboyadvance':'📱','nds':'📱','3ds':'📱','xbox':'','xbox360':'','segagenesis':'🕹️','segasaturn':'💿','sega_dreamcast':'','mame':'️','arcade_y_mas':'👾','nsfw':''};
 
-const MODS_CATEGORIES={texturas_pc:{nombre:'Texturas PC',icono:'🖼️',color:'#bd00ff',desc:'Packs de texturas HD para juegos de PC'},texturas_iso:{nombre:'Texturas ISO',icono:'💿',color:'#00f0ff',desc:'Texturas mejoradas para ISOs'},parches:{nombre:'Parches',icono:'🔧',color:'#ff9500',desc:'Patches de traducción y fixes'},mods_juego:{nombre:'Mods de Juegos',icono:'🎮',color:'#ff00aa',desc:'Modificaciones completas'},configs:{nombre:'Configuraciones',icono:'⚙️',color:'#00ff94',desc:'Archivos de configuración'},shaders:{nombre:'Shaders',icono:'✨',color:'#ffd700',desc:'Shaders y efectos visuales'},otros:{nombre:'Otros',icono:'📦',color:'#9ca3af',desc:'Otros mods'}};
-const APPS_CATEGORIES={launchers:{nombre:'Launchers',icono:'🚀'},herramientas:{nombre:'Herramientas',icono:'🧰'},apk:{nombre:'APKs',icono:'📱'},otros:{nombre:'Otros',icono:'📦'}};
-const ARCHIVOS_CATEGORIES={bios:{nombre:'BIOS',icono:'💾'},firmwares:{nombre:'Firmwares',icono:'🔌'},saves:{nombre:'Saves',icono:'💽'},configs:{nombre:'Configuraciones',icono:'⚙️'},otros:{nombre:'Otros',icono:'📦'}};
+const MODS_CATEGORIES={texturas_pc:{nombre:'Texturas PC',icono:'🖼️',color:'#bd00ff',desc:'Packs de texturas HD para juegos de PC'},texturas_iso:{nombre:'Texturas ISO',icono:'💿',color:'#00f0ff',desc:'Texturas mejoradas para ISOs'},parches:{nombre:'Parches',icono:'🔧',color:'#ff9500',desc:'Patches de traducción y fixes'},mods_juego:{nombre:'Mods de Juegos',icono:'',color:'#ff00aa',desc:'Modificaciones completas'},configs:{nombre:'Configuraciones',icono:'⚙️',color:'#00ff94',desc:'Archivos de configuración'},shaders:{nombre:'Shaders',icono:'✨',color:'#ffd700',desc:'Shaders y efectos visuales'},otros:{nombre:'Otros',icono:'📦',color:'#9ca3af',desc:'Otros mods'}};
+const APPS_CATEGORIES={launchers:{nombre:'Launchers',icono:''},herramientas:{nombre:'Herramientas',icono:''},apk:{nombre:'APKs',icono:''},otros:{nombre:'Otros',icono:''}};
+const ARCHIVOS_CATEGORIES={bios:{nombre:'BIOS',icono:''},firmwares:{nombre:'Firmwares',icono:''},saves:{nombre:'Saves',icono:'💽'},configs:{nombre:'Configuraciones',icono:'⚙️'},otros:{nombre:'Otros',icono:''}};
 
 function convertToJsDelivr(url) {
     if (!url) return url;
@@ -509,7 +585,7 @@ class TickerCarousel{
 let latestTicker=null,topTicker=null;
 
 // ==========================================
-// FILTRO +18 (simple botón toggle)
+// FILTRO +18 (botón en header)
 // ==========================================
 const AGE_STORAGE_KEY = 'gmh_age_verified';
 const NSFW_FILTER_KEY = 'gmh_nsfw_filter';
@@ -568,19 +644,15 @@ function updateNSFWFilterUI() {
     }
 }
 
-// Click en el botón +18
 nsfwFilterBtn.addEventListener('click', () => {
     if (nsfwFilterActive) {
-        // Desactivar filtro
         nsfwFilterActive = false;
         setNSFWFilter(false);
         updateNSFWFilterUI();
         showToast('🔒 Filtro +18 desactivado', 'info');
-        // Refrescar vistas
         renderBiblioteca();
         renderHomeRows();
     } else {
-        // Activar filtro (primero verificar edad)
         if (isAgeVerified()) {
             nsfwFilterActive = true;
             setNSFWFilter(true);
@@ -598,6 +670,31 @@ nsfwFilterBtn.addEventListener('click', () => {
                 renderHomeRows();
             });
         }
+    }
+});
+
+// ==========================================
+// PANEL DE ESTADÍSTICAS (clickeable)
+// ==========================================
+const statsCounterBtn = document.getElementById('stats-counter-btn');
+const statsPanel = document.getElementById('stats-panel');
+let statsPanelVisible = false;
+
+statsCounterBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    statsPanelVisible = !statsPanelVisible;
+    if (statsPanelVisible) {
+        statsPanel.classList.add('visible');
+    } else {
+        statsPanel.classList.remove('visible');
+    }
+});
+
+// Cerrar panel al hacer clic fuera
+document.addEventListener('click', (e) => {
+    if (!statsPanel.contains(e.target) && !statsCounterBtn.contains(e.target)) {
+        statsPanelVisible = false;
+        statsPanel.classList.remove('visible');
     }
 });
 
@@ -771,7 +868,6 @@ function renderBiblioteca(){
     g.innerHTML='';
     const cs=getAllCategoryKeys().filter(c=>getCategoryCount(c)>0).sort((a,b)=>getCategoryCount(b)-getCategoryCount(a));
     
-    // Si el filtro +18 está activo, agregar la categoría nsfw
     if (nsfwFilterActive && nsfwData.length > 0) {
         db['nsfw'] = nsfwData;
         if (!cs.includes('nsfw')) cs.push('nsfw');
@@ -816,7 +912,6 @@ function renderHomeRows(){
     topTicker.start();
     const sc=getAllCategoryKeys().filter(c=>getCategoryCount(c)>0).sort((a,b)=>getCategoryCount(b)-getCategoryCount(a));
     
-    // Si el filtro +18 está activo, agregar la categoría nsfw
     if (nsfwFilterActive && nsfwData.length > 0) {
         db['nsfw'] = nsfwData;
         if (!sc.includes('nsfw')) sc.push('nsfw');
@@ -949,6 +1044,11 @@ function getWeekString(date) {
     return `${d.getUTCFullYear()}-W${String(weekNo).padStart(2, '0')}`;
 }
 
+// ==========================================
+// CONTADOR DE VISITAS MEJORADO
+// ==========================================
+let statsHoy = 0, statsSemana = 0, statsMes = 0;
+
 async function registrarVisitaGlobal() {
     try {
         const userId = getAnonId();
@@ -959,6 +1059,15 @@ async function registrarVisitaGlobal() {
         const userRef = dbFirestore.collection('usuarios_visitas').doc(userId);
         const userDoc = await userRef.get();
         const data = userDoc.exists ? userDoc.data() : {};
+        
+        // Verificar si cambió el día para "restaurar" el contador de hoy
+        const lastHoyRegistrado = data.last_hoy || '';
+        if (lastHoyRegistrado && lastHoyRegistrado !== hoyStr) {
+            // Es un nuevo día, el contador de hoy se "restaura" solo porque
+            // el documento de Firebase para el nuevo día no existe aún
+            console.log(' Nuevo día detectado. Contador de hoy se reinicia automáticamente.');
+        }
+        
         const checkAndUpdate = async (campo, valorActual, nuevoValor, docGlobal) => {
             if (valorActual !== nuevoValor) {
                 await userRef.set({ [campo]: nuevoValor }, { merge: true });
@@ -975,9 +1084,28 @@ async function registrarVisitaGlobal() {
 }
 
 function escucharVisitasEnTiempoReal() {
-    dbFirestore.collection('stats_visitas').doc('hoy').onSnapshot(doc => { animateNumber('stat-hoy', doc.exists ? (doc.data().count || 0) : 0); });
-    dbFirestore.collection('stats_visitas').doc('semana').onSnapshot(doc => { animateNumber('stat-semana', doc.exists ? (doc.data().count || 0) : 0); });
-    dbFirestore.collection('stats_visitas').doc('mes').onSnapshot(doc => { animateNumber('stat-mes', doc.exists ? (doc.data().count || 0) : 0); });
+    dbFirestore.collection('stats_visitas').doc('hoy').onSnapshot(doc => { 
+        const count = doc.exists ? (doc.data().count || 0) : 0;
+        statsHoy = count;
+        animateNumber('stat-hoy', count);
+        document.getElementById('stats-hoy').textContent = count.toLocaleString('es-ES');
+    });
+    dbFirestore.collection('stats_visitas').doc('semana').onSnapshot(doc => { 
+        const count = doc.exists ? (doc.data().count || 0) : 0;
+        statsSemana = count;
+        animateNumber('stat-semana', count);
+        document.getElementById('stats-semana').textContent = count.toLocaleString('es-ES');
+    });
+    dbFirestore.collection('stats_visitas').doc('mes').onSnapshot(doc => { 
+        const count = doc.exists ? (doc.data().count || 0) : 0;
+        statsMes = count;
+        animateNumber('stat-mes', count);
+        document.getElementById('stats-mes').textContent = count.toLocaleString('es-ES');
+    });
+    
+    // Actualizar fecha en el panel
+    const hoy = new Date();
+    document.getElementById('stats-fecha-hoy').textContent = hoy.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 }
 
 function animateNumber(elementId, target) {
