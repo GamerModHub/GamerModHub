@@ -17,134 +17,57 @@
         .stat-label { font-size: 0.65rem; opacity: 0.8; letter-spacing: 0.05em; }
         @media (max-width: 640px) { .stat-label { font-size: 0.6rem; } }
         
-        /* Modal +18 */
-        .age-verification-overlay {
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(10px);
-        }
+        .age-verification-overlay { background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(10px); }
         .age-verification-box {
             background: linear-gradient(135deg, #1a0000 0%, #0d0000 100%);
             border: 2px solid #ff0040;
             box-shadow: 0 0 40px rgba(255, 0, 64, 0.3);
         }
-        .btn-age-yes {
-            background: linear-gradient(135deg, #ff0040, #cc0033);
-            transition: all 0.3s;
-        }
-        .btn-age-yes:hover {
-            background: linear-gradient(135deg, #ff1a53, #e60039);
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(255, 0, 64, 0.5);
-        }
-        .btn-age-no {
-            background: linear-gradient(135deg, #333, #222);
-            transition: all 0.3s;
-        }
+        .btn-age-yes { background: linear-gradient(135deg, #ff0040, #cc0033); transition: all 0.3s; }
+        .btn-age-yes:hover { background: linear-gradient(135deg, #ff1a53, #e60039); transform: scale(1.05); box-shadow: 0 0 20px rgba(255, 0, 64, 0.5); }
+        .btn-age-no { background: linear-gradient(135deg, #333, #222); transition: all 0.3s; }
         .btn-age-no:hover { background: linear-gradient(135deg, #444, #333); }
         
-        /* Botón +18 en header */
         .nsfw-header-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 5px 10px;
-            border-radius: 8px;
-            font-size: 0.7rem;
-            font-weight: 700;
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 5px 10px; border-radius: 8px;
+            font-size: 0.7rem; font-weight: 700;
             border: 1px solid rgba(255, 255, 255, 0.08);
             background: rgba(255, 255, 255, 0.03);
-            color: #666;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            user-select: none;
-            white-space: nowrap;
+            color: #666; cursor: pointer; transition: all 0.3s ease; user-select: none; white-space: nowrap;
         }
-        .nsfw-header-btn:hover {
-            background: rgba(255, 0, 64, 0.1);
-            border-color: rgba(255, 0, 64, 0.4);
-            color: #ff4070;
-        }
+        .nsfw-header-btn:hover { background: rgba(255, 0, 64, 0.1); border-color: rgba(255, 0, 64, 0.4); color: #ff4070; }
         .nsfw-header-btn.active {
             background: linear-gradient(135deg, rgba(255, 0, 64, 0.25), rgba(204, 0, 51, 0.2));
-            border-color: #ff0040;
-            color: #ff4070;
+            border-color: #ff0040; color: #ff4070;
             box-shadow: 0 0 12px rgba(255, 0, 64, 0.35);
         }
-        .nsfw-header-btn .nsfw-dot {
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-            background: #666;
-            transition: all 0.3s;
-        }
-        .nsfw-header-btn.active .nsfw-dot {
-            background: #ff0040;
-            box-shadow: 0 0 8px #ff0040;
-        }
+        .nsfw-header-btn .nsfw-dot { width: 5px; height: 5px; border-radius: 50%; background: #666; transition: all 0.3s; }
+        .nsfw-header-btn.active .nsfw-dot { background: #ff0040; box-shadow: 0 0 8px #ff0040; }
         
-        /* Panel de estadísticas expandible */
         .stats-panel {
-            position: fixed;
-            top: 60px;
-            left: 50%;
+            position: fixed; top: 60px; left: 50%;
             transform: translateX(-50%) translateY(-10px);
-            background: rgba(10, 10, 20, 0.95);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(0, 240, 255, 0.3);
-            border-radius: 12px;
-            padding: 12px 16px;
-            z-index: 9998;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-            min-width: 220px;
+            background: rgba(10, 10, 20, 0.95); backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 12px;
+            padding: 12px 16px; z-index: 9998;
+            opacity: 0; visibility: hidden; transition: all 0.3s ease;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); min-width: 220px;
         }
-        .stats-panel.visible {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(-50%) translateY(0);
-        }
+        .stats-panel.visible { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
         .stats-panel::before {
-            content: '';
-            position: absolute;
-            top: -6px;
-            left: 50%;
+            content: ''; position: absolute; top: -6px; left: 50%;
             transform: translateX(-50%) rotate(45deg);
-            width: 12px;
-            height: 12px;
+            width: 12px; height: 12px;
             background: rgba(10, 10, 20, 0.95);
             border-left: 1px solid rgba(0, 240, 255, 0.3);
             border-top: 1px solid rgba(0, 240, 255, 0.3);
         }
-        .stats-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 6px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
+        .stats-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
         .stats-row:last-child { border-bottom: none; }
-        .stats-label {
-            font-size: 0.75rem;
-            color: #888;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .stats-value {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #fff;
-        }
-        .stats-date {
-            text-align: center;
-            font-size: 0.65rem;
-            color: #555;
-            margin-top: 6px;
-            padding-top: 6px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-        }
+        .stats-label { font-size: 0.75rem; color: #888; display: flex; align-items: center; gap: 6px; }
+        .stats-value { font-size: 0.85rem; font-weight: 700; color: #fff; }
+        .stats-date { text-align: center; font-size: 0.65rem; color: #555; margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255, 255, 255, 0.05); }
     </style>
 </head>
 <body>
@@ -174,7 +97,7 @@
     </div>
 </div>
 
-<!-- PANEL DE ESTADÍSTICAS (popup al clickear contador) -->
+<!-- PANEL DE ESTADÍSTICAS -->
 <div id="stats-panel" class="stats-panel">
     <div class="stats-row">
         <span class="stats-label"><i class="fa fa-calendar-day text-cyan-400"></i> Hoy</span>
@@ -197,7 +120,6 @@
             <i class="fa fa-bolt text-cyan-400"></i> <span class="hidden sm:inline">GAMERMODHUB</span><span class="sm:hidden">GMH</span>
         </h1>
         
-        <!-- CONTADOR DE VISITAS (clickeable) -->
         <div class="stat-container flex items-center gap-1 sm:gap-2 text-[10px] sm:text-xs font-bold bg-gradient-to-r from-cyan-500/10 to-purple-500/10 border border-cyan-500/30 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 shrink-0" id="stats-counter-btn" title="Ver estadísticas completas">
             <i class="fa fa-users text-[10px] sm:text-xs text-cyan-400"></i>
             <div class="flex flex-col leading-tight">
@@ -206,20 +128,18 @@
             </div>
         </div>
 
-        <!-- BOTÓN +18 (entre YouTube y tuerca) -->
+        <!-- BOTÓN +18 -->
         <button type="button" id="nsfw-filter-btn" class="nsfw-header-btn" title="Activar/Desactivar contenido +18">
             <span class="nsfw-dot"></span>
             <span>+18</span>
         </button>
 
-        <!-- BOTÓN YOUTUBE -->
         <a href="https://m.youtube.com/@DraculordxInmortalgames/videos" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white text-[10px] sm:text-xs font-bold px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg transition-all shadow-lg shadow-red-600/30 hover:shadow-red-600/50 hover:scale-105 shrink-0">
             <i class="fa fa-youtube-play"></i> <span class="hidden sm:inline">Videos</span>
         </a>
 
         <div class="flex-1"></div>
         
-        <!-- BOTÓN NEON (tuerca) -->
         <button type="button" id="btn-toggle-neon" class="neon-toggle-btn" title="Apagar efectos neon" aria-label="Alternar efectos neon">
             <i class="fa fa-cog"></i><span class="neon-toggle-label">Neon</span>
         </button>
@@ -246,7 +166,6 @@
 </nav>
 
 <main>
-    <!-- INICIO -->
     <div id="contenido-inicio" class="tab-content active">
         <section class="banner-box p-4 sm:p-6 mb-6 fade-in-item">
             <div class="relative z-10 flex flex-col items-center text-center">
@@ -280,7 +199,6 @@
         <div class="inicio-content" id="dynamic-home-rows"></div>
     </div>
 
-    <!-- BIBLIOTECA -->
     <div id="contenido-manual" class="tab-content">
         <h3 class="font-neon text-2xl neon-animated mb-2 flex items-center gap-2"><i class="fa fa-folder-open"></i> Biblioteca</h3>
         <p class="text-gray-400 text-sm mb-6">Explorá el catálogo completo de consolas</p>
@@ -291,7 +209,6 @@
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4" id="biblioteca-grid"></div>
     </div>
 
-    <!-- CATEGORÍA ROMS -->
     <div id="contenido-categoria" class="tab-content">
         <div class="back-btn" id="btn-volver"><i class="fa fa-arrow-left"></i> Volver al inicio</div>
         <h2 class="font-neon text-2xl neon-animated mb-1" id="cat-title">Catálogo</h2>
@@ -316,7 +233,6 @@
         </div>
     </div>
 
-    <!-- MODS -->
     <div id="contenido-mods" class="tab-content">
         <h3 class="font-neon text-2xl neon-animated mb-2 flex items-center gap-2"><i class="fa fa-paint-brush"></i> Mods y Texturas</h3>
         <p class="text-gray-400 text-sm mb-6">Modificaciones, texturas HD, parches y configuraciones</p>
@@ -328,7 +244,7 @@
         <div class="filter-chips" id="mods-filter-chips">
             <button type="button" class="filter-chip active" data-cat="all">Todos</button>
             <button type="button" class="filter-chip" data-cat="texturas_pc">️ Texturas PC</button>
-            <button type="button" class="filter-chip" data-cat="texturas_iso">💿 Texturas ISO</button>
+            <button type="button" class="filter-chip" data-cat="texturas_iso"> Texturas ISO</button>
             <button type="button" class="filter-chip" data-cat="parches">🔧 Parches</button>
             <button type="button" class="filter-chip" data-cat="mods_juego">🎮 Mods de Juegos</button>
             <button type="button" class="filter-chip" data-cat="configs">⚙️ Configuraciones</button>
@@ -340,7 +256,6 @@
         </div>
     </div>
 
-    <!-- EMULADORES -->
     <div id="contenido-emuladores" class="tab-content">
         <h3 class="font-neon text-2xl neon-animated mb-2 flex items-center gap-2"><i class="fa fa-microchip"></i> Emuladores</h3>
         <p class="text-gray-400 text-sm mb-6">Para correr tus juegos con el mejor rendimiento</p>
@@ -360,7 +275,6 @@
         </div>
     </div>
 
-    <!-- APPS -->
     <div id="contenido-apps" class="tab-content">
         <h3 class="font-neon text-2xl neon-animated mb-2 flex items-center gap-2"><i class="fa fa-android"></i> Aplicaciones</h3>
         <p class="text-gray-400 text-sm mb-6">Herramientas, launchers, utilidades y optimizadores</p>
@@ -371,17 +285,16 @@
         </div>
         <div class="filter-chips" id="apps-filter-chips">
             <button type="button" class="filter-chip active" data-cat="all">Todas</button>
-            <button type="button" class="filter-chip" data-cat="launchers">🚀 Launchers</button>
-            <button type="button" class="filter-chip" data-cat="herramientas"> Herramientas</button>
+            <button type="button" class="filter-chip" data-cat="launchers"> Launchers</button>
+            <button type="button" class="filter-chip" data-cat="herramientas">🧰 Herramientas</button>
             <button type="button" class="filter-chip" data-cat="apk">📱 APKs</button>
-            <button type="button" class="filter-chip" data-cat="otros">📦 Otros</button>
+            <button type="button" class="filter-chip" data-cat="otros"> Otros</button>
         </div>
         <div id="apps-grid" class="grid-3-col">
             <div class="col-span-full text-center py-10 text-gray-400"><i class="fa fa-spinner fa-spin text-2xl mb-2"></i><p>Cargando...</p></div>
         </div>
     </div>
 
-    <!-- ARCHIVOS GAMER -->
     <div id="contenido-archivos" class="tab-content">
         <h3 class="font-neon text-2xl neon-animated mb-2 flex items-center gap-2"><i class="fa fa-folder-open-o"></i> Archivos Gamer</h3>
         <p class="text-gray-400 text-sm mb-6">BIOS, firmwares, saves y configuraciones esenciales</p>
@@ -395,7 +308,7 @@
             <button type="button" class="filter-chip" data-cat="bios">💾 BIOS</button>
             <button type="button" class="filter-chip" data-cat="firmwares">🔌 Firmwares</button>
             <button type="button" class="filter-chip" data-cat="saves">💽 Saves</button>
-            <button type="button" class="filter-chip" data-cat="configs">⚙️ Configuraciones</button>
+            <button type="button" class="filter-chip" data-cat="configs">️ Configuraciones</button>
             <button type="button" class="filter-chip" data-cat="otros">📦 Otros</button>
         </div>
         <div id="archivos-grid" class="grid-3-col">
@@ -403,7 +316,6 @@
         </div>
     </div>
 
-    <!-- GRUPOS -->
     <div id="contenido-grupos" class="tab-content">
         <h3 class="font-neon text-2xl neon-animated mb-2 flex items-center gap-2"><i class="fa fa-users"></i> Grupos Gamers</h3>
         <p class="text-gray-400 text-sm mb-6">Únete a nuestros grupos oficiales de WhatsApp</p>
@@ -433,7 +345,6 @@
         </div>
     </div>
 
-    <!-- PEDIR JUEGO -->
     <div id="contenido-pedir" class="tab-content">
         <h3 class="font-neon text-2xl neon-animated mb-2 flex items-center gap-2"><i class="fa fa-gamepad"></i> Pedir un juego</h3>
         <p class="text-gray-400 text-sm mb-6">¿No encontrás lo que buscás? Pedilo y lo subimos.</p>
@@ -451,7 +362,7 @@
     </div>
 </main>
 
-<!-- MODAL JUEGO CON BOTONES DINÁMICOS -->
+<!-- MODAL JUEGO -->
 <div id="game-modal" class="modal-overlay" onclick="if(event.target===this)closeGameModal()">
     <div class="modal-content">
         <button class="modal-close-btn" onclick="closeGameModal()"><i class="fa fa-times"></i></button>
@@ -489,7 +400,6 @@
     </div>
 </div>
 
-<!-- MODAL REPORTES -->
 <div id="modal-reportar" class="modal-overlay" onclick="if(event.target===this)closeReportModal()">
     <div class="modal-content">
         <button class="modal-close-btn" onclick="closeReportModal()"><i class="fa fa-times"></i></button>
@@ -510,7 +420,7 @@
         <form id="form-reportar">
             <label class="report-type-label"><i class="fa fa-list-ul"></i> ¿Qué problema encontraste?</label>
             <div class="report-type-grid">
-                <label class="report-type-option" data-type="link_caido"><input type="radio" name="report-type" value="link_caido"><span class="report-type-icon"></span><span class="report-type-text">Link caído</span></label>
+                <label class="report-type-option" data-type="link_caido"><input type="radio" name="report-type" value="link_caido"><span class="report-type-icon">🔗</span><span class="report-type-text">Link caído</span></label>
                 <label class="report-type-option" data-type="juego_incorrecto"><input type="radio" name="report-type" value="juego_incorrecto"><span class="report-type-icon">⚠️</span><span class="report-type-text">Incorrecto</span></label>
                 <label class="report-type-option" data-type="otro"><input type="radio" name="report-type" value="otro"><span class="report-type-icon">📝</span><span class="report-type-text">Otro</span></label>
             </div>
@@ -545,11 +455,11 @@ const contents=document.querySelectorAll('.tab-content');
 
 const CONSOLE_NAMES={'android':'Android','windows':'Windows','psvita':'PS Vita','psp':'PSP','ps1':'PS1','ps2':'PS2','ps3':'PS3','ps4':'PS4','nes':'NES','snes':'SNES','n64':'N64','gamecube':'GameCube','wii':'Wii','wiiu':'Wii U','gameboy':'Game Boy','gameboycolor':'GB Color','gameboyadvance':'GBA','nds':'NDS','3ds':'3DS','xbox':'Xbox','xbox360':'Xbox 360','segagenesis':'Sega Genesis','segasaturn':'Sega Saturn','sega_dreamcast':'Dreamcast','mame':'MAME','arcade_y_mas':'Arcade','nsfw':'NSFW +18'};
 const CONSOLE_ASPECT_RATIOS={'android':'1/1','gameboy':'1/1','gameboycolor':'1/1','gameboyadvance':'1/1','nds':'1/1','3ds':'1/1','psp':'2/3','psvita':'3/4','ps3':'4/5','ps4':'4/5','sega_dreamcast':'4/5','windows':'3/4','ps1':'3/4','ps2':'3/4','nes':'3/4','snes':'3/4','n64':'3/4','gamecube':'3/4','wii':'3/4','wiiu':'3/4','xbox':'3/4','xbox360':'3/4','segagenesis':'3/4','segasaturn':'3/4','mame':'3/4','arcade_y_mas':'3/4','nsfw':'3/4'};
-const ICONOS_CONSOLA={'android':'','windows':'💻','psvita':'','psp':'📀','ps1':'💿','ps2':'🕹️','ps3':'','ps4':'','nes':'','snes':'👾','n64':'🕹️','gamecube':'🎲','wii':'','wiiu':'','gameboy':'📱','gameboycolor':'','gameboyadvance':'📱','nds':'📱','3ds':'📱','xbox':'','xbox360':'','segagenesis':'🕹️','segasaturn':'💿','sega_dreamcast':'','mame':'️','arcade_y_mas':'👾','nsfw':''};
+const ICONOS_CONSOLA={'android':'','windows':'💻','psvita':'','psp':'📀','ps1':'💿','ps2':'🕹️','ps3':'🎮','ps4':'','nes':'👾','snes':'👾','n64':'🕹️','gamecube':'🎲','wii':'','wiiu':'🎮','gameboy':'📱','gameboycolor':'','gameboyadvance':'📱','nds':'📱','3ds':'📱','xbox':'🎮','xbox360':'🎮','segagenesis':'🕹️','segasaturn':'💿','sega_dreamcast':'💿','mame':'️','arcade_y_mas':'👾','nsfw':'🔞'};
 
-const MODS_CATEGORIES={texturas_pc:{nombre:'Texturas PC',icono:'🖼️',color:'#bd00ff',desc:'Packs de texturas HD para juegos de PC'},texturas_iso:{nombre:'Texturas ISO',icono:'💿',color:'#00f0ff',desc:'Texturas mejoradas para ISOs'},parches:{nombre:'Parches',icono:'🔧',color:'#ff9500',desc:'Patches de traducción y fixes'},mods_juego:{nombre:'Mods de Juegos',icono:'',color:'#ff00aa',desc:'Modificaciones completas'},configs:{nombre:'Configuraciones',icono:'⚙️',color:'#00ff94',desc:'Archivos de configuración'},shaders:{nombre:'Shaders',icono:'✨',color:'#ffd700',desc:'Shaders y efectos visuales'},otros:{nombre:'Otros',icono:'📦',color:'#9ca3af',desc:'Otros mods'}};
-const APPS_CATEGORIES={launchers:{nombre:'Launchers',icono:''},herramientas:{nombre:'Herramientas',icono:''},apk:{nombre:'APKs',icono:''},otros:{nombre:'Otros',icono:''}};
-const ARCHIVOS_CATEGORIES={bios:{nombre:'BIOS',icono:''},firmwares:{nombre:'Firmwares',icono:''},saves:{nombre:'Saves',icono:'💽'},configs:{nombre:'Configuraciones',icono:'⚙️'},otros:{nombre:'Otros',icono:''}};
+const MODS_CATEGORIES={texturas_pc:{nombre:'Texturas PC',icono:'🖼️',color:'#bd00ff',desc:'Packs de texturas HD para juegos de PC'},texturas_iso:{nombre:'Texturas ISO',icono:'💿',color:'#00f0ff',desc:'Texturas mejoradas para ISOs'},parches:{nombre:'Parches',icono:'🔧',color:'#ff9500',desc:'Patches de traducción y fixes'},mods_juego:{nombre:'Mods de Juegos',icono:'🎮',color:'#ff00aa',desc:'Modificaciones completas'},configs:{nombre:'Configuraciones',icono:'⚙️',color:'#00ff94',desc:'Archivos de configuración'},shaders:{nombre:'Shaders',icono:'✨',color:'#ffd700',desc:'Shaders y efectos visuales'},otros:{nombre:'Otros',icono:'📦',color:'#9ca3af',desc:'Otros mods'}};
+const APPS_CATEGORIES={launchers:{nombre:'Launchers',icono:'🚀'},herramientas:{nombre:'Herramientas',icono:'🧰'},apk:{nombre:'APKs',icono:'📱'},otros:{nombre:'Otros',icono:'📦'}};
+const ARCHIVOS_CATEGORIES={bios:{nombre:'BIOS',icono:'💾'},firmwares:{nombre:'Firmwares',icono:'🔌'},saves:{nombre:'Saves',icono:'💽'},configs:{nombre:'Configuraciones',icono:'⚙️'},otros:{nombre:'Otros',icono:'📦'}};
 
 function convertToJsDelivr(url) {
     if (!url) return url;
@@ -585,7 +495,7 @@ class TickerCarousel{
 let latestTicker=null,topTicker=null;
 
 // ==========================================
-// FILTRO +18 (botón en header)
+// FILTRO +18 PERSISTENTE
 // ==========================================
 const AGE_STORAGE_KEY = 'gmh_age_verified';
 const NSFW_FILTER_KEY = 'gmh_nsfw_filter';
@@ -649,7 +559,7 @@ nsfwFilterBtn.addEventListener('click', () => {
         nsfwFilterActive = false;
         setNSFWFilter(false);
         updateNSFWFilterUI();
-        showToast('🔒 Filtro +18 desactivado', 'info');
+        showToast(' Filtro +18 desactivado', 'info');
         renderBiblioteca();
         renderHomeRows();
     } else {
@@ -674,7 +584,7 @@ nsfwFilterBtn.addEventListener('click', () => {
 });
 
 // ==========================================
-// PANEL DE ESTADÍSTICAS (clickeable)
+// PANEL DE ESTADÍSTICAS
 // ==========================================
 const statsCounterBtn = document.getElementById('stats-counter-btn');
 const statsPanel = document.getElementById('stats-panel');
@@ -690,7 +600,6 @@ statsCounterBtn.addEventListener('click', (e) => {
     }
 });
 
-// Cerrar panel al hacer clic fuera
 document.addEventListener('click', (e) => {
     if (!statsPanel.contains(e.target) && !statsCounterBtn.contains(e.target)) {
         statsPanelVisible = false;
@@ -845,7 +754,20 @@ window.openGameModal=function(g,c){
 window.closeGameModal=function(){document.getElementById('game-modal').classList.remove('active');document.body.style.overflow=''};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeGameModal();closeReportModal()}});
 
-async function loadData(){try{const d=await dbFirestore.collection('sistema').doc('catalogo_por_consola').get();if(d.exists){const data=d.data();for(const[k,v]of Object.entries(data)){if(Array.isArray(v)){db[k]=v;db[k].sort((a,b)=>(b.timestamp||0)-(a.timestamp||0))}}}}catch(e){console.error('Error ROMs:',e)}CATEGORIES=getAllCategoryKeys();renderBiblioteca();renderHomeRows()}
+async function loadData(){
+    try{
+        const d=await dbFirestore.collection('sistema').doc('catalogo_por_consola').get();
+        if(d.exists){
+            const data=d.data();
+            for(const[k,v]of Object.entries(data)){
+                if(Array.isArray(v)){db[k]=v;db[k].sort((a,b)=>(b.timestamp||0)-(a.timestamp||0))}
+            }
+        }
+    }catch(e){console.error('Error ROMs:',e)}
+    CATEGORIES=getAllCategoryKeys();
+    renderBiblioteca();
+    renderHomeRows();
+}
 async function loadNovedades(){try{const d=await dbFirestore.collection('sistema').doc('novedades').get();if(d.exists&&d.data().items){novedadesData=d.data().items.sort((a,b)=>(b.timestamp||0)-(a.timestamp||0))}}catch(e){console.error('Error novedades:',e)}renderNews()}
 async function loadTopBuscados(){try{const d=await dbFirestore.collection('sistema').doc('top_buscados').get();if(d.exists&&d.data().games){topBuscadosData=d.data().games}}catch(e){console.error('Error top:',e)}renderTopBuscados()}
 async function loadEmuladores(){try{const d=await dbFirestore.collection('sistema').doc('emuladores').get();if(d.exists&&d.data().items){emuladoresData=d.data().items.sort((a,b)=>(b.timestamp||0)-(a.timestamp||0))}}catch(e){console.error('Error emuladores:',e)}renderEmuladores()}
@@ -858,8 +780,10 @@ async function loadNSFW() {
         const d = await dbFirestore.collection('sistema').doc('nsfw_games').get();
         if (d.exists && d.data().games) {
             nsfwData = d.data().games.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+        } else {
+            nsfwData = [];
         }
-    } catch (e) { console.error('Error cargando NSFW:', e); }
+    } catch (e) { console.error('Error cargando NSFW:', e); nsfwData = []; }
 }
 
 function renderBiblioteca(){
@@ -868,6 +792,7 @@ function renderBiblioteca(){
     g.innerHTML='';
     const cs=getAllCategoryKeys().filter(c=>getCategoryCount(c)>0).sort((a,b)=>getCategoryCount(b)-getCategoryCount(a));
     
+    // Si el filtro +18 está activo Y hay datos NSFW cargados, agregar la categoría
     if (nsfwFilterActive && nsfwData.length > 0) {
         db['nsfw'] = nsfwData;
         if (!cs.includes('nsfw')) cs.push('nsfw');
@@ -880,7 +805,7 @@ function renderBiblioteca(){
         const d=document.createElement('div');
         d.className='folder-card p-6 text-center';
         d.onclick=()=>openCategory(c);
-        const fallbackIcon=ICONOS_CONSOLA[c]||'';
+        const fallbackIcon=ICONOS_CONSOLA[c]||'🎯';
         d.innerHTML=`<div class="mb-4 flex justify-center items-center h-16"><img src="images/biblioteca-categorias/${c}.png" alt="${escapeHtml(getConsoleName(c))}" class="w-16 h-16 object-contain drop-shadow-[0_0_10px_rgba(0,240,255,0.4)] transition-transform duration-300 hover:scale-110" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="text-5xl hidden items-center justify-center w-16 h-16">${fallbackIcon}</div></div><h4 class="font-neon font-bold text-lg mb-1">${escapeHtml(getConsoleName(c))}</h4><p class="text-xs text-cyan-400 font-semibold">${countLabel(getCategoryCount(c))}</p>`;
         g.appendChild(d)
     });
@@ -912,6 +837,7 @@ function renderHomeRows(){
     topTicker.start();
     const sc=getAllCategoryKeys().filter(c=>getCategoryCount(c)>0).sort((a,b)=>getCategoryCount(b)-getCategoryCount(a));
     
+    // Si el filtro +18 está activo Y hay datos NSFW cargados, agregar la categoría
     if (nsfwFilterActive && nsfwData.length > 0) {
         db['nsfw'] = nsfwData;
         if (!sc.includes('nsfw')) sc.push('nsfw');
@@ -1044,9 +970,6 @@ function getWeekString(date) {
     return `${d.getUTCFullYear()}-W${String(weekNo).padStart(2, '0')}`;
 }
 
-// ==========================================
-// CONTADOR DE VISITAS MEJORADO
-// ==========================================
 let statsHoy = 0, statsSemana = 0, statsMes = 0;
 
 async function registrarVisitaGlobal() {
@@ -1059,14 +982,6 @@ async function registrarVisitaGlobal() {
         const userRef = dbFirestore.collection('usuarios_visitas').doc(userId);
         const userDoc = await userRef.get();
         const data = userDoc.exists ? userDoc.data() : {};
-        
-        // Verificar si cambió el día para "restaurar" el contador de hoy
-        const lastHoyRegistrado = data.last_hoy || '';
-        if (lastHoyRegistrado && lastHoyRegistrado !== hoyStr) {
-            // Es un nuevo día, el contador de hoy se "restaura" solo porque
-            // el documento de Firebase para el nuevo día no existe aún
-            console.log(' Nuevo día detectado. Contador de hoy se reinicia automáticamente.');
-        }
         
         const checkAndUpdate = async (campo, valorActual, nuevoValor, docGlobal) => {
             if (valorActual !== nuevoValor) {
@@ -1103,7 +1018,6 @@ function escucharVisitasEnTiempoReal() {
         document.getElementById('stats-mes').textContent = count.toLocaleString('es-ES');
     });
     
-    // Actualizar fecha en el panel
     const hoy = new Date();
     document.getElementById('stats-fecha-hoy').textContent = hoy.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 }
@@ -1143,13 +1057,25 @@ fetch('mas-juegos.json').then(res => res.json()).then(sitios => {
     });
 }).catch(e => console.warn('No se pudo cargar sitios externos:', e));
 
-// Inicialización
+// ==========================================
+// INICIALIZACIÓN CON PERSISTENCIA DEL FILTRO +18
+// ==========================================
+// 1. Restaurar el estado del filtro desde localStorage
 nsfwFilterActive = isNSFWFilterActive();
 updateNSFWFilterUI();
+
+// 2. Cargar datos
 loadData();
 loadNovedades();
 loadTopBuscados();
-loadNSFW();
+loadNSFW().then(() => {
+    // 3. Una vez cargados los datos NSFW, si el filtro estaba activo, refrescar las vistas
+    if (nsfwFilterActive && nsfwData.length > 0) {
+        renderBiblioteca();
+        renderHomeRows();
+    }
+});
+
 registrarVisitaGlobal();
 escucharVisitasEnTiempoReal();
 bindNeon();
