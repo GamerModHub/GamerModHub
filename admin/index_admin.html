@@ -9,12 +9,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <link rel="stylesheet" href="styles.css">
-    
-    <!-- SEGURIDAD: Ocultar todo por defecto hasta que JS confirme login -->
-    <style>
-        .pantalla-protegida { display: none !important; }
-        #pantalla-login { display: flex !important; }
-    </style>
 </head>
 
 <body>
@@ -69,7 +63,7 @@
 <!-- ============================================ -->
 <!-- 2. PANTALLA DE BIENVENIDA (OCULTA POR DEFECTO) -->
 <!-- ============================================ -->
-<div id="pantalla-bienvenida" class="pantalla-completa pantalla-protegida">
+<div id="pantalla-bienvenida" class="pantalla-completa" style="display:none;">
     <div class="marco-real caja-centro">
         <i class="fa fa-user-circle-o titulo-dorado text-7xl mb-6"></i>
         <h1 class="font-gamer text-2xl sm:text-3xl titulo-dorado mb-2">BIENVENIDO</h1>
@@ -80,7 +74,6 @@
             <i class="fa fa-upload mr-2"></i> SUBIR ROMS / GESTIONAR
         </button>
 
-        <!-- BOTÓN +18 CORREGIDO -->
         <button id="btn-ir-a-nsfw" class="btn-soberano w-full text-base sm:text-xl py-4 sm:py-5 mb-3 shadow-lg shadow-red-500/20" style="background: linear-gradient(135deg, #990033, #ff0040, #ff6680);">
             <i class="fa fa-exclamation-circle mr-2"></i> GESTIONAR JUEGOS +18
         </button>
@@ -114,7 +107,7 @@
 <!-- ============================================ -->
 <!-- 3. PANEL PRINCIPAL (OCULTO POR DEFECTO) -->
 <!-- ============================================ -->
-<div id="panel-principal" class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-10 pantalla-protegida">
+<div id="panel-principal" class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-10" style="display:none;">
     <header class="mb-6 sm:mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div class="w-full md:w-auto">
             <h1 class="font-gamer text-xl sm:text-3xl md:text-4xl titulo-dorado">CATÁLOGO <span class="text-xs sm:text-sm align-top bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded border border-yellow-500/30">ADMIN</span></h1>
@@ -205,7 +198,7 @@
                 <input type="text" id="idJuego" class="input-lujo" placeholder="ID Interno (Opcional)">
 
                 <div class="border border-dashed border-amber-700/50 rounded-xl p-3 sm:p-4 bg-black/20">
-                    <p class="text-amber-400/70 text-xs sm:text-sm mb-3 font-bold">📷 PORTADA</p>
+                    <p class="text-amber-400/70 text-xs sm:text-sm mb-3 font-bold"> PORTADA</p>
                     <input type="file" id="imgPortada" accept="image/*" class="hidden">
                     <button type="button" onclick="document.getElementById('imgPortada').click()" class="btn-soberano w-full text-xs sm:text-sm">
                         <i class="fa fa-cloud-upload"></i> SELECCIONAR IMAGEN
@@ -276,7 +269,7 @@
                     <option value="">Todas las plataformas</option>
                 </select>
                 <select id="filtroAdmin" class="input-lujo text-sm border-green-600/40 bg-green-900/10">
-                    <option value="todos"> Ver todos los juegos</option>
+                    <option value="todos">🌍 Ver todos los juegos</option>
                     <option value="mio">👤 Solo mis subidas</option>
                 </select>
             </div>
@@ -320,7 +313,7 @@
                 <input type="text" id="editTitulo" class="input-lujo text-sm" placeholder="Título" required>
 
                 <div class="border border-dashed border-amber-700/50 rounded-xl p-3 bg-black/20">
-                    <p class="text-amber-400/70 text-xs sm:text-sm mb-2 font-bold"> PORTADA</p>
+                    <p class="text-amber-400/70 text-xs sm:text-sm mb-2 font-bold">📷 PORTADA</p>
                     <div class="relative mb-3">
                         <img id="edit-cover-preview" class="vista-previa-edit mx-auto" style="display:none;">
                         <p id="edit-cover-no-img" class="text-center text-gray-500 text-sm py-4 hidden">Sin portada actual</p>
@@ -385,7 +378,7 @@
 <!-- ============================================ -->
 <!-- 8. PANEL GESTIÓN JUEGOS +18 (OCULTO POR DEFECTO) -->
 <!-- ============================================ -->
-<div id="panel-nsfw" class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-10 pantalla-protegida">
+<div id="panel-nsfw" class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-10" style="display:none;">
     <header class="mb-6 sm:mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div class="w-full md:w-auto">
             <h1 class="font-gamer text-xl sm:text-3xl md:text-4xl titulo-dorado flex items-center gap-3">
@@ -581,7 +574,7 @@
 <!-- ============================================ -->
 <!-- 4. PANEL VALIDADOR (OCULTO POR DEFECTO) -->
 <!-- ============================================ -->
-<div id="panel-validador" class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-10 pantalla-protegida">
+<div id="panel-validador" class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-10" style="display:none;">
     <header class="mb-6 sm:mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div class="w-full md:w-auto">
             <h1 class="font-gamer text-xl sm:text-3xl md:text-4xl titulo-dorado flex items-center gap-3">
@@ -631,7 +624,7 @@
                     <option value="todos">🔍 Todos los estados</option>
                     <option value="error">❌ Solo rotas</option>
                     <option value="ok">✅ Solo funcionales</option>
-                    <option value="pending"> Solo pendientes</option>
+                    <option value="pending">⏳ Solo pendientes</option>
                 </select>
             </div>
             <div>
@@ -748,7 +741,7 @@
 <!-- ============================================ -->
 <!-- 5. PANEL HUÉRFANAS (OCULTO POR DEFECTO) -->
 <!-- ============================================ -->
-<div id="panel-huerfanas" class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-10 pantalla-protegida">
+<div id="panel-huerfanas" class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-10" style="display:none;">
     <header class="mb-6 sm:mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
             <h1 class="font-gamer text-xl sm:text-3xl titulo-dorado flex items-center gap-3">
@@ -790,7 +783,7 @@
 <!-- ============================================ -->
 <!-- 6. PANEL REPORTES (OCULTO POR DEFECTO) -->
 <!-- ============================================ -->
-<div id="panel-reportes" class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-10 pantalla-protegida">
+<div id="panel-reportes" class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-10" style="display:none;">
     <header class="mb-6 sm:mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
             <h1 class="font-gamer text-xl sm:text-3xl titulo-dorado flex items-center gap-3">
@@ -834,7 +827,7 @@
 <!-- ============================================ -->
 <!-- 7. PANEL EXTRAS (OCULTO POR DEFECTO) -->
 <!-- ============================================ -->
-<div id="panel-extras" class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-10 pantalla-protegida">
+<div id="panel-extras" class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-10" style="display:none;">
     <header class="mb-6 sm:mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
             <h1 class="font-gamer text-xl sm:text-3xl titulo-dorado flex items-center gap-3">
@@ -859,7 +852,7 @@
             <h2 class="font-gamer titulo-dorado text-xl"><i class="fa fa-microchip"></i> Gestión de Emuladores</h2>
             <button class="boton-accion boton-nuevo" onclick="Emuladores.abrirModal()"><i class="fa fa-plus"></i> Nuevo Emulador</button>
         </div>
-        <input type="text" id="emuladores-buscar" class="input-lujo mb-4" placeholder="🔍 Buscar emulador...">
+        <input type="text" id="emuladores-buscar" class="input-lujo mb-4" placeholder=" Buscar emulador...">
         <div id="emuladores-lista" class="items-grid"></div>
     </div>
 
@@ -878,7 +871,7 @@
             <button class="boton-accion boton-nuevo" onclick="Mods.abrirModal()"><i class="fa fa-plus"></i> Nuevo Mod</button>
         </div>
         <div class="category-selector" id="mods-categorias"></div>
-        <input type="text" id="mods-buscar" class="input-lujo mb-4" placeholder="🔍 Buscar mod...">
+        <input type="text" id="mods-buscar" class="input-lujo mb-4" placeholder=" Buscar mod...">
         <div id="mods-lista" class="items-grid"></div>
     </div>
 
