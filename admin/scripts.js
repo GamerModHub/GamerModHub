@@ -1692,3 +1692,527 @@ const observer = new MutationObserver(() => {
     }
 });
 observer.observe(document.getElementById('panel-extras'), { subtree: true, attributes: true, attributeFilter: ['class'] });
+
+
+
+
+
+// ==========================================
+// GESTIÓN DE JUEGOS +18 (NSFW)
+// ==========================================
+let nsfwGamesList = [];
+let nsfwCapturasTemp = [];
+
+// Navegación desde bienvenida
+document.getElementById('btn-ir-a-nsfw').onclick = async () => {
+    document.getElementById('pantalla-bienvenida').style.display = 'none';
+    document.getElementById('panel-nsfw').style.display = 'block';
+    document.getElementById('admin-nsfw-name').textContent = adminActual;
+    abrirModal('CARGANDO', 'Obteniendo juegos +18...', 50);
+    await cargarNSFWGames();
+    cerrarModal();
+};
+
+// Volver desde NSFW
+document.getElementById('btn-volver-inicio-desde-nsfw').onclick = () => {
+    document.getElementById('panel-nsfw').style.display = 'none';
+    document.getElementById('pantalla-bienvenida').style.display = 'flex';
+};
+
+// ==========================================
+// CARGAR LISTA NSFW
+// ==========================================
+async function cargarNSFWGames() {
+    try {
+        const doc = await db.collection('sistema').doc('nsfw_games').get();
+        if (doc.exists && doc.data().games) {
+            nsfwGamesList = doc.data().games.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+        } else {
+            nsfwGamesList = [];
+        }
+        renderNSFWStats();
+        renderNSFWLista();
+    } catch (err) {
+        console.error("Error cargando NSFW:", err);
+        document.getElementById('nsfw-lista').innerHTML = `<div class="text-red-400 text-center py-10">Error al cargar: ${err.message}</div>`;
+    }
+}
+
+function renderNSFWStats() {
+    document.getElementById('nsfw-total').textContent = nsfwGamesList.length;
+    document.getElementById('nsfw-con-link').textContent = nsfwGamesList.filter(g => g.link && g.link.trim() !== '').length;
+    document.getElementById('nsfw-con-partes').textContent = nsfwGamesList.filter(g => Array.isArray(g.partes) && g.partes.length > 0).length;
+}
+
+function renderNSFWLista() {
+    const busqueda = (document.getElementById('nsfw-buscar').value || '').toLowerCase();
+    const filtrados = nsfwGamesList.filter(j => !busqueda || (j.title && j.title.toLowerCase().includes(busqueda)));
+    const contenedor = document.getElementById('nsfw-lista');
+    
+    if (filtrados.length === 0) {
+        contenedor.innerHTML = `<div class="text-center py-10 text-red-500/50"><i class="fa fa-inbox text-3xl mb-3"></i><p>${nsfwGamesList.length === 0 ? 'Sin juegos +18. ¡Agregá el primero!' : 'No se encontraron resultados'}</p></div>`;
+        return;
+    }
+    
+    contenedor.innerHTML = filtrados.map(j => {
+        const tienePortada = j.cover && j.cover.trim() !== '';
+        const portadaSrc = tienePortada ? limpiarUrl(j.cover) : 'https://via.placeholder.com/80x100/1a0000/ff0040?text=NSFW';
+        const tieneLink = j.link && j.link.trim() !== '';
+        const tienePartes = Array.isArray(j.partes) && j.partes.length > 0;
+        const tieneDatos = Array.isArray(j.datos) && j.datos.length > 0;
+        
+        let badges = '';
+        if (tieneLink) badges += '<span class="text-xs text-green-400 ml-1" title="Tiene link principal"><i class="fa fa-link"></i></span>';
+        if (tienePartes) badges += `<span class="text-xs text-purple-400 ml-1" title="${j.partes.length} parte(s)"><i class="fa fa-cubes"></i> ${j.partes.length}</span>`;
+        if (tieneDatos) badges += `<span class="text-xs text-orange-400 ml-1" title="${j.datos.length} dato(s)"><i class="fa fa-database"></i> ${j.datos.length}</span>`;
+        
+        return `
+        <div class="elemento-lista p-3 sm:p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4" style="border-left: 3px solid #ff0040;">
+            <div class="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
+                <img src="${portadaSrc}" class="w-14 h-18 sm:w-16 sm:h-20 object-cover rounded-lg border border-red-700/50 shadow-md flex-shrink-0" 
+                     onerror="this.onerror=null; this.src='https://via.placeholder.com/80x100/1a0000/ff4444?text=Error'; this.style.opacity='0.5';" loading="lazy">
+                <div class="flex-1 min-w-0">
+                    <h3 class="font-bold text-base sm:text-lg truncate text-white flex items-center">
+                        ${j.title || 'Sin título'}
+                        <span class="nsfw-badge-mini ml-2 text-white" style="background: linear-gradient(135deg, #ff0040, #cc0033); font-size: 0.6rem; padding: 2px 6px; border-radius: 999px;">+18</span>
+                    </h3>
+                    <p class="text-xs sm:text-sm text-red-400/70 flex items-center gap-2 flex-wrap mt-1">
+                        ${badges}
+                    </p>
+                    ${j.descripcion ? `<p class="text-xs text-gray-400 mt-1 line-clamp-2">${j.descripcion.substring(0, 80)}${j.descripcion.length > 80 ? '...' : ''}</p>` : ''}
+                </div>
+            </div>
+            <div class="flex gap-2 w-full sm:w-auto justify-end sm:justify-start">
+                <button onclick="editarNSFWGame('${j.id}')" class="boton-accion boton-editar flex-1 sm:flex-none text-xs sm:text-sm">
+                    <i class="fa fa-pencil"></i> <span class="hidden sm:inline">Editar</span>
+                </button>
+                <button onclick="borrarNSFWGame('${j.id}')" class="boton-accion boton-borrar flex-1 sm:flex-none text-xs sm:text-sm">
+                    <i class="fa fa-trash"></i> <span class="hidden sm:inline">Borrar</span>
+                </button>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+document.getElementById('nsfw-buscar').oninput = renderNSFWLista;
+
+// ==========================================
+// SUBIDA DE IMÁGENES NSFW
+// ==========================================
+document.getElementById('nsfw-imgPortada').onchange = async (e) => {
+    const arch = e.target.files[0];
+    if (!arch) return;
+    if (arch.size > 5 * 1024 * 1024) { mostrarToast('La imagen excede 5MB.', 'error'); e.target.value = ''; return; }
+    abrirModal('OPTIMIZANDO', 'Comprimiendo imagen...', 30);
+    try {
+        const blobComprimido = await comprimirImagen(arch);
+        abrirModal('SUBIENDO PORTADA', 'Enviando a GitHub...', 70);
+        const idUnico = Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+        const ruta = `nsfw/portadas/portada_nsfw_${idUnico}.jpg`;
+        const resultado = await subirArchivoGitHub(blobComprimido, ruta);
+        document.getElementById('nsfw-coverUrl').value = resultado.url;
+        document.getElementById('nsfw-coverPath').value = resultado.path;
+        const img = document.getElementById('nsfw-prevPortada');
+        img.src = limpiarUrl(resultado.url); img.style.display = 'block';
+        cerrarModal();
+        mostrarToast('Portada subida correctamente', 'success');
+    } catch (err) { cerrarModal(); modalError('Fallo al subir: ' + err.message); }
+};
+
+document.getElementById('nsfw-imgCapturas').onchange = async (e) => {
+    const archs = [...e.target.files];
+    if (archs.length === 0) return;
+    nsfwCapturasTemp = [];
+    document.getElementById('nsfw-prevCapturas').innerHTML = '';
+    for (let i = 0; i < archs.length; i++) {
+        if (archs[i].size > 5 * 1024 * 1024) { mostrarToast(`${archs[i].name} excede 5MB.`, 'error'); continue; }
+        abrirModal('OPTIMIZANDO', `Comprimiendo ${i+1}/${archs.length}...`, (i/archs.length)*50);
+        try {
+            const blobComprimido = await comprimirImagen(archs[i]);
+            abrirModal('SUBIENDO', `Enviando ${i+1}/${archs.length}...`, 50 + ((i+1)/archs.length)*50);
+            const idUnico = Date.now().toString(36) + i;
+            const ruta = `nsfw/capturas/capt_nsfw_${idUnico}.jpg`;
+            const resultado = await subirArchivoGitHub(blobComprimido, ruta);
+            nsfwCapturasTemp.push(resultado);
+            const img = document.createElement('img');
+            img.src = limpiarUrl(resultado.url); img.className = 'vista-previa-mini';
+            document.getElementById('nsfw-prevCapturas').appendChild(img);
+        } catch (err) { mostrarToast(`Error al subir ${archs[i].name}`, 'error'); }
+    }
+    document.getElementById('nsfw-capturasData').value = JSON.stringify(nsfwCapturasTemp);
+    cerrarModal();
+    if (nsfwCapturasTemp.length > 0) mostrarToast(`${nsfwCapturasTemp.length} capturas subidas`, 'success');
+};
+
+// ==========================================
+// DATOS Y PARTES DINÁMICAS (NSFW)
+// ==========================================
+function crearFilaCampoNSFW(tipo, nombre = '', url = '') {
+    const div = document.createElement('div');
+    div.className = `flex gap-2 items-start grupo-${tipo}-nsfw animate-fade-in`;
+    div.innerHTML = `
+        <input type="text" class="input-lujo text-xs flex-1 ${tipo}-nombre-nsfw" placeholder="Nombre (ej: Parte 1, Save Data)" value="${nombre}" required>
+        <input type="url" class="input-lujo text-xs flex-[2] ${tipo}-url-nsfw" placeholder="URL de descarga" value="${url}" required>
+        <button type="button" class="btn-eliminar-campo-nsfw bg-red-900/30 text-red-300 border border-red-600/50 w-8 h-8 flex items-center justify-center rounded hover:bg-red-900/50 transition-colors flex-shrink-0" title="Eliminar">
+            <i class="fa fa-trash"></i>
+        </button>
+    `;
+    div.querySelector('.btn-eliminar-campo-nsfw').addEventListener('click', () => { div.remove(); });
+    return div;
+}
+
+document.getElementById('nsfw-btn-agregar-dato').addEventListener('click', () => {
+    document.getElementById('nsfw-contenedor-datos').appendChild(crearFilaCampoNSFW('dato'));
+});
+document.getElementById('nsfw-btn-agregar-parte').addEventListener('click', () => {
+    document.getElementById('nsfw-contenedor-partes').appendChild(crearFilaCampoNSFW('parte'));
+});
+
+// ==========================================
+// GUARDAR NUEVO JUEGO NSFW
+// ==========================================
+document.getElementById('form-nsfw').onsubmit = async (e) => {
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-circle-o-notch fa-spin"></i> GUARDANDO...';
+    try {
+        // Recolección de Datos y Partes
+        const datosArray = [];
+        document.querySelectorAll('#nsfw-contenedor-datos .grupo-dato-nsfw').forEach(fila => {
+            const nombre = fila.querySelector('.dato-nombre-nsfw').value.trim();
+            const url = fila.querySelector('.dato-url-nsfw').value.trim();
+            if (nombre && url) datosArray.push({ nombre, url });
+        });
+
+        const partesArray = [];
+        document.querySelectorAll('#nsfw-contenedor-partes .grupo-parte-nsfw').forEach(fila => {
+            const nombre = fila.querySelector('.parte-nombre-nsfw').value.trim();
+            const url = fila.querySelector('.parte-url-nsfw').value.trim();
+            if (nombre && url) partesArray.push({ nombre, url });
+        });
+
+        const linkPrincipal = document.getElementById('nsfw-link').value.trim();
+        if (!linkPrincipal && datosArray.length === 0 && partesArray.length === 0) {
+            mostrarToast('Debes proporcionar al menos un enlace, un Dato o una Parte.', 'error');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa fa-save"></i> GUARDAR JUEGO +18';
+            return;
+        }
+
+        const coverUrlFinal = limpiarUrl(document.getElementById('nsfw-coverUrl').value);
+        const nuevoJuego = {
+            id: Date.now().toString(),
+            title: document.getElementById('nsfw-titulo').value.trim(),
+            idJuego: document.getElementById('nsfw-idJuego').value.trim(),
+            cover: coverUrlFinal,
+            coverPath: document.getElementById('nsfw-coverPath').value,
+            screenshots: nsfwCapturasTemp.map(c => limpiarUrl(c.url)),
+            screenshotsPaths: nsfwCapturasTemp.map(c => c.path),
+            link: linkPrincipal,
+            descripcion: document.getElementById('nsfw-descripcion').value.trim(),
+            tipo: 'nsfw',
+            consola: 'nsfw',
+            uploadedBy: adminActual,
+            timestamp: Date.now(),
+            datos: datosArray,
+            partes: partesArray
+        };
+
+        // Guardar en Firebase
+        const docRef = db.collection('sistema').doc('nsfw_games');
+        const docSnap = await docRef.get();
+        const currentGames = docSnap.exists && docSnap.data().games ? docSnap.data().games : [];
+        currentGames.push(nuevoJuego);
+        await docRef.set({ games: currentGames }, { merge: true });
+
+        // Limpieza
+        e.target.reset();
+        document.getElementById('nsfw-prevPortada').style.display = 'none';
+        document.getElementById('nsfw-prevCapturas').innerHTML = '';
+        document.getElementById('nsfw-coverUrl').value = '';
+        document.getElementById('nsfw-coverPath').value = '';
+        document.getElementById('nsfw-capturasData').value = '';
+        document.getElementById('nsfw-contenedor-datos').innerHTML = '';
+        document.getElementById('nsfw-contenedor-partes').innerHTML = '';
+        nsfwCapturasTemp = [];
+        
+        mostrarToast(`Juego +18 guardado por ${adminActual}`, 'success');
+        await cargarNSFWGames();
+    } catch (err) { 
+        console.error(err);
+        mostrarToast('Error al guardar: ' + err.message, 'error'); 
+    }
+    finally { 
+        btn.disabled = false; 
+        btn.innerHTML = '<i class="fa fa-save"></i> GUARDAR JUEGO +18'; 
+    }
+};
+
+// ==========================================
+// EDITAR JUEGO NSFW
+// ==========================================
+window.editarNSFWGame = function(id) {
+    const j = nsfwGamesList.find(x => x.id === id);
+    if (!j) return;
+    
+    document.getElementById('editNsfwId').value = id;
+    document.getElementById('editNsfwOriginalTimestamp').value = j.timestamp || Date.now();
+    document.getElementById('editNsfwIdJuego').value = j.idJuego || '';
+    document.getElementById('editNsfwTitulo').value = j.title || '';
+    document.getElementById('editNsfwLink').value = j.link || '';
+    document.getElementById('editNsfwDesc').value = j.descripcion || '';
+    document.getElementById('editNsfwCoverUrlInput').value = limpiarUrl(j.cover || '');
+    
+    // Portada preview
+    const coverPreview = document.getElementById('edit-nsfw-cover-preview');
+    const coverNoImg = document.getElementById('edit-nsfw-cover-no-img');
+    const btnDeleteCover = document.getElementById('btn-delete-edit-nsfw-cover');
+    if (j.cover) {
+        coverPreview.src = limpiarUrl(j.cover); 
+        coverPreview.style.display = 'block';
+        coverNoImg.classList.add('hidden'); 
+        btnDeleteCover.classList.remove('hidden');
+    } else {
+        coverPreview.style.display = 'none'; 
+        coverNoImg.classList.remove('hidden');
+        btnDeleteCover.classList.add('hidden');
+    }
+    
+    // Capturas
+    renderizarCapturasEditNSFW(j.screenshots || []);
+    document.getElementById('editNsfwCapturasUrlInput').value = '';
+    
+    // Datos y Partes
+    const contEditDatos = document.getElementById('contenedor-edit-nsfw-datos');
+    const contEditPartes = document.getElementById('contenedor-edit-nsfw-partes');
+    contEditDatos.innerHTML = '';
+    contEditPartes.innerHTML = '';
+    
+    if (Array.isArray(j.datos)) {
+        j.datos.forEach(d => contEditDatos.appendChild(crearFilaCampoNSFW('dato', d.nombre, d.url)));
+    }
+    if (Array.isArray(j.partes)) {
+        j.partes.forEach(p => contEditPartes.appendChild(crearFilaCampoNSFW('parte', p.nombre, p.url)));
+    }
+    
+    document.getElementById('modal-editar-nsfw').style.display = 'flex';
+};
+
+function renderizarCapturasEditNSFW(urls) {
+    const grid = document.getElementById('edit-nsfw-capturas-grid');
+    const noImg = document.getElementById('edit-nsfw-capturas-no-img');
+    grid.innerHTML = '';
+    if (urls.length === 0) { noImg.classList.remove('hidden'); return; }
+    noImg.classList.add('hidden');
+    urls.forEach((url, index) => {
+        const div = document.createElement('div');
+        div.className = 'relative group';
+        div.innerHTML = `
+            <img src="${limpiarUrl(url)}" class="w-20 h-20 object-cover rounded-lg border border-red-700/50" 
+                 onerror="this.onerror=null; this.src='https://via.placeholder.com/80x80/1a0000/ff4444?text=Error'; this.style.opacity='0.5';">
+            <button type="button" onclick="eliminarCapturaEditNSFW(${index})" class="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg hover:bg-red-700 active:scale-95 text-xs">
+                <i class="fa fa-times"></i>
+            </button>`;
+        grid.appendChild(div);
+    });
+}
+
+let editNsfwCapturasUrlsToKeep = [];
+let editNsfwCapturasPathsToDelete = [];
+let editNsfwCoverPathToDelete = '';
+
+window.eliminarCapturaEditNSFW = function(index) {
+    const juego = nsfwGamesList.find(x => x.id === document.getElementById('editNsfwId').value);
+    if (!juego) return;
+    const path = juego.screenshotsPaths ? juego.screenshotsPaths[index] : '';
+    if (path) editNsfwCapturasPathsToDelete.push(path);
+    editNsfwCapturasUrlsToKeep.splice(index, 1);
+    renderizarCapturasEditNSFW(editNsfwCapturasUrlsToKeep);
+};
+
+// Al abrir el modal de edición, inicializar las variables
+const originalEditarNSFW = window.editarNSFWGame;
+window.editarNSFWGame = function(id) {
+    editNsfwCapturasUrlsToKeep = [];
+    editNsfwCapturasPathsToDelete = [];
+    editNsfwCoverPathToDelete = '';
+    const j = nsfwGamesList.find(x => x.id === id);
+    if (j) {
+        editNsfwCapturasUrlsToKeep = [...(j.screenshots || [])];
+        if (j.coverPath) editNsfwCoverPathToDelete = j.coverPath;
+    }
+    originalEditarNSFW(id);
+};
+
+// Subir nueva portada en edición NSFW
+document.getElementById('edit-nsfw-imgPortada').onchange = async (e) => {
+    const arch = e.target.files[0]; if (!arch) return;
+    if (arch.size > 5 * 1024 * 1024) { mostrarToast('Excede 5MB.', 'error'); e.target.value = ''; return; }
+    abrirModal('OPTIMIZANDO', 'Comprimiendo...', 30);
+    try {
+        const blobComprimido = await comprimirImagen(arch);
+        abrirModal('SUBIENDO PORTADA', 'Enviando...', 70);
+        const idUnico = Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+        const ruta = `nsfw/portadas/portada_nsfw_edit_${idUnico}.jpg`;
+        const resultado = await subirArchivoGitHub(blobComprimido, ruta);
+        const juego = nsfwGamesList.find(x => x.id === document.getElementById('editNsfwId').value);
+        if (juego && juego.coverPath) editNsfwCoverPathToDelete = juego.coverPath;
+        document.getElementById('edit-nsfw-cover-preview').src = limpiarUrl(resultado.url);
+        document.getElementById('edit-nsfw-cover-preview').style.display = 'block';
+        document.getElementById('edit-nsfw-cover-no-img').classList.add('hidden');
+        document.getElementById('btn-delete-edit-nsfw-cover').classList.remove('hidden');
+        document.getElementById('editNsfwCoverUrlInput').value = limpiarUrl(resultado.url);
+        cerrarModal();
+        mostrarToast('Nueva portada lista', 'success');
+    } catch (err) { cerrarModal(); modalError('Fallo: ' + err.message); }
+};
+
+document.getElementById('btn-delete-edit-nsfw-cover').onclick = function() {
+    const juego = nsfwGamesList.find(x => x.id === document.getElementById('editNsfwId').value);
+    if (juego && juego.coverPath) editNsfwCoverPathToDelete = juego.coverPath;
+    document.getElementById('edit-nsfw-cover-preview').style.display = 'none';
+    document.getElementById('edit-nsfw-cover-no-img').classList.remove('hidden');
+    document.getElementById('btn-delete-edit-nsfw-cover').classList.add('hidden');
+    document.getElementById('editNsfwCoverUrlInput').value = '';
+};
+
+// Subir nuevas capturas en edición NSFW
+document.getElementById('edit-nsfw-imgCapturas').onchange = async (e) => {
+    const archs = [...e.target.files]; if (archs.length === 0) return;
+    for (let i = 0; i < archs.length; i++) {
+        if (archs[i].size > 5 * 1024 * 1024) { mostrarToast(`${archs[i].name} excede 5MB.`, 'error'); continue; }
+        abrirModal('OPTIMIZANDO', `Comprimiendo ${i+1}/${archs.length}...`, (i/archs.length)*50);
+        try {
+            const blobComprimido = await comprimirImagen(archs[i]);
+            abrirModal('SUBIENDO', `Enviando ${i+1}/${archs.length}...`, 50 + ((i+1)/archs.length)*50);
+            const idUnico = Date.now().toString(36) + i;
+            const ruta = `nsfw/capturas/capt_nsfw_edit_${idUnico}.jpg`;
+            const resultado = await subirArchivoGitHub(blobComprimido, ruta);
+            editNsfwCapturasUrlsToKeep.push(limpiarUrl(resultado.url));
+        } catch (err) { mostrarToast(`Error al subir ${archs[i].name}`, 'error'); }
+    }
+    renderizarCapturasEditNSFW(editNsfwCapturasUrlsToKeep);
+    cerrarModal();
+    mostrarToast(`${archs.length} capturas agregadas`, 'success');
+    e.target.value = '';
+};
+
+// Botones agregar en edición NSFW
+document.querySelector('.btn-agregar-edit-nsfw-datos')?.addEventListener('click', () => {
+    document.getElementById('contenedor-edit-nsfw-datos').appendChild(crearFilaCampoNSFW('dato'));
+});
+document.querySelector('.btn-agregar-edit-nsfw-partes')?.addEventListener('click', () => {
+    document.getElementById('contenedor-edit-nsfw-partes').appendChild(crearFilaCampoNSFW('parte'));
+});
+
+// ==========================================
+// GUARDAR EDICIÓN NSFW
+// ==========================================
+document.getElementById('formEditarNSFW').onsubmit = async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('editNsfwId').value;
+    const timestampOriginal = parseInt(document.getElementById('editNsfwOriginalTimestamp').value) || Date.now();
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    btn.textContent = 'ACTUALIZANDO...';
+    try {
+        // Recolección de Datos y Partes
+        const datosArray = [];
+        document.querySelectorAll('#contenedor-edit-nsfw-datos .grupo-dato-nsfw').forEach(fila => {
+            const nombre = fila.querySelector('.dato-nombre-nsfw').value.trim();
+            const url = fila.querySelector('.dato-url-nsfw').value.trim();
+            if (nombre && url) datosArray.push({ nombre, url });
+        });
+
+        const partesArray = [];
+        document.querySelectorAll('#contenedor-edit-nsfw-partes .grupo-parte-nsfw').forEach(fila => {
+            const nombre = fila.querySelector('.parte-nombre-nsfw').value.trim();
+            const url = fila.querySelector('.parte-url-nsfw').value.trim();
+            if (nombre && url) partesArray.push({ nombre, url });
+        });
+
+        const coverUrlFinal = limpiarUrl(document.getElementById('editNsfwCoverUrlInput').value.trim());
+        let coverPathFinal = extraerPathDeUrl(coverUrlFinal);
+        const urlsPegadas = document.getElementById('editNsfwCapturasUrlInput').value
+            .split('\n').map(u => u.trim()).filter(u => u).map(u => limpiarUrl(u));
+        const capturasFinales = [...new Set([...editNsfwCapturasUrlsToKeep.map(limpiarUrl), ...urlsPegadas])];
+
+        const juegoActualizado = {
+            id: id,
+            title: document.getElementById('editNsfwTitulo').value.trim(),
+            idJuego: document.getElementById('editNsfwIdJuego').value.trim(),
+            cover: coverUrlFinal,
+            coverPath: coverPathFinal,
+            screenshots: capturasFinales,
+            screenshotsPaths: capturasFinales.map(extraerPathDeUrl).filter(Boolean),
+            link: document.getElementById('editNsfwLink').value.trim(),
+            descripcion: document.getElementById('editNsfwDesc').value.trim(),
+            tipo: 'nsfw',
+            consola: 'nsfw',
+            editedBy: adminActual,
+            editTimestamp: Date.now(),
+            timestamp: timestampOriginal,
+            datos: datosArray,
+            partes: partesArray
+        };
+
+        // Actualizar en Firebase
+        const docRef = db.collection('sistema').doc('nsfw_games');
+        const docSnap = await docRef.get();
+        let games = docSnap.exists && docSnap.data().games ? docSnap.data().games : [];
+        games = games.filter(g => g.id !== id);
+        games.push(juegoActualizado);
+        await docRef.set({ games: games }, { merge: true });
+
+        // Borrar archivos viejos de GitHub
+        if (editNsfwCoverPathToDelete && editNsfwCoverPathToDelete !== coverPathFinal) {
+            await borrarArchivoGitHub(editNsfwCoverPathToDelete);
+        }
+        for (const path of editNsfwCapturasPathsToDelete) {
+            if (path) await borrarArchivoGitHub(path);
+        }
+
+        document.getElementById('modal-editar-nsfw').style.display = 'none';
+        mostrarToast('Juego +18 actualizado por ' + adminActual, 'success');
+        await cargarNSFWGames();
+    } catch (err) { 
+        console.error(err);
+        mostrarToast('Error al actualizar: ' + err.message, 'error'); 
+    }
+    finally { 
+        btn.disabled = false; 
+        btn.textContent = 'ACTUALIZAR REGISTRO'; 
+    }
+};
+
+// ==========================================
+// BORRAR JUEGO NSFW
+// ==========================================
+window.borrarNSFWGame = async function(idJuego) {
+    if (!confirm("⚠️ ¿ESTÁS SEGURO?\n\nSe eliminarán las imágenes de GitHub y el registro del juego +18.")) return;
+    const juego = nsfwGamesList.find(x => x.id === idJuego);
+    if (!juego) return;
+    abrirModal("ELIMINANDO", "Paso 1: Actualizando base de datos...", 10);
+    try {
+        const docRef = db.collection('sistema').doc('nsfw_games');
+        const docSnap = await docRef.get();
+        let games = docSnap.exists && docSnap.data().games ? docSnap.data().games : [];
+        games = games.filter(j => j.id !== idJuego);
+        await docRef.set({ games: games }, { merge: true });
+        
+        document.getElementById('detalle-modal').textContent = "Paso 2: Eliminando imágenes de GitHub...";
+        document.getElementById('barra-progreso').style.width = "50%";
+        
+        if (juego.coverPath) await borrarArchivoGitHub(juego.coverPath);
+        const pathsCapturas = juego.screenshotsPaths || [];
+        for (let i = 0; i < pathsCapturas.length; i++) {
+            document.getElementById('detalle-modal').textContent = `Eliminando captura ${i+1}/${pathsCapturas.length}...`;
+            document.getElementById('barra-progreso').style.width = `${50 + ((i+1)/pathsCapturas.length)*40}%`;
+            await borrarArchivoGitHub(pathsCapturas[i]);
+        }
+        
+        modalExito("Juego +18 e imágenes eliminados correctamente.");
+        await cargarNSFWGames();
+    } catch (err) { modalError("Error: " + err.message); }
+};
