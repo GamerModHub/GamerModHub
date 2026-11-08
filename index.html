@@ -68,10 +68,29 @@
         .stats-label { font-size: 0.75rem; color: #888; display: flex; align-items: center; gap: 6px; }
         .stats-value { font-size: 0.85rem; font-weight: 700; color: #fff; }
         .stats-date { text-align: center; font-size: 0.65rem; color: #555; margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255, 255, 255, 0.05); }
+
+        /* Estilos para el botón de reset admin */
+        .admin-reset-btn {
+            position: fixed; bottom: 20px; right: 20px; z-index: 9999;
+            background: linear-gradient(135deg, #ff0040, #cc0033);
+            color: white; border: none; border-radius: 50px;
+            padding: 10px 20px; font-weight: bold; font-size: 0.8rem;
+            box-shadow: 0 4px 15px rgba(255, 0, 64, 0.4);
+            cursor: pointer; transition: all 0.3s;
+            display: none; /* Oculto por defecto */
+        }
+        .admin-reset-btn:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(255, 0, 64, 0.6); }
+        .admin-reset-btn.show { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 <div id="toast-container"></div>
+
+<!-- BOTÓN ADMIN RESET (Se activa con doble click en logo o similar, aquí lo dejo visible para pruebas, cámbialo a 'display:none' si quieres ocultarlo totalmente) -->
+<button id="btn-admin-reset" class="admin-reset-btn show" title="Forzar reseteo de contador diario">
+    <i class="fa fa-trash"></i> Reset Stats Hoy
+</button>
 
 <!-- MODAL DE VERIFICACIÓN DE EDAD +18 -->
 <div id="age-verification-modal" class="fixed inset-0 z-[9999] hidden age-verification-overlay flex items-center justify-center p-4">
@@ -816,7 +835,7 @@ function renderHomeRows(){
     const c=document.getElementById('dynamic-home-rows');
     c.innerHTML='';
     if(latestTicker){latestTicker.destroy();latestTicker=null}
-    if(topTicker){topTicker.destroy;topTicker=null}
+    if(topTicker){topTicker.destroy();topTicker=null} // CORREGIDO AQUÍ
     const ls=document.createElement('div');
     ls.className='carousel-section fade-in-item';
     ls.style.setProperty('--accent-from','var(--neon-blue)');
@@ -961,61 +980,62 @@ document.getElementById('form-pedir').addEventListener('submit',async e=>{
     finally{btn.disabled=false;btn.classList.remove('disabled');btn.innerHTML='<i class="fa fa-paper-plane"></i> Enviar pedido'}
 });
 
-function getWeekString(date) {
-    const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-    const dayNum = d.getUTCDay() || 7;
-    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-    const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-    return `${d.getUTCFullYear()}-W${String(weekNo).padStart(2, '0')}`;
+// ==========================================
+// NUEVO SISTEMA DE ESTADÍSTICAS AUTOMÁTICO
+// ==========================================
+
+function getTodayId() {
+    return new Date().toISOString().split('T')[0]; // Ej: 2026-11-08
 }
 
-let statsHoy = 0, statsSemana = 0, statsMes = 0;
+let unsubStatsDaily = null;
 
 async function registrarVisitaGlobal() {
     try {
         const userId = getAnonId();
-        const now = new Date();
-        const hoyStr = now.toISOString().split('T')[0];
-        const semanaStr = getWeekString(now);
-        const mesStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+        const todayId = getTodayId();
+        
         const userRef = dbFirestore.collection('usuarios_visitas').doc(userId);
         const userDoc = await userRef.get();
         const data = userDoc.exists ? userDoc.data() : {};
         
-        const checkAndUpdate = async (campo, valorActual, nuevoValor, docGlobal) => {
-            if (valorActual !== nuevoValor) {
-                await userRef.set({ [campo]: nuevoValor }, { merge: true });
-                await dbFirestore.collection('stats_visitas').doc(docGlobal).set({
-                    count: firebase.firestore.FieldValue.increment(1), periodo: nuevoValor,
-                    ultima_actualizacion: firebase.firestore.FieldValue.serverTimestamp()
-                }, { merge: true });
-            }
-        };
-        await checkAndUpdate('last_hoy', data.last_hoy, hoyStr, 'hoy');
-        await checkAndUpdate('last_semana', data.last_semana, semanaStr, 'semana');
-        await checkAndUpdate('last_mes', data.last_mes, mesStr, 'mes');
-    } catch (e) { console.error('Error al registrar visita:', e); }
+        // Solo incrementamos si el usuario no ha visitado HOY todavía
+        if (data.last_day !== todayId) {
+            await userRef.set({ last_day: todayId }, { merge: true });
+            
+            // Incrementamos el contador global de este día específico
+            await dbFirestore.collection('stats_daily').doc(todayId).set({
+                count: firebase.firestore.FieldValue.increment(1),
+                updated_at: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+        }
+    } catch (e) { 
+        console.error('Error al registrar visita:', e); 
+    }
 }
 
 function escucharVisitasEnTiempoReal() {
-    dbFirestore.collection('stats_visitas').doc('hoy').onSnapshot(doc => { 
+    const todayId = getTodayId();
+    
+    // Limpiar listener anterior si existe
+    if(unsubStatsDaily) unsubStatsDaily();
+
+    // Escuchar el documento específico de HOY
+    unsubStatsDaily = dbFirestore.collection('stats_daily').doc(todayId).onSnapshot(doc => {
         const count = doc.exists ? (doc.data().count || 0) : 0;
-        statsHoy = count;
+        
+        // Actualizar Header Counter
         animateNumber('stat-hoy', count);
-        document.getElementById('stats-hoy').textContent = count.toLocaleString('es-ES');
-    });
-    dbFirestore.collection('stats_visitas').doc('semana').onSnapshot(doc => { 
-        const count = doc.exists ? (doc.data().count || 0) : 0;
-        statsSemana = count;
-        animateNumber('stat-semana', count);
-        document.getElementById('stats-semana').textContent = count.toLocaleString('es-ES');
-    });
-    dbFirestore.collection('stats_visitas').doc('mes').onSnapshot(doc => { 
-        const count = doc.exists ? (doc.data().count || 0) : 0;
-        statsMes = count;
-        animateNumber('stat-mes', count);
-        document.getElementById('stats-mes').textContent = count.toLocaleString('es-ES');
+        
+        // Actualizar Panel Desplegable
+        const panelHoy = document.getElementById('stats-hoy');
+        if(panelHoy) panelHoy.textContent = count.toLocaleString('es-ES');
+        
+        // Nota: Semana y Mes requieren cálculos más complejos (sumar rangos de fechas).
+        // Para simplificar y mantener la velocidad, mostramos solo "Hoy" en tiempo real exacto.
+        // Si necesitas semana/mes precisos, deberías crear documentos separados para esos periodos también.
+        document.getElementById('stats-semana').textContent = "--"; 
+        document.getElementById('stats-mes').textContent = "--";
     });
     
     const hoy = new Date();
@@ -1040,6 +1060,26 @@ function animateNumber(elementId, target) {
     requestAnimationFrame(update);
 }
 
+// Función para el botón de Reset Admin
+window.forzarResetHoy = async function() {
+    if(!confirm("¿Seguro que quieres poner el contador de HOY en 0?")) return;
+    
+    const todayId = getTodayId();
+    try {
+        await dbFirestore.collection('stats_daily').doc(todayId).delete();
+        showToast("Contador de hoy reseteado a 0", "success");
+        setTimeout(() => {
+            animateNumber('stat-hoy', 0);
+            document.getElementById('stats-hoy').textContent = "0";
+        }, 500);
+    } catch(e) {
+        console.error(e);
+        showToast("Error al resetear", "error");
+    }
+}
+
+document.getElementById('btn-admin-reset').addEventListener('click', window.forzarResetHoy);
+
 const btnDesplegar = document.getElementById('btn-desplegar');
 const listaJuegos = document.getElementById('lista-juegos');
 const flecha = document.querySelector('.banner-flecha');
@@ -1058,27 +1098,32 @@ fetch('mas-juegos.json').then(res => res.json()).then(sitios => {
 }).catch(e => console.warn('No se pudo cargar sitios externos:', e));
 
 // ==========================================
-// INICIALIZACIÓN CON PERSISTENCIA DEL FILTRO +18
+// INICIALIZACIÓN OPTIMIZADA
 // ==========================================
-// 1. Restaurar el estado del filtro desde localStorage
-nsfwFilterActive = isNSFWFilterActive();
-updateNSFWFilterUI();
+async function initApp() {
+    // 1. Restaurar estado del filtro
+    nsfwFilterActive = isNSFWFilterActive();
+    updateNSFWFilterUI();
 
-// 2. Cargar datos
-loadData();
-loadNovedades();
-loadTopBuscados();
-loadNSFW().then(() => {
-    // 3. Una vez cargados los datos NSFW, si el filtro estaba activo, refrescar las vistas
-    if (nsfwFilterActive && nsfwData.length > 0) {
-        renderBiblioteca();
-        renderHomeRows();
-    }
-});
+    // 2. Cargar TODOS los datos en paralelo
+    await Promise.all([
+        loadData(),
+        loadNovedades(),
+        loadTopBuscados(),
+        loadNSFW()
+    ]);
 
-registrarVisitaGlobal();
-escucharVisitasEnTiempoReal();
-bindNeon();
+    // 3. Renderizar una sola vez con todos los datos ya disponibles
+    renderBiblioteca();
+    renderHomeRows();
+    
+    // 4. Iniciar procesos en segundo plano
+    registrarVisitaGlobal();
+    escucharVisitasEnTiempoReal();
+    bindNeon();
+}
+
+initApp();
 </script>
 </body>
 </html>
